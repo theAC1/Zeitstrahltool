@@ -1,26 +1,21 @@
-type TimelineEvent = {
-  id: string;
-  year: number;
-  title: string;
-  description?: string;
-};
-
-const EVENTS: TimelineEvent[] = [
-  { id: "e1", year: -44, title: "Caesar ermordet", description: "Iden des Maerz" },
-  { id: "e2", year: 476, title: "Westroemisches Reich", description: "Traditionelles Ende" },
-  { id: "e3", year: 1492, title: "Kolumbus", description: "Ankunft in der Karibik" },
-  { id: "e4", year: 1789, title: "Franzoesische Revolution" },
-  { id: "e5", year: 1989, title: "Mauerfall" },
-];
+import type { Timeline as TimelineType, TimelineEvent } from "../../types/timeline";
 
 function scaleYear(year: number, minYear: number, maxYear: number, width: number) {
   const span = maxYear - minYear || 1;
   return ((year - minYear) / span) * width;
 }
 
-export function Timeline() {
-  const minYear = Math.min(...EVENTS.map(e => e.year));
-  const maxYear = Math.max(...EVENTS.map(e => e.year));
+export function Timeline({ timeline }: { timeline: TimelineType }) {
+  const events = timeline.events;
+
+  const years = events.flatMap((e: TimelineEvent) => {
+    if (typeof e.year === "number") return [e.year];
+    if (typeof e.startYear === "number" && typeof e.endYear === "number") return [e.startYear, e.endYear];
+    return [];
+  });
+
+  const minYear = years.length ? Math.min(...years) : 0;
+  const maxYear = years.length ? Math.max(...years) : 1;
 
   const width = 1000;
   const height = 180;
@@ -43,14 +38,22 @@ export function Timeline() {
           strokeWidth="2"
         />
 
-        {EVENTS.map((ev) => {
-          const x = paddingX + scaleYear(ev.year, minYear, maxYear, width - paddingX * 2);
+        {events.map((ev) => {
+          const labelYear =
+            typeof ev.year === "number"
+              ? ev.year
+              : typeof ev.startYear === "number" && typeof ev.endYear === "number"
+                ? ev.startYear
+                : 0;
+
+          const x = paddingX + scaleYear(labelYear, minYear, maxYear, width - paddingX * 2);
+
           return (
             <g key={ev.id}>
               <circle cx={x} cy={lineY} r="6" fill="currentColor" />
               <line x1={x} y1={lineY} x2={x} y2={lineY - 24} stroke="currentColor" strokeWidth="2" />
               <text x={x} y={lineY - 32} textAnchor="middle" fontSize="12">
-                {ev.year}
+                {labelYear}
               </text>
               <text x={x} y={lineY + 28} textAnchor="middle" fontSize="12">
                 {ev.title}
