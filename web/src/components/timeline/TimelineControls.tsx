@@ -14,6 +14,7 @@ export function TimelineControls() {
   const [error, setError] = useState<string | null>(null);
 
   const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
+  const [editYearById, setEditYearById] = useState<Record<string, string>>({});
 
   function onAddEvent(e: React.FormEvent) {
     e.preventDefault();
@@ -79,27 +80,76 @@ export function TimelineControls() {
       delete next[eventId];
       return next;
     });
+
+    setEditYearById(prev => {
+      const next = { ...prev };
+      delete next[eventId];
+      return next;
+    });
   }
 
-  function onStartEdit(eventId: string, currentTitle: string) {
-    setEditTitleById(prev => ({ ...prev, [eventId]: currentTitle }));
+  function startEditTitle(eventId: string, currentTitle: string) {
+    setEditTitleById(prev => (Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentTitle }));
   }
 
-  function onSaveTitle(eventId: string) {
-    const nextTitle = (editTitleById[eventId] ?? "").trim();
+  function startEditYear(eventId: string, currentYear: string) {
+    setEditYearById(prev => (Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentYear }));
+  }
+
+  function onSave(eventId: string) {
+    const current = timeline.events.find(ev => ev.id === eventId);
+    if (!current) return;
+
+    const nextTitle = (editTitleById[eventId] ?? current.title).trim();
+    const nextYearStr =
+      (editYearById[eventId] ??
+        (typeof current.year === "number" ? String(current.year) : "")).trim();
+
     if (!nextTitle) {
       setError("Title darf nicht leer sein.");
       return;
     }
 
+    const parsedYear = Number(nextYearStr);
+    if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
+      setError("Year muss eine ganze Zahl sein (zB 2000 oder -44).");
+      return;
+    }
+
     setError(null);
+    const candidate = {
+      ...current,
+      title: nextTitle,
+      year: parsedYear,
+      startYear: undefined,
+      endYear: undefined,
+    };
+
+
+    const result = TimelineEventSchema.safeParse(candidate);
+    if (!result.success) {
+      setError("Ungueltige Werte. Bitte pruefen.");
+      return;
+    }
 
     dispatch({
       type: "timeline/replace",
       payload: {
         ...timeline,
-        events: timeline.events.map(ev => (ev.id === eventId ? { ...ev, title: nextTitle } : ev)),
+        events: timeline.events.map(ev => (ev.id === eventId ? result.data : ev)),
       },
+    });
+
+    setEditTitleById(prev => {
+      const next = { ...prev };
+      delete next[eventId];
+      return next;
+    });
+
+    setEditYearById(prev => {
+      const next = { ...prev };
+      delete next[eventId];
+      return next;
     });
   }
 
@@ -174,8 +224,13 @@ export function TimelineControls() {
 
         <div className="flex flex-col gap-2">
           {timeline.events.map(ev => {
-            const isEditing = Object.prototype.hasOwnProperty.call(editTitleById, ev.id);
-            const editValue = editTitleById[ev.id] ?? "";
+            const isEditingTitle = Object.prototype.hasOwnProperty.call(editTitleById, ev.id);
+            const isEditingYear = Object.prototype.hasOwnProperty.call(editYearById, ev.id);
+
+            const editTitleValue = editTitleById[ev.id] ?? "";
+            const editYearValue = editYearById[ev.id] ?? "";
+
+            const currentYearStr = typeof ev.year === "number" ? String(ev.year) : "";
 
             return (
               <div key={ev.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2 py-2">
@@ -185,26 +240,37 @@ export function TimelineControls() {
                     <span className="text-gray-600">({formatYear(ev)})</span>{" "}
                     <span className="font-medium">{ev.title}</span>
                   </div>
-                  {ev.description ? (
-                    <div className="text-xs text-gray-600">{ev.description}</div>
-                  ) : null}
+
+                  {ev.description ? <div className="text-xs text-gray-600">{ev.description}</div> : null}
 
                   <div className="mt-2 flex flex-wrap items-end gap-2">
                     <div className="flex flex-col">
-                      <label className="text-xs text-gray-600" htmlFor={`edit-${ev.id}`}>title</label>
+                      <label className="text-xs text-gray-600" htmlFor={`edit-title-${ev.id}`}>title</label>
                       <input
-                        id={`edit-${ev.id}`}
+                        id={`edit-title-${ev.id}`}
                         className="w-64 rounded-md border px-2 py-1 text-sm"
-                        value={isEditing ? editValue : ev.title}
+                        value={isEditingTitle ? editTitleValue : ev.title}
                         onChange={e => setEditTitleById(prev => ({ ...prev, [ev.id]: e.target.value }))}
-                        onFocus={() => onStartEdit(ev.id, ev.title)}
+                        onFocus={() => startEditTitle(ev.id, ev.title)}
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="text-xs text-gray-600" htmlFor={`edit-year-${ev.id}`}>year</label>
+                      <input
+                        id={`edit-year-${ev.id}`}
+                        className="w-28 rounded-md border px-2 py-1 text-sm"
+                        value={isEditingYear ? editYearValue : currentYearStr}
+                        onChange={e => setEditYearById(prev => ({ ...prev, [ev.id]: e.target.value }))}
+                        onFocus={() => startEditYear(ev.id, currentYearStr)}
+                        inputMode="numeric"
                       />
                     </div>
 
                     <button
                       type="button"
                       className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-                      onClick={() => onSaveTitle(ev.id)}
+                      onClick={() => onSave(ev.id)}
                     >
                       Save
                     </button>
