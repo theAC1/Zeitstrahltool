@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import type { TimelineAxis } from "../../types/timeline";
 import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
 import { TimelineEventSchema } from "../../types/timeline";
 
@@ -34,65 +35,36 @@ function parseOptionalInt(raw: string): number | undefined {
   return n;
 }
 
-export function TimelineControls() {
-  const { timeline } = useTimelineState();
-  const dispatch = useTimelineDispatch();
+function axisKey(axis?: TimelineAxis) {
+  return JSON.stringify({
+    tickStep: typeof axis?.tickStep === "number" ? axis.tickStep : null,
+    targetTickCount: typeof axis?.targetTickCount === "number" ? axis.targetTickCount : null,
+    minYear: typeof axis?.minYear === "number" ? axis.minYear : null,
+    maxYear: typeof axis?.maxYear === "number" ? axis.maxYear : null,
+  });
+}
 
-  const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
-  const [isTitleDirty, setIsTitleDirty] = useState(false);
+function AxisControls(props: {
+  axis?: TimelineAxis;
+  onSaveAxis: (axis?: TimelineAxis) => void;
+  setError: (msg: string | null) => void;
+}) {
+  const { axis, onSaveAxis, setError } = props;
 
-  const axis = timeline.axis;
-
-  const [tickStepInput, setTickStepInput] = useState(() =>
+  const [tickStepInput, setTickStepInput] = useState(
     typeof axis?.tickStep === "number" ? String(axis.tickStep) : "",
   );
-  const [targetTickCountInput, setTargetTickCountInput] = useState(() =>
+  const [targetTickCountInput, setTargetTickCountInput] = useState(
     typeof axis?.targetTickCount === "number" ? String(axis.targetTickCount) : "",
   );
-  const [minYearInput, setMinYearInput] = useState(() =>
+  const [minYearInput, setMinYearInput] = useState(
     typeof axis?.minYear === "number" ? String(axis.minYear) : "",
   );
-  const [maxYearInput, setMaxYearInput] = useState(() =>
+  const [maxYearInput, setMaxYearInput] = useState(
     typeof axis?.maxYear === "number" ? String(axis.maxYear) : "",
   );
 
-  // Sync inputs whenever axis in state changes (reset, load from storage, save)
-  useEffect(() => {
-    setTickStepInput(typeof axis?.tickStep === "number" ? String(axis.tickStep) : "");
-    setTargetTickCountInput(typeof axis?.targetTickCount === "number" ? String(axis.targetTickCount) : "");
-    setMinYearInput(typeof axis?.minYear === "number" ? String(axis.minYear) : "");
-    setMaxYearInput(typeof axis?.maxYear === "number" ? String(axis.maxYear) : "");
-  }, [axis?.tickStep, axis?.targetTickCount, axis?.minYear, axis?.maxYear]);
-
-  const existingIds = useMemo(() => timeline.events.map(e => e.id), [timeline.events]);
-  const nextIdPreview = useMemo(() => nextAutoId(existingIds), [existingIds]);
-
-  const [title, setTitle] = useState("");
-  const [year, setYear] = useState("");
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
-  const [editYearById, setEditYearById] = useState<Record<string, string>>({});
-  const [editDescriptionById, setEditDescriptionById] = useState<Record<string, string>>({});
-
-  const timelineTitleValue = isTitleDirty ? timelineTitleDraft : timeline.title;
-
-  function onSaveTimelineTitle() {
-    const next = timelineTitleValue.trim();
-    if (!next) {
-      setError("Timeline Titel darf nicht leer sein.");
-      return;
-    }
-    setError(null);
-
-    dispatch({ type: "timeline/updateTitle", payload: { title: next } });
-
-    setIsTitleDirty(false);
-    setTimelineTitleDraft("");
-  }
-
-  function onSaveAxis() {
+  function onSave() {
     setError(null);
 
     const tickStep = parseOptionalInt(tickStepInput);
@@ -132,7 +104,7 @@ export function TimelineControls() {
       return;
     }
 
-    const nextAxis = {
+    const nextAxis: TimelineAxis = {
       ...(typeof tickStep === "number" ? { tickStep } : {}),
       ...(typeof targetTickCount === "number" ? { targetTickCount } : {}),
       ...(typeof minYear === "number" ? { minYear } : {}),
@@ -140,14 +112,109 @@ export function TimelineControls() {
     };
 
     const axisToStore = Object.keys(nextAxis).length ? nextAxis : undefined;
+    onSaveAxis(axisToStore);
+  }
 
-    dispatch({
-      type: "timeline/replace",
-      payload: {
-        ...timeline,
-        axis: axisToStore,
-      },
-    });
+  return (
+    <div className="mb-3 rounded-md border p-2">
+      <div className="mb-2 text-sm font-medium">Axis (Massstab)</div>
+
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="axis-tickStep">tickStep (leer = auto)</label>
+          <input
+            id="axis-tickStep"
+            className="w-44 rounded-md border px-2 py-1 text-sm"
+            value={tickStepInput}
+            onChange={e => setTickStepInput(e.target.value)}
+            placeholder="zB 500"
+            inputMode="numeric"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="axis-targetTickCount">
+            targetTickCount (nur wenn tickStep leer)
+          </label>
+          <input
+            id="axis-targetTickCount"
+            className="w-44 rounded-md border px-2 py-1 text-sm"
+            value={targetTickCountInput}
+            onChange={e => setTargetTickCountInput(e.target.value)}
+            placeholder="zB 6"
+            inputMode="numeric"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="axis-minYear">minYear (leer = daten)</label>
+          <input
+            id="axis-minYear"
+            className="w-44 rounded-md border px-2 py-1 text-sm"
+            value={minYearInput}
+            onChange={e => setMinYearInput(e.target.value)}
+            placeholder="zB 0"
+            inputMode="numeric"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="axis-maxYear">maxYear (leer = daten)</label>
+          <input
+            id="axis-maxYear"
+            className="w-44 rounded-md border px-2 py-1 text-sm"
+            value={maxYearInput}
+            onChange={e => setMaxYearInput(e.target.value)}
+            placeholder="zB 1000"
+            inputMode="numeric"
+          />
+        </div>
+
+        <button
+          type="button"
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={onSave}
+        >
+          Save Axis
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function TimelineControls() {
+  const { timeline } = useTimelineState();
+  const dispatch = useTimelineDispatch();
+
+  const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
+  const [isTitleDirty, setIsTitleDirty] = useState(false);
+
+  const existingIds = useMemo(() => timeline.events.map(e => e.id), [timeline.events]);
+  const nextIdPreview = useMemo(() => nextAutoId(existingIds), [existingIds]);
+
+  const [title, setTitle] = useState("");
+  const [year, setYear] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
+  const [editYearById, setEditYearById] = useState<Record<string, string>>({});
+  const [editDescriptionById, setEditDescriptionById] = useState<Record<string, string>>({});
+
+  const timelineTitleValue = isTitleDirty ? timelineTitleDraft : timeline.title;
+
+  function onSaveTimelineTitle() {
+    const next = timelineTitleValue.trim();
+    if (!next) {
+      setError("Timeline Titel darf nicht leer sein.");
+      return;
+    }
+    setError(null);
+
+    dispatch({ type: "timeline/updateTitle", payload: { title: next } });
+
+    setIsTitleDirty(false);
+    setTimelineTitleDraft("");
   }
 
   function onResetTimeline() {
@@ -164,12 +231,6 @@ export function TimelineControls() {
     setTitle("");
     setYear("");
     setDescription("");
-
-    // axis inputs will sync via useEffect, but we clear immediately as well
-    setTickStepInput("");
-    setTargetTickCountInput("");
-    setMinYearInput("");
-    setMaxYearInput("");
   }
 
   function onAddEvent(e: React.FormEvent) {
@@ -362,69 +423,20 @@ export function TimelineControls() {
         {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
       </div>
 
-      <div className="mb-3 rounded-md border p-2">
-        <div className="mb-2 text-sm font-medium">Axis (Massstab)</div>
-
-        <div className="flex flex-wrap items-end gap-2">
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600" htmlFor="axis-tickStep">tickStep (leer = auto)</label>
-            <input
-              id="axis-tickStep"
-              className="w-44 rounded-md border px-2 py-1 text-sm"
-              value={tickStepInput}
-              onChange={e => setTickStepInput(e.target.value)}
-              placeholder="zB 500"
-              inputMode="numeric"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600" htmlFor="axis-targetTickCount">
-              targetTickCount (nur wenn tickStep leer)
-            </label>
-            <input
-              id="axis-targetTickCount"
-              className="w-44 rounded-md border px-2 py-1 text-sm"
-              value={targetTickCountInput}
-              onChange={e => setTargetTickCountInput(e.target.value)}
-              placeholder="zB 6"
-              inputMode="numeric"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600" htmlFor="axis-minYear">minYear (leer = daten)</label>
-            <input
-              id="axis-minYear"
-              className="w-44 rounded-md border px-2 py-1 text-sm"
-              value={minYearInput}
-              onChange={e => setMinYearInput(e.target.value)}
-              placeholder="zB 0"
-              inputMode="numeric"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-600" htmlFor="axis-maxYear">maxYear (leer = daten)</label>
-            <input
-              id="axis-maxYear"
-              className="w-44 rounded-md border px-2 py-1 text-sm"
-              value={maxYearInput}
-              onChange={e => setMaxYearInput(e.target.value)}
-              placeholder="zB 1000"
-              inputMode="numeric"
-            />
-          </div>
-
-          <button
-            type="button"
-            className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-            onClick={onSaveAxis}
-          >
-            Save Axis
-          </button>
-        </div>
-      </div>
+      <AxisControls
+        key={axisKey(timeline.axis)}
+        axis={timeline.axis}
+        setError={setError}
+        onSaveAxis={(axisToStore) => {
+          dispatch({
+            type: "timeline/replace",
+            payload: {
+              ...timeline,
+              axis: axisToStore,
+            },
+          });
+        }}
+      />
 
       <form onSubmit={onAddEvent} className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
