@@ -1,5 +1,6 @@
 import { TimelineProvider } from "../context/timeline/TimelineContext";
 import { TimelineContainer } from "../components/timeline/TimelineContainer";
+import { TimelineControls } from "../components/timeline/TimelineControls";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       </p>
 
       <TimelineProvider>
+        <TimelineControls />
         <TimelineContainer />
       </TimelineProvider>
     </main>
