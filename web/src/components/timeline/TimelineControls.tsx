@@ -8,6 +8,9 @@ export function TimelineControls() {
   const { timeline } = useTimelineState();
   const dispatch = useTimelineDispatch();
 
+  const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
+  const [isTitleDirty, setIsTitleDirty] = useState(false);
+
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
@@ -17,6 +20,40 @@ export function TimelineControls() {
   const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
   const [editYearById, setEditYearById] = useState<Record<string, string>>({});
   const [editDescriptionById, setEditDescriptionById] = useState<Record<string, string>>({});
+
+  const timelineTitleValue = isTitleDirty ? timelineTitleDraft : timeline.title;
+
+  function onSaveTimelineTitle() {
+    const next = timelineTitleValue.trim();
+    if (!next) {
+      setError("Timeline Titel darf nicht leer sein.");
+      return;
+    }
+    setError(null);
+
+    dispatch({
+      type: "timeline/replace",
+      payload: {
+        ...timeline,
+        title: next,
+      },
+    });
+
+    setIsTitleDirty(false);
+    setTimelineTitleDraft("");
+  }
+
+  function onResetTimeline() {
+    dispatch({ type: "timeline/reset" });
+    setError(null);
+
+    setIsTitleDirty(false);
+    setTimelineTitleDraft("");
+
+    setEditTitleById({});
+    setEditYearById({});
+    setEditDescriptionById({});
+  }
 
   function onAddEvent(e: React.FormEvent) {
     e.preventDefault();
@@ -195,17 +232,41 @@ export function TimelineControls() {
 
   return (
     <div className="mb-4 rounded-md border p-3">
-      <div className="mb-2 flex flex-wrap items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-end gap-2">
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="tl-title">Timeline Titel</label>
+          <input
+            id="tl-title"
+            className="w-80 rounded-md border px-2 py-1 text-sm"
+            value={timelineTitleValue}
+            onChange={e => {
+              setIsTitleDirty(true);
+              setTimelineTitleDraft(e.target.value);
+            }}
+          />
+        </div>
+
         <button
           type="button"
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-          onClick={() => dispatch({ type: "timeline/reset" })}
+          onClick={onSaveTimelineTitle}
+        >
+          Save Titel
+        </button>
+
+        <button
+          type="button"
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={onResetTimeline}
         >
           Reset Timeline
         </button>
+
         <span className="text-sm text-gray-600">
           Reset setzt auf Default zurueck und schreibt LocalStorage neu.
         </span>
+
+        {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
       </div>
 
       <form onSubmit={onAddEvent} className="flex flex-wrap items-end gap-2">
@@ -260,8 +321,6 @@ export function TimelineControls() {
         >
           Add Event
         </button>
-
-        {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
       </form>
 
       <div className="mt-4 border-t pt-3">

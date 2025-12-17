@@ -37,7 +37,7 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
   return (
     <div className="w-full overflow-x-auto rounded-lg border bg-white p-4">
       <div className="mb-2 text-sm text-gray-600">
-        Statischer MVP Slice (SVG). Jahre: {minYear} bis {maxYear}
+        Timeline: {timeline.title}. Jahre: {minYear} bis {maxYear}
       </div>
 
       <svg width={width} height={height} role="img" aria-label="Zeitstrahl">
