@@ -19,11 +19,11 @@ export type TimelineAction =
 
 const STORAGE_KEY = "zeitstrahltool.timeline.v1";
 
-const initialState: TimelineState = {
+export const initialState: TimelineState = {
   timeline: sampleTimeline,
 };
 
-function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
+export function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
   switch (action.type) {
     case "timeline/replace":
       return { ...state, timeline: action.payload };
