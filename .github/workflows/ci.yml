@@ -23,3 +23,6 @@ jobs:
       - name: Build
         working-directory: web
         run: npm run build
+      - name: Test
+        working-directory: web
+        run: npm run test
