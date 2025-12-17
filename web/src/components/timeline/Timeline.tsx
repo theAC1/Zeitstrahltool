@@ -1,4 +1,5 @@
 import type { Timeline as TimelineType, TimelineEvent } from "../../types/timeline";
+import { generateTicks } from "../../lib/timeline/axis";
 
 function scaleYear(year: number, minYear: number, maxYear: number, width: number) {
   const span = maxYear - minYear || 1;
@@ -30,9 +31,12 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
   const maxYear = years.length ? Math.max(...years) : 1;
 
   const width = 1000;
-  const height = 180;
+  const height = 220;
   const paddingX = 40;
   const lineY = 80;
+
+  const innerWidth = width - paddingX * 2;
+  const ticks = generateTicks(minYear, maxYear);
 
   return (
     <div className="w-full overflow-x-auto rounded-lg border bg-white p-4">
@@ -50,9 +54,21 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
           strokeWidth="2"
         />
 
+        {ticks.map((t) => {
+          const x = paddingX + scaleYear(t, minYear, maxYear, innerWidth);
+          return (
+            <g key={`tick-${t}`}>
+              <line x1={x} y1={lineY} x2={x} y2={lineY + 8} stroke="currentColor" strokeWidth="1" />
+              <text x={x} y={lineY + 24} textAnchor="middle" fontSize="11">
+                {t}
+              </text>
+            </g>
+          );
+        })}
+
         {eventsSorted.map((ev) => {
           const labelYear = eventAnchorYear(ev);
-          const x = paddingX + scaleYear(labelYear, minYear, maxYear, width - paddingX * 2);
+          const x = paddingX + scaleYear(labelYear, minYear, maxYear, innerWidth);
 
           return (
             <g key={ev.id}>
@@ -61,7 +77,10 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
               <text x={x} y={lineY - 32} textAnchor="middle" fontSize="12">
                 {labelYear}
               </text>
-              <text x={x} y={lineY + 28} textAnchor="middle" fontSize="12">
+              <text x={x} y={lineY - 48} textAnchor="middle" fontSize="10">
+                {ev.id}
+              </text>
+              <text x={x} y={lineY + 52} textAnchor="middle" fontSize="12">
                 {ev.title}
               </text>
             </g>
