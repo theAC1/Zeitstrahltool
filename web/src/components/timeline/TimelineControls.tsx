@@ -1,13 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
 import { TimelineEventSchema } from "../../types/timeline";
 
 function nextAutoId(existingIds: string[]): string {
   const used = new Set(existingIds);
 
-  // Prefer e<number> sequence if present
   let max = 0;
   for (const id of existingIds) {
     const m = /^e(\d+)$/.exec(id);
@@ -17,16 +16,22 @@ function nextAutoId(existingIds: string[]): string {
     }
   }
 
-  // Next after max, ensure unique
   for (let i = max + 1; i < max + 10000; i += 1) {
     const candidate = `e${i}`;
     if (!used.has(candidate)) return candidate;
   }
 
-  // Fallback, still ensure unique
   let fallback = `e${Date.now()}`;
   while (used.has(fallback)) fallback = `e${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   return fallback;
+}
+
+function parseOptionalInt(raw: string): number | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  const n = Number(trimmed);
+  if (!Number.isFinite(n) || !Number.isInteger(n)) return NaN;
+  return n;
 }
 
 export function TimelineControls() {
@@ -35,6 +40,29 @@ export function TimelineControls() {
 
   const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
   const [isTitleDirty, setIsTitleDirty] = useState(false);
+
+  const axis = timeline.axis;
+
+  const [tickStepInput, setTickStepInput] = useState(() =>
+    typeof axis?.tickStep === "number" ? String(axis.tickStep) : "",
+  );
+  const [targetTickCountInput, setTargetTickCountInput] = useState(() =>
+    typeof axis?.targetTickCount === "number" ? String(axis.targetTickCount) : "",
+  );
+  const [minYearInput, setMinYearInput] = useState(() =>
+    typeof axis?.minYear === "number" ? String(axis.minYear) : "",
+  );
+  const [maxYearInput, setMaxYearInput] = useState(() =>
+    typeof axis?.maxYear === "number" ? String(axis.maxYear) : "",
+  );
+
+  // Sync inputs whenever axis in state changes (reset, load from storage, save)
+  useEffect(() => {
+    setTickStepInput(typeof axis?.tickStep === "number" ? String(axis.tickStep) : "");
+    setTargetTickCountInput(typeof axis?.targetTickCount === "number" ? String(axis.targetTickCount) : "");
+    setMinYearInput(typeof axis?.minYear === "number" ? String(axis.minYear) : "");
+    setMaxYearInput(typeof axis?.maxYear === "number" ? String(axis.maxYear) : "");
+  }, [axis?.tickStep, axis?.targetTickCount, axis?.minYear, axis?.maxYear]);
 
   const existingIds = useMemo(() => timeline.events.map(e => e.id), [timeline.events]);
   const nextIdPreview = useMemo(() => nextAutoId(existingIds), [existingIds]);
@@ -64,6 +92,64 @@ export function TimelineControls() {
     setTimelineTitleDraft("");
   }
 
+  function onSaveAxis() {
+    setError(null);
+
+    const tickStep = parseOptionalInt(tickStepInput);
+    if (Number.isNaN(tickStep)) {
+      setError("tickStep muss eine ganze Zahl sein oder leer (auto).");
+      return;
+    }
+    if (typeof tickStep === "number" && tickStep <= 0) {
+      setError("tickStep muss groesser als 0 sein.");
+      return;
+    }
+
+    const targetTickCount = parseOptionalInt(targetTickCountInput);
+    if (Number.isNaN(targetTickCount)) {
+      setError("targetTickCount muss eine ganze Zahl sein oder leer (auto).");
+      return;
+    }
+    if (typeof targetTickCount === "number" && (targetTickCount < 2 || targetTickCount > 50)) {
+      setError("targetTickCount muss zwischen 2 und 50 liegen.");
+      return;
+    }
+
+    const minYear = parseOptionalInt(minYearInput);
+    if (Number.isNaN(minYear)) {
+      setError("minYear muss eine ganze Zahl sein oder leer (auto).");
+      return;
+    }
+
+    const maxYear = parseOptionalInt(maxYearInput);
+    if (Number.isNaN(maxYear)) {
+      setError("maxYear muss eine ganze Zahl sein oder leer (auto).");
+      return;
+    }
+
+    if (typeof minYear === "number" && typeof maxYear === "number" && maxYear < minYear) {
+      setError("maxYear muss groesser oder gleich minYear sein.");
+      return;
+    }
+
+    const nextAxis = {
+      ...(typeof tickStep === "number" ? { tickStep } : {}),
+      ...(typeof targetTickCount === "number" ? { targetTickCount } : {}),
+      ...(typeof minYear === "number" ? { minYear } : {}),
+      ...(typeof maxYear === "number" ? { maxYear } : {}),
+    };
+
+    const axisToStore = Object.keys(nextAxis).length ? nextAxis : undefined;
+
+    dispatch({
+      type: "timeline/replace",
+      payload: {
+        ...timeline,
+        axis: axisToStore,
+      },
+    });
+  }
+
   function onResetTimeline() {
     dispatch({ type: "timeline/reset" });
     setError(null);
@@ -78,6 +164,12 @@ export function TimelineControls() {
     setTitle("");
     setYear("");
     setDescription("");
+
+    // axis inputs will sync via useEffect, but we clear immediately as well
+    setTickStepInput("");
+    setTargetTickCountInput("");
+    setMinYearInput("");
+    setMaxYearInput("");
   }
 
   function onAddEvent(e: React.FormEvent) {
@@ -268,6 +360,70 @@ export function TimelineControls() {
         </span>
 
         {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
+      </div>
+
+      <div className="mb-3 rounded-md border p-2">
+        <div className="mb-2 text-sm font-medium">Axis (Massstab)</div>
+
+        <div className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600" htmlFor="axis-tickStep">tickStep (leer = auto)</label>
+            <input
+              id="axis-tickStep"
+              className="w-44 rounded-md border px-2 py-1 text-sm"
+              value={tickStepInput}
+              onChange={e => setTickStepInput(e.target.value)}
+              placeholder="zB 500"
+              inputMode="numeric"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600" htmlFor="axis-targetTickCount">
+              targetTickCount (nur wenn tickStep leer)
+            </label>
+            <input
+              id="axis-targetTickCount"
+              className="w-44 rounded-md border px-2 py-1 text-sm"
+              value={targetTickCountInput}
+              onChange={e => setTargetTickCountInput(e.target.value)}
+              placeholder="zB 6"
+              inputMode="numeric"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600" htmlFor="axis-minYear">minYear (leer = daten)</label>
+            <input
+              id="axis-minYear"
+              className="w-44 rounded-md border px-2 py-1 text-sm"
+              value={minYearInput}
+              onChange={e => setMinYearInput(e.target.value)}
+              placeholder="zB 0"
+              inputMode="numeric"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-600" htmlFor="axis-maxYear">maxYear (leer = daten)</label>
+            <input
+              id="axis-maxYear"
+              className="w-44 rounded-md border px-2 py-1 text-sm"
+              value={maxYearInput}
+              onChange={e => setMaxYearInput(e.target.value)}
+              placeholder="zB 1000"
+              inputMode="numeric"
+            />
+          </div>
+
+          <button
+            type="button"
+            className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+            onClick={onSaveAxis}
+          >
+            Save Axis
+          </button>
+        </div>
       </div>
 
       <form onSubmit={onAddEvent} className="flex flex-wrap items-end gap-2">
