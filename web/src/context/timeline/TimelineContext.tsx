@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
+import { z } from "zod";
 import type { Timeline, TimelineEvent } from "../../types/timeline";
 import { TimelineSchema } from "../../types/timeline";
 import { sampleTimeline } from "../../data/sampleTimeline";
@@ -18,6 +19,12 @@ export type TimelineAction =
   | { type: "event/delete"; payload: { id: string } };
 
 const STORAGE_KEY = "zeitstrahltool.timeline.v1";
+
+const StorageSchema = z.object({
+  schemaVersion: z.literal(1),
+  timeline: TimelineSchema,
+});
+type StorageValue = z.infer<typeof StorageSchema>;
 
 export const initialState: TimelineState = {
   timeline: sampleTimeline,
@@ -89,10 +96,18 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
       }
 
       const parsedJson: unknown = JSON.parse(raw);
-      const result = TimelineSchema.safeParse(parsedJson);
 
-      if (result.success) {
-        dispatch({ type: "timeline/replace", payload: result.data });
+      // New format (wrapper with schemaVersion)
+      const wrapped = StorageSchema.safeParse(parsedJson);
+      if (wrapped.success) {
+        dispatch({ type: "timeline/replace", payload: wrapped.data.timeline });
+        return;
+      }
+
+      // Legacy format (raw Timeline)
+      const legacy = TimelineSchema.safeParse(parsedJson);
+      if (legacy.success) {
+        dispatch({ type: "timeline/replace", payload: legacy.data });
       }
     } catch {
       // Ignorieren, Default bleibt aktiv
@@ -105,7 +120,8 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     if (!hasLoadedFromStorage.current) return;
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.timeline));
+      const payload: StorageValue = { schemaVersion: 1, timeline: state.timeline };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
       // Ignorieren (zB Private Mode, Quota, etc.)
     }
