@@ -11,10 +11,12 @@ export function TimelineControls() {
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
+  const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
   const [editYearById, setEditYearById] = useState<Record<string, string>>({});
+  const [editDescriptionById, setEditDescriptionById] = useState<Record<string, string>>({});
 
   function onAddEvent(e: React.FormEvent) {
     e.preventDefault();
@@ -23,6 +25,7 @@ export function TimelineControls() {
     const trimmedId = id.trim();
     const trimmedTitle = title.trim();
     const trimmedYear = year.trim();
+    const trimmedDescription = description.trim();
 
     if (!trimmedId || !trimmedTitle || !trimmedYear) {
       setError("Bitte id, title und year ausfuellen.");
@@ -39,6 +42,7 @@ export function TimelineControls() {
       id: trimmedId,
       title: trimmedTitle,
       year: parsedYear,
+      description: trimmedDescription ? trimmedDescription : undefined,
     };
 
     const result = TimelineEventSchema.safeParse(candidate);
@@ -64,6 +68,7 @@ export function TimelineControls() {
     setId("");
     setTitle("");
     setYear("");
+    setDescription("");
   }
 
   function onDeleteEvent(eventId: string) {
@@ -86,14 +91,30 @@ export function TimelineControls() {
       delete next[eventId];
       return next;
     });
+
+    setEditDescriptionById(prev => {
+      const next = { ...prev };
+      delete next[eventId];
+      return next;
+    });
   }
 
   function startEditTitle(eventId: string, currentTitle: string) {
-    setEditTitleById(prev => (Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentTitle }));
+    setEditTitleById(prev =>
+      Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentTitle },
+    );
   }
 
   function startEditYear(eventId: string, currentYear: string) {
-    setEditYearById(prev => (Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentYear }));
+    setEditYearById(prev =>
+      Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentYear },
+    );
+  }
+
+  function startEditDescription(eventId: string, currentDescription: string) {
+    setEditDescriptionById(prev =>
+      Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentDescription },
+    );
   }
 
   function onSave(eventId: string) {
@@ -104,6 +125,12 @@ export function TimelineControls() {
     const nextYearStr =
       (editYearById[eventId] ??
         (typeof current.year === "number" ? String(current.year) : "")).trim();
+
+    const nextDescRaw = Object.prototype.hasOwnProperty.call(editDescriptionById, eventId)
+      ? editDescriptionById[eventId]
+      : (current.description ?? "");
+    const nextDescTrimmed = nextDescRaw.trim();
+    const nextDescription = nextDescTrimmed ? nextDescTrimmed : undefined;
 
     if (!nextTitle) {
       setError("Title darf nicht leer sein.");
@@ -117,14 +144,15 @@ export function TimelineControls() {
     }
 
     setError(null);
+
     const candidate = {
       ...current,
       title: nextTitle,
       year: parsedYear,
+      description: nextDescription,
       startYear: undefined,
       endYear: undefined,
     };
-
 
     const result = TimelineEventSchema.safeParse(candidate);
     if (!result.success) {
@@ -147,6 +175,12 @@ export function TimelineControls() {
     });
 
     setEditYearById(prev => {
+      const next = { ...prev };
+      delete next[eventId];
+      return next;
+    });
+
+    setEditDescriptionById(prev => {
       const next = { ...prev };
       delete next[eventId];
       return next;
@@ -209,6 +243,17 @@ export function TimelineControls() {
           />
         </div>
 
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="ev-desc">description</label>
+          <input
+            id="ev-desc"
+            className="w-80 rounded-md border px-2 py-1 text-sm"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            placeholder="Optional"
+          />
+        </div>
+
         <button
           type="submit"
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
@@ -226,11 +271,14 @@ export function TimelineControls() {
           {timeline.events.map(ev => {
             const isEditingTitle = Object.prototype.hasOwnProperty.call(editTitleById, ev.id);
             const isEditingYear = Object.prototype.hasOwnProperty.call(editYearById, ev.id);
+            const isEditingDesc = Object.prototype.hasOwnProperty.call(editDescriptionById, ev.id);
 
             const editTitleValue = editTitleById[ev.id] ?? "";
             const editYearValue = editYearById[ev.id] ?? "";
+            const editDescValue = editDescriptionById[ev.id] ?? "";
 
             const currentYearStr = typeof ev.year === "number" ? String(ev.year) : "";
+            const currentDescStr = ev.description ?? "";
 
             return (
               <div key={ev.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2 py-2">
@@ -264,6 +312,18 @@ export function TimelineControls() {
                         onChange={e => setEditYearById(prev => ({ ...prev, [ev.id]: e.target.value }))}
                         onFocus={() => startEditYear(ev.id, currentYearStr)}
                         inputMode="numeric"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="text-xs text-gray-600" htmlFor={`edit-desc-${ev.id}`}>description</label>
+                      <input
+                        id={`edit-desc-${ev.id}`}
+                        className="w-80 rounded-md border px-2 py-1 text-sm"
+                        value={isEditingDesc ? editDescValue : currentDescStr}
+                        onChange={e => setEditDescriptionById(prev => ({ ...prev, [ev.id]: e.target.value }))}
+                        onFocus={() => startEditDescription(ev.id, currentDescStr)}
+                        placeholder="Optional"
                       />
                     </div>
 
