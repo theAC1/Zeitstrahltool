@@ -5,10 +5,22 @@ function scaleYear(year: number, minYear: number, maxYear: number, width: number
   return ((year - minYear) / span) * width;
 }
 
-export function Timeline({ timeline }: { timeline: TimelineType }) {
-  const events = timeline.events;
+function eventAnchorYear(ev: TimelineEvent): number {
+  if (typeof ev.year === "number") return ev.year;
+  if (typeof ev.startYear === "number") return ev.startYear;
+  if (typeof ev.endYear === "number") return ev.endYear;
+  return 0;
+}
 
-  const years = events.flatMap((e: TimelineEvent) => {
+export function Timeline({ timeline }: { timeline: TimelineType }) {
+  const eventsSorted = [...timeline.events].sort((a, b) => {
+    const ay = eventAnchorYear(a);
+    const by = eventAnchorYear(b);
+    if (ay !== by) return ay - by;
+    return a.id.localeCompare(b.id);
+  });
+
+  const years = eventsSorted.flatMap((e) => {
     if (typeof e.year === "number") return [e.year];
     if (typeof e.startYear === "number" && typeof e.endYear === "number") return [e.startYear, e.endYear];
     return [];
@@ -38,14 +50,8 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
           strokeWidth="2"
         />
 
-        {events.map((ev) => {
-          const labelYear =
-            typeof ev.year === "number"
-              ? ev.year
-              : typeof ev.startYear === "number" && typeof ev.endYear === "number"
-                ? ev.startYear
-                : 0;
-
+        {eventsSorted.map((ev) => {
+          const labelYear = eventAnchorYear(ev);
           const x = paddingX + scaleYear(labelYear, minYear, maxYear, width - paddingX * 2);
 
           return (
