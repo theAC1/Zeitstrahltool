@@ -50,6 +50,22 @@ export function TimelineControls() {
     setYear("");
   }
 
+  function onDeleteEvent(eventId: string) {
+    dispatch({
+      type: "timeline/replace",
+      payload: {
+        ...timeline,
+        events: timeline.events.filter(ev => ev.id !== eventId),
+      },
+    });
+  }
+
+  function formatYear(ev: { year?: number; startYear?: number; endYear?: number }) {
+    if (typeof ev.year === "number") return String(ev.year);
+    if (typeof ev.startYear === "number" && typeof ev.endYear === "number") return `${ev.startYear} bis ${ev.endYear}`;
+    return "";
+  }
+
   return (
     <div className="mb-4 rounded-md border p-3">
       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -109,6 +125,35 @@ export function TimelineControls() {
 
         {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
       </form>
+
+      <div className="mt-4 border-t pt-3">
+        <div className="mb-2 text-sm font-medium">Events</div>
+
+        <div className="flex flex-col gap-2">
+          {timeline.events.map(ev => (
+            <div key={ev.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2 py-2">
+              <div className="min-w-0">
+                <div className="text-sm">
+                  <span className="font-mono">{ev.id}</span>{" "}
+                  <span className="text-gray-600">({formatYear(ev)})</span>{" "}
+                  <span className="font-medium">{ev.title}</span>
+                </div>
+                {ev.description ? (
+                  <div className="text-xs text-gray-600">{ev.description}</div>
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+                onClick={() => onDeleteEvent(ev.id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
