@@ -27,8 +27,11 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
     return [];
   });
 
-  const minYear = years.length ? Math.min(...years) : 0;
-  const maxYear = years.length ? Math.max(...years) : 1;
+  const dataMinYear = years.length ? Math.min(...years) : 0;
+  const dataMaxYear = years.length ? Math.max(...years) : 1;
+
+  const axisMinYear = typeof timeline.axis?.minYear === "number" ? timeline.axis.minYear : dataMinYear;
+  const axisMaxYear = typeof timeline.axis?.maxYear === "number" ? timeline.axis.maxYear : dataMaxYear;
 
   const width = 1000;
   const height = 220;
@@ -36,12 +39,16 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
   const lineY = 80;
 
   const innerWidth = width - paddingX * 2;
-  const ticks = generateTicks(minYear, maxYear);
+
+  const ticks = generateTicks(axisMinYear, axisMaxYear, {
+    step: timeline.axis?.tickStep,
+    targetTickCount: timeline.axis?.targetTickCount,
+  });
 
   return (
     <div className="w-full overflow-x-auto rounded-lg border bg-white p-4">
       <div className="mb-2 text-sm text-gray-600">
-        Timeline: {timeline.title}. Jahre: {minYear} bis {maxYear}
+        Timeline: {timeline.title}. Jahre: {axisMinYear} bis {axisMaxYear}
       </div>
 
       <svg width={width} height={height} role="img" aria-label="Zeitstrahl">
@@ -55,7 +62,7 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
         />
 
         {ticks.map((t) => {
-          const x = paddingX + scaleYear(t, minYear, maxYear, innerWidth);
+          const x = paddingX + scaleYear(t, axisMinYear, axisMaxYear, innerWidth);
           return (
             <g key={`tick-${t}`}>
               <line x1={x} y1={lineY} x2={x} y2={lineY + 8} stroke="currentColor" strokeWidth="1" />
@@ -68,7 +75,7 @@ export function Timeline({ timeline }: { timeline: TimelineType }) {
 
         {eventsSorted.map((ev) => {
           const labelYear = eventAnchorYear(ev);
-          const x = paddingX + scaleYear(labelYear, minYear, maxYear, innerWidth);
+          const x = paddingX + scaleYear(labelYear, axisMinYear, axisMaxYear, innerWidth);
 
           return (
             <g key={ev.id}>

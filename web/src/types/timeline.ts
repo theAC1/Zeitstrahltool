@@ -8,6 +8,13 @@ export type TimelineMetadata = {
   updatedAt?: string;
 };
 
+export type TimelineAxis = {
+  minYear?: number;
+  maxYear?: number;
+  tickStep?: number;
+  targetTickCount?: number;
+};
+
 export type TimelineEvent = {
   id: string;
   title: string;
@@ -35,6 +42,7 @@ export type Timeline = {
   description?: string;
   events: TimelineEvent[];
   epochs: Epoch[];
+  axis?: TimelineAxis;
   metadata?: TimelineMetadata;
 };
 
@@ -45,6 +53,25 @@ export const TimelineMetadataSchema = z.object({
   createdAt: z.string().min(1).optional(),
   updatedAt: z.string().min(1).optional(),
 });
+
+export const TimelineAxisSchema = z
+  .object({
+    minYear: z.number().int().optional(),
+    maxYear: z.number().int().optional(),
+    tickStep: z.number().int().positive().optional(),
+    targetTickCount: z.number().int().min(2).max(50).optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (typeof val.minYear === "number" && typeof val.maxYear === "number") {
+      if (val.maxYear < val.minYear) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "axis.maxYear must be greater than or equal to axis.minYear.",
+          path: ["maxYear"],
+        });
+      }
+    }
+  });
 
 export const TimelineEventSchema = z
   .object({
@@ -124,5 +151,6 @@ export const TimelineSchema = z.object({
   description: z.string().min(1).optional(),
   events: z.array(TimelineEventSchema),
   epochs: z.array(EpochSchema),
+  axis: TimelineAxisSchema.optional(),
   metadata: TimelineMetadataSchema.optional(),
 });
