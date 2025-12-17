@@ -1,8 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
 import { TimelineEventSchema } from "../../types/timeline";
+
+function nextAutoId(existingIds: string[]): string {
+  const used = new Set(existingIds);
+
+  // Prefer e<number> sequence if present
+  let max = 0;
+  for (const id of existingIds) {
+    const m = /^e(\d+)$/.exec(id);
+    if (m) {
+      const n = Number(m[1]);
+      if (Number.isFinite(n) && n > max) max = n;
+    }
+  }
+
+  // Next after max, ensure unique
+  for (let i = max + 1; i < max + 10000; i += 1) {
+    const candidate = `e${i}`;
+    if (!used.has(candidate)) return candidate;
+  }
+
+  // Fallback, still ensure unique
+  let fallback = `e${Date.now()}`;
+  while (used.has(fallback)) fallback = `e${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  return fallback;
+}
 
 export function TimelineControls() {
   const { timeline } = useTimelineState();
@@ -11,7 +36,9 @@ export function TimelineControls() {
   const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
   const [isTitleDirty, setIsTitleDirty] = useState(false);
 
-  const [id, setId] = useState("");
+  const existingIds = useMemo(() => timeline.events.map(e => e.id), [timeline.events]);
+  const nextIdPreview = useMemo(() => nextAutoId(existingIds), [existingIds]);
+
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
   const [description, setDescription] = useState("");
@@ -47,19 +74,22 @@ export function TimelineControls() {
     setEditTitleById({});
     setEditYearById({});
     setEditDescriptionById({});
+
+    setTitle("");
+    setYear("");
+    setDescription("");
   }
 
   function onAddEvent(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    const trimmedId = id.trim();
     const trimmedTitle = title.trim();
     const trimmedYear = year.trim();
     const trimmedDescription = description.trim();
 
-    if (!trimmedId || !trimmedTitle || !trimmedYear) {
-      setError("Bitte id, title und year ausfuellen.");
+    if (!trimmedTitle || !trimmedYear) {
+      setError("Bitte title und year ausfuellen.");
       return;
     }
 
@@ -69,8 +99,10 @@ export function TimelineControls() {
       return;
     }
 
+    const newId = nextAutoId(existingIds);
+
     const candidate = {
-      id: trimmedId,
+      id: newId,
       title: trimmedTitle,
       year: parsedYear,
       description: trimmedDescription ? trimmedDescription : undefined,
@@ -82,15 +114,8 @@ export function TimelineControls() {
       return;
     }
 
-    const exists = timeline.events.some(ev => ev.id === result.data.id);
-    if (exists) {
-      setError("Diese id existiert bereits. Bitte eine andere id verwenden.");
-      return;
-    }
-
     dispatch({ type: "event/add", payload: result.data });
 
-    setId("");
     setTitle("");
     setYear("");
     setDescription("");
@@ -247,14 +272,10 @@ export function TimelineControls() {
 
       <form onSubmit={onAddEvent} className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="ev-id">id</label>
-          <input
-            id="ev-id"
-            className="w-44 rounded-md border px-2 py-1 text-sm"
-            value={id}
-            onChange={e => setId(e.target.value)}
-            placeholder="e6"
-          />
+          <label className="text-xs text-gray-600">id (auto)</label>
+          <div className="w-44 rounded-md border bg-gray-50 px-2 py-1 text-sm font-mono text-gray-700">
+            {nextIdPreview}
+          </div>
         </div>
 
         <div className="flex flex-col">
