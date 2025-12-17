@@ -31,13 +31,7 @@ export function TimelineControls() {
     }
     setError(null);
 
-    dispatch({
-      type: "timeline/replace",
-      payload: {
-        ...timeline,
-        title: next,
-      },
-    });
+    dispatch({ type: "timeline/updateTitle", payload: { title: next } });
 
     setIsTitleDirty(false);
     setTimelineTitleDraft("");
@@ -94,13 +88,7 @@ export function TimelineControls() {
       return;
     }
 
-    dispatch({
-      type: "timeline/replace",
-      payload: {
-        ...timeline,
-        events: [...timeline.events, result.data],
-      },
-    });
+    dispatch({ type: "event/add", payload: result.data });
 
     setId("");
     setTitle("");
@@ -109,13 +97,7 @@ export function TimelineControls() {
   }
 
   function onDeleteEvent(eventId: string) {
-    dispatch({
-      type: "timeline/replace",
-      payload: {
-        ...timeline,
-        events: timeline.events.filter(ev => ev.id !== eventId),
-      },
-    });
+    dispatch({ type: "event/delete", payload: { id: eventId } });
 
     setEditTitleById(prev => {
       const next = { ...prev };
@@ -197,13 +179,7 @@ export function TimelineControls() {
       return;
     }
 
-    dispatch({
-      type: "timeline/replace",
-      payload: {
-        ...timeline,
-        events: timeline.events.map(ev => (ev.id === eventId ? result.data : ev)),
-      },
-    });
+    dispatch({ type: "event/update", payload: result.data });
 
     setEditTitleById(prev => {
       const next = { ...prev };

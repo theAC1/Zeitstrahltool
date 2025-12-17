@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
-import type { Timeline } from "../../types/timeline";
+import type { Timeline, TimelineEvent } from "../../types/timeline";
 import { TimelineSchema } from "../../types/timeline";
 import { sampleTimeline } from "../../data/sampleTimeline";
 
@@ -11,7 +11,11 @@ export type TimelineState = {
 
 export type TimelineAction =
   | { type: "timeline/replace"; payload: Timeline }
-  | { type: "timeline/reset" };
+  | { type: "timeline/reset" }
+  | { type: "timeline/updateTitle"; payload: { title: string } }
+  | { type: "event/add"; payload: TimelineEvent }
+  | { type: "event/update"; payload: TimelineEvent }
+  | { type: "event/delete"; payload: { id: string } };
 
 const STORAGE_KEY = "zeitstrahltool.timeline.v1";
 
@@ -23,8 +27,46 @@ function timelineReducer(state: TimelineState, action: TimelineAction): Timeline
   switch (action.type) {
     case "timeline/replace":
       return { ...state, timeline: action.payload };
+
     case "timeline/reset":
       return initialState;
+
+    case "timeline/updateTitle":
+      return {
+        ...state,
+        timeline: {
+          ...state.timeline,
+          title: action.payload.title,
+        },
+      };
+
+    case "event/add":
+      return {
+        ...state,
+        timeline: {
+          ...state.timeline,
+          events: [...state.timeline.events, action.payload],
+        },
+      };
+
+    case "event/update":
+      return {
+        ...state,
+        timeline: {
+          ...state.timeline,
+          events: state.timeline.events.map(ev => (ev.id === action.payload.id ? action.payload : ev)),
+        },
+      };
+
+    case "event/delete":
+      return {
+        ...state,
+        timeline: {
+          ...state.timeline,
+          events: state.timeline.events.filter(ev => ev.id !== action.payload.id),
+        },
+      };
+
     default:
       return state;
   }
@@ -36,8 +78,6 @@ const TimelineDispatchContext = createContext<React.Dispatch<TimelineAction> | u
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(timelineReducer, initialState);
 
-  // Verhindert, dass wir beim ersten Render sofort den Default in LocalStorage schreiben,
-  // bevor wir einen vorhandenen Wert geladen haben.
   const hasLoadedFromStorage = useRef(false);
 
   useEffect(() => {
