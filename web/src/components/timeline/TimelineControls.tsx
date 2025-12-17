@@ -323,7 +323,7 @@ export function TimelineControls() {
       <div className="mt-4 border-t pt-3">
         <div className="mb-2 text-sm font-medium">Events</div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 max-h-80 overflow-y-auto pr-1">
           {timeline.events.map(ev => {
             const isEditingTitle = Object.prototype.hasOwnProperty.call(editTitleById, ev.id);
             const isEditingYear = Object.prototype.hasOwnProperty.call(editYearById, ev.id);
