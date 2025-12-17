@@ -13,21 +13,36 @@ export function TimelineControls() {
   const [year, setYear] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
+
   function onAddEvent(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    const parsedYear = Number(year);
+    const trimmedId = id.trim();
+    const trimmedTitle = title.trim();
+    const trimmedYear = year.trim();
+
+    if (!trimmedId || !trimmedTitle || !trimmedYear) {
+      setError("Bitte id, title und year ausfuellen.");
+      return;
+    }
+
+    const parsedYear = Number(trimmedYear);
+    if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
+      setError("Year muss eine ganze Zahl sein (zB 2000 oder -44).");
+      return;
+    }
 
     const candidate = {
-      id: id.trim(),
-      title: title.trim(),
+      id: trimmedId,
+      title: trimmedTitle,
       year: parsedYear,
     };
 
     const result = TimelineEventSchema.safeParse(candidate);
     if (!result.success) {
-      setError("Ungueltige Eingabe. Bitte id, title und ein gueltiges Jahr setzen.");
+      setError("Ungueltige Eingabe. Bitte Werte pruefen.");
       return;
     }
 
@@ -56,6 +71,34 @@ export function TimelineControls() {
       payload: {
         ...timeline,
         events: timeline.events.filter(ev => ev.id !== eventId),
+      },
+    });
+
+    setEditTitleById(prev => {
+      const next = { ...prev };
+      delete next[eventId];
+      return next;
+    });
+  }
+
+  function onStartEdit(eventId: string, currentTitle: string) {
+    setEditTitleById(prev => ({ ...prev, [eventId]: currentTitle }));
+  }
+
+  function onSaveTitle(eventId: string) {
+    const nextTitle = (editTitleById[eventId] ?? "").trim();
+    if (!nextTitle) {
+      setError("Title darf nicht leer sein.");
+      return;
+    }
+
+    setError(null);
+
+    dispatch({
+      type: "timeline/replace",
+      payload: {
+        ...timeline,
+        events: timeline.events.map(ev => (ev.id === eventId ? { ...ev, title: nextTitle } : ev)),
       },
     });
   }
@@ -130,28 +173,54 @@ export function TimelineControls() {
         <div className="mb-2 text-sm font-medium">Events</div>
 
         <div className="flex flex-col gap-2">
-          {timeline.events.map(ev => (
-            <div key={ev.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2 py-2">
-              <div className="min-w-0">
-                <div className="text-sm">
-                  <span className="font-mono">{ev.id}</span>{" "}
-                  <span className="text-gray-600">({formatYear(ev)})</span>{" "}
-                  <span className="font-medium">{ev.title}</span>
-                </div>
-                {ev.description ? (
-                  <div className="text-xs text-gray-600">{ev.description}</div>
-                ) : null}
-              </div>
+          {timeline.events.map(ev => {
+            const isEditing = Object.prototype.hasOwnProperty.call(editTitleById, ev.id);
+            const editValue = editTitleById[ev.id] ?? "";
 
-              <button
-                type="button"
-                className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-                onClick={() => onDeleteEvent(ev.id)}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
+            return (
+              <div key={ev.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2 py-2">
+                <div className="min-w-0">
+                  <div className="text-sm">
+                    <span className="font-mono">{ev.id}</span>{" "}
+                    <span className="text-gray-600">({formatYear(ev)})</span>{" "}
+                    <span className="font-medium">{ev.title}</span>
+                  </div>
+                  {ev.description ? (
+                    <div className="text-xs text-gray-600">{ev.description}</div>
+                  ) : null}
+
+                  <div className="mt-2 flex flex-wrap items-end gap-2">
+                    <div className="flex flex-col">
+                      <label className="text-xs text-gray-600" htmlFor={`edit-${ev.id}`}>title</label>
+                      <input
+                        id={`edit-${ev.id}`}
+                        className="w-64 rounded-md border px-2 py-1 text-sm"
+                        value={isEditing ? editValue : ev.title}
+                        onChange={e => setEditTitleById(prev => ({ ...prev, [ev.id]: e.target.value }))}
+                        onFocus={() => onStartEdit(ev.id, ev.title)}
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+                      onClick={() => onSaveTitle(ev.id)}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+                  onClick={() => onDeleteEvent(ev.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
