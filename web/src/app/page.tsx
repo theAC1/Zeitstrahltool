@@ -1,19 +1,27 @@
-import { TimelineProvider } from "../context/timeline/TimelineContext";
-import { TimelineContainer } from "../components/timeline/TimelineContainer";
 import { TimelineControls } from "../components/timeline/TimelineControls";
+import { TimelineView } from "../components/timeline/TimelineView";
 
 export default function Home() {
   return (
-    <main className="mx-auto max-w-4xl p-6">
-      <h1 className="mb-2 text-2xl font-semibold">Zeitstrahltool</h1>
-      <p className="mb-6 text-gray-700">
-        MVP Start: Statischer Timeline Slice (SVG) mit typisiertem Domain Modell.
-      </p>
+    <main className="min-h-screen bg-gray-50 p-6">
+      <div className="mx-auto max-w-7xl">
+        <h1 className="mb-2 text-2xl font-semibold text-gray-900">Zeitstrahltool</h1>
+        <p className="mb-6 text-sm text-gray-700">
+          MVP Slice. Statische SVG Timeline plus Controls. Multi Timelines, Persistenz, JSON Export/Import.
+        </p>
 
-      <TimelineProvider>
-        <TimelineControls />
-        <TimelineContainer />
-      </TimelineProvider>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <section className="lg:col-span-4">
+            <div className="sticky top-6">
+              <TimelineControls />
+            </div>
+          </section>
+
+          <section className="lg:col-span-8">
+            <TimelineView />
+          </section>
+        </div>
+      </div>
     </main>
   );
 }
