@@ -36,6 +36,20 @@ describe("timelineReducer", () => {
     expect(next.activeTimelineId).toBe("t2");
   });
 
+  it("creates an empty timeline and makes it active", () => {
+    const next = timelineReducer(initialState, {
+      type: "timeline/createEmpty",
+      payload: { id: "t-empty", title: "Empty" },
+    });
+
+    expect(next.activeTimelineId).toBe("t-empty");
+    const created = next.timelines.find(t => t.id === "t-empty");
+    expect(created?.events.length).toBe(0);
+    expect(created?.epochs.length).toBe(0);
+    expect(created?.axis).toBeUndefined();
+  });
+
+
   it("clears axis when set to undefined", () => {
     const next = timelineReducer(initialState, {
       type: "timeline/updateAxis",

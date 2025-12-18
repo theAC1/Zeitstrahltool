@@ -28,6 +28,12 @@ function nextAutoId(existingIds: string[]): string {
   return fallback;
 }
 
+function createTimelineId(prefix: string = "tl"): string {
+  const suffix = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
+  return `${prefix}-${suffix}`;
+}
+
+
 function parseOptionalInt(raw: string): number | undefined {
   const trimmed = raw.trim();
   if (!trimmed) return undefined;
@@ -477,6 +483,25 @@ export function TimelineControls() {
         >
           {UI.timeline.duplicate}
         </button>
+
+        <button
+          type="button"
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={() => {
+            const id = createTimelineId("tl");
+            dispatch({ type: "timeline/createEmpty", payload: { id, title: "New timeline" } });
+            setError(null);
+            setNotice(null);
+            setIsTitleDirty(false);
+            setTimelineTitleDraft("");
+            setEditTitleById({});
+            setEditYearById({});
+            setEditDescriptionById({});
+          }}
+        >
+          {UI.timeline.newEmpty}
+        </button>
+
 
         <button
           type="button"

@@ -20,6 +20,7 @@ export const UI = {
   timeline: {
     activeLabel: "Active timeline",
     duplicate: "Duplicate",
+    newEmpty: "New empty timeline",
     delete: "Delete timeline",
     titleLabel: "Timeline title",
     saveTitle: "Save title",
