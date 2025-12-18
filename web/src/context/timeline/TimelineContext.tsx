@@ -6,6 +6,8 @@ import type { Timeline, TimelineAxis, TimelineEvent } from "../../types/timeline
 import { TimelineSchema } from "../../types/timeline";
 import { sampleTimeline } from "../../data/sampleTimeline";
 
+import { migrateStoredState, STORAGE_SCHEMA_VERSION } from "./storageSchema";
+
 export type TimelineState = {
   timelines: Timeline[];
   activeTimelineId: string;
@@ -110,7 +112,7 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
       const exists = state.timelines.some(t => t.id === id);
       const nextTimelines = exists ? state.timelines : [...state.timelines, empty];
 
-      return { timelines: nextTimelines, activeTimelineId: id };
+      return { timelines: nextTimelines, activeTimelineId: id  };
     }
 
 
@@ -234,7 +236,7 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
         timelines: state.timelines,
         activeTimelineId: state.activeTimelineId,
       };
-      localStorage.setItem(STORAGE_KEY_V2, JSON.stringify(payload));
+      localStorage.setItem(STORAGE_KEY_V2, JSON.stringify({ ...(payload), schemaVersion: STORAGE_SCHEMA_VERSION }));
     } catch {
       // Ignorieren
     }
