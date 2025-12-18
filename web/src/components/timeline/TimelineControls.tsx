@@ -51,6 +51,7 @@ function cloneTimeline(base: Timeline): Timeline {
     ...base,
     id: newId,
     title: `${base.title} (Copy)`,
+    axis: undefined,
   };
 }
 
