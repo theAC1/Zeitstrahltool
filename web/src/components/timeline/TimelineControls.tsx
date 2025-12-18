@@ -77,7 +77,6 @@ function AxisControls(props: {
 
   function onSave() {
     setError(null);
-    setNotice(null);
 
     const tickStep = parseOptionalInt(tickStepInput);
     if (Number.isNaN(tickStep)) {
