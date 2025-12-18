@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Timeline, TimelineAxis } from "../../types/timeline";
 import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
-import { TimelineEventSchema } from "../../types/timeline";
+import { TimelineEventSchema, TimelineSchema } from "../../types/timeline";
 
 function nextAutoId(existingIds: string[]): string {
   const used = new Set(existingIds);
@@ -211,6 +211,7 @@ export function TimelineControls() {
   const [year, setYear] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [importJson, setImportJson] = useState("");
 
   const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
   const [editYearById, setEditYearById] = useState<Record<string, string>>({});
@@ -391,6 +392,32 @@ export function TimelineControls() {
       delete next[eventId];
       return next;
     });
+  }
+
+  
+  function onImportTimelineJson() {
+    setError(null);
+
+    try {
+      const parsed = JSON.parse(importJson);
+      const result = TimelineSchema.safeParse(parsed);
+
+      if (!result.success) {
+        setError("Import JSON ist ungueltig.");
+        return;
+      }
+
+      dispatch({ type: "timeline/replace", payload: result.data });
+
+      setImportJson("");
+      setIsTitleDirty(false);
+      setTimelineTitleDraft("");
+      setEditTitleById({});
+      setEditYearById({});
+      setEditDescriptionById({});
+    } catch {
+      setError("Import JSON ist kein gueltiges JSON.");
+    }
   }
 
   function formatYear(ev: { year?: number; startYear?: number; endYear?: number }) {
@@ -643,6 +670,34 @@ export function TimelineControls() {
           })}
         </div>
       </div>
+      <details className="mt-4 rounded-md border p-2">
+        <summary className="cursor-pointer text-sm font-medium">JSON Export und Import</summary>
+
+        <div className="mt-2 grid gap-2">
+          <div className="text-xs text-gray-600">Export (aktiver Zeitstrahl)</div>
+          <pre className="max-h-64 overflow-auto rounded-md bg-gray-50 p-2 text-xs">
+            {JSON.stringify(timeline, null, 2)}
+          </pre>
+
+          <div className="text-xs text-gray-600">Import (ersetzt aktiven Zeitstrahl)</div>
+          <textarea
+            className="h-40 w-full rounded-md border px-2 py-1 font-mono text-xs"
+            value={importJson}
+            onChange={(e) => setImportJson(e.target.value)}
+            placeholder='{"id":"t1","title":"...","events":[...],"epochs":[...]}'
+          />
+          <button
+            type="button"
+            className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+            onClick={onImportTimelineJson}
+            disabled={!importJson.trim()}
+            aria-disabled={!importJson.trim()}
+          >
+            Import JSON
+          </button>
+        </div>
+      </details>
+
     </div>
   );
 }
