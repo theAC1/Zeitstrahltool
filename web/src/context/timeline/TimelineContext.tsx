@@ -20,6 +20,7 @@ export type TimelineViewState = {
 export type TimelineAction =
   | { type: "state/replace"; payload: TimelineState }
   | { type: "timeline/select"; payload: { id: string } }
+  | { type: "timeline/add"; payload: { timeline: Timeline } }
   | { type: "timeline/replace"; payload: Timeline }
   | { type: "timeline/reset" }
   | { type: "timeline/updateTitle"; payload: { title: string } }
@@ -89,6 +90,18 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         return { ...state, activeTimelineId: action.payload.id };
       }
       return state;
+    case "timeline/add": {
+      const next = action.payload.timeline;
+
+      const exists = state.timelines.some(t => t.id === next.id);
+      const nextTimelines = exists ? state.timelines : [...state.timelines, next];
+
+      return {
+        timelines: nextTimelines,
+        activeTimelineId: next.id,
+      };
+    }
+
 
     case "timeline/replace":
       return replaceActiveTimeline(state, action.payload);

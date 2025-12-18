@@ -16,6 +16,15 @@ describe("timelineReducer", () => {
 
   it("updates axis on active timeline", () => {
     const next = timelineReducer(initialState, { type: "timeline/updateAxis", payload: { axis: { tickStep: 100 } } });
+
+  it("adds a new timeline and makes it active", () => {
+    const cloned = { ...sampleTimeline, id: "t2", title: "Timeline 2" };
+    const next = timelineReducer(initialState, { type: "timeline/add", payload: { timeline: cloned } });
+
+    expect(next.timelines.length).toBe(2);
+    expect(next.activeTimelineId).toBe("t2");
+  });
+
     expect(getActiveTimeline(next).axis?.tickStep).toBe(100);
   });
 

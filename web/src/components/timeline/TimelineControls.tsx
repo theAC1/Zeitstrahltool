@@ -426,7 +426,7 @@ export function TimelineControls() {
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={() => {
             const cloned = cloneTimeline(timeline);
-            dispatch({ type: "state/replace", payload: { timelines: [...timelines, cloned], activeTimelineId: cloned.id } });
+            dispatch({ type: "timeline/add", payload: { timeline: cloned } });
             setError(null);
             setIsTitleDirty(false);
             setTimelineTitleDraft("");
