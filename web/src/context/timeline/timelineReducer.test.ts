@@ -9,6 +9,11 @@ describe("timelineReducer", () => {
     expect(next.timeline.title).toBe("Neue Timeline");
   });
 
+  it("updates axis", () => {
+    const next = timelineReducer(initialState, { type: "timeline/updateAxis", payload: { axis: { tickStep: 100 } } });
+    expect(next.timeline.axis?.tickStep).toBe(100);
+  });
+
   it("adds an event", () => {
     const newEvent: TimelineEvent = { id: "e999", title: "Neu", year: 2001 };
     const next = timelineReducer(initialState, { type: "event/add", payload: newEvent });

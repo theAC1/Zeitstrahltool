@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
 import { z } from "zod";
-import type { Timeline, TimelineEvent } from "../../types/timeline";
+import type { Timeline, TimelineAxis, TimelineEvent } from "../../types/timeline";
 import { TimelineSchema } from "../../types/timeline";
 import { sampleTimeline } from "../../data/sampleTimeline";
 
@@ -14,6 +14,7 @@ export type TimelineAction =
   | { type: "timeline/replace"; payload: Timeline }
   | { type: "timeline/reset" }
   | { type: "timeline/updateTitle"; payload: { title: string } }
+  | { type: "timeline/updateAxis"; payload: { axis?: TimelineAxis } }
   | { type: "event/add"; payload: TimelineEvent }
   | { type: "event/update"; payload: TimelineEvent }
   | { type: "event/delete"; payload: { id: string } };
@@ -44,6 +45,15 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         timeline: {
           ...state.timeline,
           title: action.payload.title,
+        },
+      };
+
+    case "timeline/updateAxis":
+      return {
+        ...state,
+        timeline: {
+          ...state.timeline,
+          axis: action.payload.axis,
         },
       };
 
@@ -97,20 +107,18 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
 
       const parsedJson: unknown = JSON.parse(raw);
 
-      // New format (wrapper with schemaVersion)
       const wrapped = StorageSchema.safeParse(parsedJson);
       if (wrapped.success) {
         dispatch({ type: "timeline/replace", payload: wrapped.data.timeline });
         return;
       }
 
-      // Legacy format (raw Timeline)
       const legacy = TimelineSchema.safeParse(parsedJson);
       if (legacy.success) {
         dispatch({ type: "timeline/replace", payload: legacy.data });
       }
     } catch {
-      // Ignorieren, Default bleibt aktiv
+      // Ignorieren
     } finally {
       hasLoadedFromStorage.current = true;
     }
@@ -123,7 +131,7 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
       const payload: StorageValue = { schemaVersion: 1, timeline: state.timeline };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
-      // Ignorieren (zB Private Mode, Quota, etc.)
+      // Ignorieren
     }
   }, [state.timeline]);
 
