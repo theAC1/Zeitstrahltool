@@ -1,5 +1,10 @@
-
 # AI working folder
 .ai/
+
+# Prevent accidental artifacts
 eslint
 web@0.1.0
+*.tgz
+*.log
+*.tmp
+.DS_Store
