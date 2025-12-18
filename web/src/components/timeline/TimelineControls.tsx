@@ -428,13 +428,7 @@ export function TimelineControls() {
         axis={timeline.axis}
         setError={setError}
         onSaveAxis={(axisToStore) => {
-          dispatch({
-            type: "timeline/replace",
-            payload: {
-              ...timeline,
-              axis: axisToStore,
-            },
-          });
+          dispatch({ type: "timeline/updateAxis", payload: { axis: axisToStore } });
         }}
       />
 
