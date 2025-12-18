@@ -7,10 +7,19 @@ import { TimelineSchema } from "../../types/timeline";
 import { sampleTimeline } from "../../data/sampleTimeline";
 
 export type TimelineState = {
+  timelines: Timeline[];
+  activeTimelineId: string;
+};
+
+export type TimelineViewState = {
   timeline: Timeline;
+  timelines: Timeline[];
+  activeTimelineId: string;
 };
 
 export type TimelineAction =
+  | { type: "state/replace"; payload: TimelineState }
+  | { type: "timeline/select"; payload: { id: string } }
   | { type: "timeline/replace"; payload: Timeline }
   | { type: "timeline/reset" }
   | { type: "timeline/updateTitle"; payload: { title: string } }
@@ -19,70 +28,94 @@ export type TimelineAction =
   | { type: "event/update"; payload: TimelineEvent }
   | { type: "event/delete"; payload: { id: string } };
 
-const STORAGE_KEY = "zeitstrahltool.timeline.v1";
+const STORAGE_KEY_V1 = "zeitstrahltool.timeline.v1";
+const STORAGE_KEY_V2 = "zeitstrahltool.timeline.v2";
 
-const StorageSchema = z.object({
+const StorageV1Schema = z.object({
   schemaVersion: z.literal(1),
   timeline: TimelineSchema,
 });
-type StorageValue = z.infer<typeof StorageSchema>;
+
+const StorageV2Schema = z.object({
+  schemaVersion: z.literal(2),
+  timelines: z.array(TimelineSchema).min(1),
+  activeTimelineId: z.string().min(1),
+});
 
 export const initialState: TimelineState = {
-  timeline: sampleTimeline,
+  timelines: [sampleTimeline],
+  activeTimelineId: sampleTimeline.id,
 };
+
+function getActiveTimeline(state: TimelineState): Timeline {
+  return state.timelines.find(t => t.id === state.activeTimelineId) ?? state.timelines[0];
+}
+
+function replaceActiveTimeline(state: TimelineState, nextTimeline: Timeline): TimelineState {
+  const idx = state.timelines.findIndex(t => t.id === state.activeTimelineId);
+  const useIdx = idx >= 0 ? idx : 0;
+
+  const nextTimelines = state.timelines.slice();
+  nextTimelines[useIdx] = nextTimeline;
+
+  // Deduplicate by id (in case id changed)
+  const seen = new Set<string>();
+  const deduped: Timeline[] = [];
+  for (const t of nextTimelines) {
+    if (seen.has(t.id)) continue;
+    seen.add(t.id);
+    deduped.push(t);
+  }
+
+  return {
+    timelines: deduped.length ? deduped : [nextTimeline],
+    activeTimelineId: nextTimeline.id,
+  };
+}
+
+function updateActiveTimeline(state: TimelineState, fn: (t: Timeline) => Timeline): TimelineState {
+  const active = getActiveTimeline(state);
+  const updated = fn(active);
+  return replaceActiveTimeline(state, updated);
+}
 
 export function timelineReducer(state: TimelineState, action: TimelineAction): TimelineState {
   switch (action.type) {
+    case "state/replace":
+      return action.payload;
+
+    case "timeline/select":
+      if (state.timelines.some(t => t.id === action.payload.id)) {
+        return { ...state, activeTimelineId: action.payload.id };
+      }
+      return state;
+
     case "timeline/replace":
-      return { ...state, timeline: action.payload };
+      return replaceActiveTimeline(state, action.payload);
 
     case "timeline/reset":
       return initialState;
 
     case "timeline/updateTitle":
-      return {
-        ...state,
-        timeline: {
-          ...state.timeline,
-          title: action.payload.title,
-        },
-      };
+      return updateActiveTimeline(state, (t) => ({ ...t, title: action.payload.title }));
 
     case "timeline/updateAxis":
-      return {
-        ...state,
-        timeline: {
-          ...state.timeline,
-          axis: action.payload.axis,
-        },
-      };
+      return updateActiveTimeline(state, (t) => ({ ...t, axis: action.payload.axis }));
 
     case "event/add":
-      return {
-        ...state,
-        timeline: {
-          ...state.timeline,
-          events: [...state.timeline.events, action.payload],
-        },
-      };
+      return updateActiveTimeline(state, (t) => ({ ...t, events: [...t.events, action.payload] }));
 
     case "event/update":
-      return {
-        ...state,
-        timeline: {
-          ...state.timeline,
-          events: state.timeline.events.map(ev => (ev.id === action.payload.id ? action.payload : ev)),
-        },
-      };
+      return updateActiveTimeline(state, (t) => ({
+        ...t,
+        events: t.events.map(ev => (ev.id === action.payload.id ? action.payload : ev)),
+      }));
 
     case "event/delete":
-      return {
-        ...state,
-        timeline: {
-          ...state.timeline,
-          events: state.timeline.events.filter(ev => ev.id !== action.payload.id),
-        },
-      };
+      return updateActiveTimeline(state, (t) => ({
+        ...t,
+        events: t.events.filter(ev => ev.id !== action.payload.id),
+      }));
 
     default:
       return state;
@@ -94,28 +127,52 @@ const TimelineDispatchContext = createContext<React.Dispatch<TimelineAction> | u
 
 export function TimelineProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(timelineReducer, initialState);
-
   const hasLoadedFromStorage = useRef(false);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        hasLoadedFromStorage.current = true;
-        return;
-      }
+      const rawV2 = localStorage.getItem(STORAGE_KEY_V2);
+      const raw = rawV2 ?? localStorage.getItem(STORAGE_KEY_V1);
+      if (!raw) return;
 
       const parsedJson: unknown = JSON.parse(raw);
 
-      const wrapped = StorageSchema.safeParse(parsedJson);
-      if (wrapped.success) {
-        dispatch({ type: "timeline/replace", payload: wrapped.data.timeline });
+      // v2
+      const v2 = StorageV2Schema.safeParse(parsedJson);
+      if (v2.success) {
+        dispatch({
+          type: "state/replace",
+          payload: {
+            timelines: v2.data.timelines,
+            activeTimelineId: v2.data.activeTimelineId,
+          },
+        });
         return;
       }
 
+      // v1 wrapper
+      const v1 = StorageV1Schema.safeParse(parsedJson);
+      if (v1.success) {
+        dispatch({
+          type: "state/replace",
+          payload: {
+            timelines: [v1.data.timeline],
+            activeTimelineId: v1.data.timeline.id,
+          },
+        });
+        return;
+      }
+
+      // legacy raw timeline
       const legacy = TimelineSchema.safeParse(parsedJson);
       if (legacy.success) {
-        dispatch({ type: "timeline/replace", payload: legacy.data });
+        dispatch({
+          type: "state/replace",
+          payload: {
+            timelines: [legacy.data],
+            activeTimelineId: legacy.data.id,
+          },
+        });
       }
     } catch {
       // Ignorieren
@@ -128,12 +185,16 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
     if (!hasLoadedFromStorage.current) return;
 
     try {
-      const payload: StorageValue = { schemaVersion: 1, timeline: state.timeline };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      const payload = {
+        schemaVersion: 2 as const,
+        timelines: state.timelines,
+        activeTimelineId: state.activeTimelineId,
+      };
+      localStorage.setItem(STORAGE_KEY_V2, JSON.stringify(payload));
     } catch {
       // Ignorieren
     }
-  }, [state.timeline]);
+  }, [state]);
 
   return (
     <TimelineStateContext.Provider value={state}>
@@ -144,12 +205,17 @@ export function TimelineProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useTimelineState(): TimelineState {
+export function useTimelineState(): TimelineViewState {
   const ctx = useContext(TimelineStateContext);
   if (!ctx) {
     throw new Error("useTimelineState must be used within TimelineProvider");
   }
-  return ctx;
+
+  return {
+    timeline: getActiveTimeline(ctx),
+    timelines: ctx.timelines,
+    activeTimelineId: ctx.activeTimelineId,
+  };
 }
 
 export function useTimelineDispatch(): React.Dispatch<TimelineAction> {

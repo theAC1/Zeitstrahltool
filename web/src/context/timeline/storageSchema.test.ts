@@ -3,17 +3,18 @@ import { z } from "zod";
 import { TimelineSchema } from "../../types/timeline";
 import { sampleTimeline } from "../../data/sampleTimeline";
 
-const StorageSchema = z.object({
-  schemaVersion: z.literal(1),
-  timeline: TimelineSchema,
+const StorageV2Schema = z.object({
+  schemaVersion: z.literal(2),
+  timelines: z.array(TimelineSchema).min(1),
+  activeTimelineId: z.string().min(1),
 });
 
-describe("LocalStorage wrapper schema", () => {
-  it("accepts schemaVersion=1 with a valid timeline payload", () => {
-    const payload = { schemaVersion: 1 as const, timeline: sampleTimeline };
+describe("LocalStorage wrapper schema (v2)", () => {
+  it("accepts schemaVersion=2 with timelines and activeTimelineId", () => {
+    const payload = { schemaVersion: 2 as const, timelines: [sampleTimeline], activeTimelineId: sampleTimeline.id };
     const roundtrip = JSON.parse(JSON.stringify(payload)) as unknown;
 
-    const r = StorageSchema.safeParse(roundtrip);
+    const r = StorageV2Schema.safeParse(roundtrip);
     expect(r.success).toBe(true);
   });
 });
