@@ -438,6 +438,22 @@ export function TimelineControls() {
         >
           Duplizieren
         </button>
+
+        <button
+          type="button"
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={() => {
+            dispatch({ type: "timeline/delete", payload: { id: activeTimelineId } });
+            setError(null);
+            setIsTitleDirty(false);
+            setTimelineTitleDraft("");
+            setEditTitleById({});
+            setEditYearById({});
+            setEditDescriptionById({});
+          }}
+        >
+          Timeline loeschen
+        </button>
       </div>
 
       <div className="mb-3 flex flex-wrap items-end gap-2">
