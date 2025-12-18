@@ -441,7 +441,9 @@ export function TimelineControls() {
 
         <button
           type="button"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          disabled={timelines.length <= 1}
+          aria-disabled={timelines.length <= 1}
+          className={timelines.length <= 1 ? "rounded-md border px-3 py-2 text-sm opacity-50" : "cursor-pointer rounded-md border px-3 py-2 text-sm"}
           onClick={() => {
             dispatch({ type: "timeline/delete", payload: { id: activeTimelineId } });
             setError(null);
