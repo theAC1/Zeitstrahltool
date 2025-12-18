@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { TimelineAxis } from "../../types/timeline";
+import type { Timeline, TimelineAxis } from "../../types/timeline";
 import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
 import { TimelineEventSchema } from "../../types/timeline";
 
@@ -42,6 +42,16 @@ function axisKey(axis?: TimelineAxis) {
     minYear: typeof axis?.minYear === "number" ? axis.minYear : null,
     maxYear: typeof axis?.maxYear === "number" ? axis.maxYear : null,
   });
+}
+
+function cloneTimeline(base: Timeline): Timeline {
+  const suffix = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
+  const newId = `${base.id}-copy-${suffix}`;
+  return {
+    ...base,
+    id: newId,
+    title: `${base.title} (Copy)`,
+  };
 }
 
 function AxisControls(props: {
@@ -183,7 +193,7 @@ function AxisControls(props: {
 }
 
 export function TimelineControls() {
-  const { timeline } = useTimelineState();
+  const { timeline, timelines, activeTimelineId } = useTimelineState();
   const dispatch = useTimelineDispatch();
 
   const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
@@ -386,6 +396,49 @@ export function TimelineControls() {
 
   return (
     <div className="mb-4 rounded-md border p-3">
+      <div className="mb-3 flex flex-wrap items-end gap-2">
+        <div className="flex flex-col">
+          <label className="text-xs text-gray-600" htmlFor="tl-select">Aktiver Zeitstrahl</label>
+          <select
+            id="tl-select"
+            className="w-80 rounded-md border px-2 py-2 text-sm"
+            value={activeTimelineId}
+            onChange={(e) => {
+              dispatch({ type: "timeline/select", payload: { id: e.target.value } });
+              setError(null);
+              setIsTitleDirty(false);
+              setTimelineTitleDraft("");
+              setEditTitleById({});
+              setEditYearById({});
+              setEditDescriptionById({});
+            }}
+          >
+            {timelines.map(t => (
+              <option key={t.id} value={t.id}>
+                {t.title} ({t.id})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          type="button"
+          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
+          onClick={() => {
+            const cloned = cloneTimeline(timeline);
+            dispatch({ type: "state/replace", payload: { timelines: [...timelines, cloned], activeTimelineId: cloned.id } });
+            setError(null);
+            setIsTitleDirty(false);
+            setTimelineTitleDraft("");
+            setEditTitleById({});
+            setEditYearById({});
+            setEditDescriptionById({});
+          }}
+        >
+          Duplizieren
+        </button>
+      </div>
+
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
           <label className="text-xs text-gray-600" htmlFor="tl-title">Timeline Titel</label>
