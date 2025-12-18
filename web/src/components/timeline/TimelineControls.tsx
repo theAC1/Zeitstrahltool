@@ -51,16 +51,6 @@ function axisKey(axis?: TimelineAxis) {
   });
 }
 
-function cloneTimeline(base: Timeline): Timeline {
-  const suffix = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
-  const newId = `${base.id}-copy-${suffix}`;
-  return {
-    ...base,
-    id: newId,
-    title: `${base.title} (Copy)`,
-    axis: undefined,
-  };
-}
 
 function AxisControls(props: {
   axis?: TimelineAxis;
