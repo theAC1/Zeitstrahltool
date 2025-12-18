@@ -14,6 +14,11 @@ describe("timelineReducer", () => {
     expect(next.timeline.axis?.tickStep).toBe(100);
   });
 
+  it("clears axis when set to undefined", () => {
+    const next = timelineReducer(initialState, { type: "timeline/updateAxis", payload: { axis: undefined } });
+    expect(next.timeline.axis).toBeUndefined();
+  });
+
   it("adds an event", () => {
     const newEvent: TimelineEvent = { id: "e999", title: "Neu", year: 2001 };
     const next = timelineReducer(initialState, { type: "event/add", payload: newEvent });
