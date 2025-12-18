@@ -7,6 +7,15 @@ export const UI = {
     targetTickCountLabel: "targetTickCount (only when tickStep is empty)",
     minYearLabel: "minYear (empty = data)",
     maxYearLabel: "maxYear (empty = data)",
+    errors: {
+      tickStepIntOrEmpty: "tickStep must be an integer or empty (auto).",
+      tickStepGtZero: "tickStep must be greater than 0.",
+      targetTickCountIntOrEmpty: "targetTickCount must be an integer or empty (auto).",
+      targetTickCountRange: "targetTickCount must be between 2 and 50.",
+      minYearIntOrEmpty: "minYear must be an integer or empty (auto).",
+      maxYearIntOrEmpty: "maxYear must be an integer or empty (auto).",
+      maxYearGteMinYear: "maxYear must be greater than or equal to minYear.",
+    },
   },
   timeline: {
     activeLabel: "Active timeline",

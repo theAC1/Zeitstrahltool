@@ -81,38 +81,38 @@ function AxisControls(props: {
 
     const tickStep = parseOptionalInt(tickStepInput);
     if (Number.isNaN(tickStep)) {
-      setError("tickStep must be an integer or empty (auto).");
+      setError(UI.axis.errors.tickStepIntOrEmpty);
       return;
     }
     if (typeof tickStep === "number" && tickStep <= 0) {
-      setError("tickStep must be greater than 0.");
+      setError(UI.axis.errors.tickStepGtZero);
       return;
     }
 
     const targetTickCount = parseOptionalInt(targetTickCountInput);
     if (Number.isNaN(targetTickCount)) {
-      setError("targetTickCount must be an integer or empty (auto).");
+      setError(UI.axis.errors.targetTickCountIntOrEmpty);
       return;
     }
     if (typeof targetTickCount === "number" && (targetTickCount < 2 || targetTickCount > 50)) {
-      setError("targetTickCount must be between 2 and 50.");
+      setError(UI.axis.errors.targetTickCountRange);
       return;
     }
 
     const minYear = parseOptionalInt(minYearInput);
     if (Number.isNaN(minYear)) {
-      setError("minYear must be an integer or empty (auto).");
+      setError(UI.axis.errors.minYearIntOrEmpty);
       return;
     }
 
     const maxYear = parseOptionalInt(maxYearInput);
     if (Number.isNaN(maxYear)) {
-      setError("maxYear must be an integer or empty (auto).");
+      setError(UI.axis.errors.maxYearIntOrEmpty);
       return;
     }
 
     if (typeof minYear === "number" && typeof maxYear === "number" && maxYear < minYear) {
-      setError("maxYear must be greater than or equal to minYear.");
+      setError(UI.axis.errors.maxYearGteMinYear);
       return;
     }
 
@@ -258,13 +258,13 @@ export function TimelineControls() {
     const trimmedDescription = description.trim();
 
     if (!trimmedTitle || !trimmedYear) {
-      setError("Please fill in title and year.");
+      setError(UI.events.errors.fillTitleYear);
       return;
     }
 
     const parsedYear = Number(trimmedYear);
     if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
-      setError("Year must be an integer (e.g. 2000 or -44).");
+      setError(UI.events.errors.yearInteger);
       return;
     }
 
@@ -279,7 +279,7 @@ export function TimelineControls() {
 
     const result = TimelineEventSchema.safeParse(candidate);
     if (!result.success) {
-      setError("Invalid input. Please check values.");
+      setError(UI.events.errors.invalidInput);
       return;
     }
 
@@ -346,13 +346,13 @@ export function TimelineControls() {
     const nextDescription = nextDescTrimmed ? nextDescTrimmed : undefined;
 
     if (!nextTitle) {
-      setError("Title cannot be empty.");
+      setError(UI.events.errors.titleEmpty);
       return;
     }
 
     const parsedYear = Number(nextYearStr);
     if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
-      setError("Year must be an integer (e.g. 2000 or -44).");
+      setError(UI.events.errors.yearInteger);
       return;
     }
 
@@ -369,7 +369,7 @@ export function TimelineControls() {
 
     const result = TimelineEventSchema.safeParse(candidate);
     if (!result.success) {
-      setError("Invalid values. Please check.");
+      setError(UI.events.errors.invalidValues);
       return;
     }
 
@@ -410,13 +410,13 @@ export function TimelineControls() {
       const incoming = result.data;
       const idCollision = timelines.some(t => t.id === incoming.id) && incoming.id !== activeTimelineId;
       if (idCollision) {
-        setError("Import id already exists. Please change the id in the JSON or delete the timeline first.");
+        setError(UI.json.errors.idCollision);
         return;
       }
 
       dispatch({ type: "timeline/replace", payload: incoming });
 
-      setNotice("Import successful.");
+      setNotice(UI.json.success);
       setImportJson("");
       setIsTitleDirty(false);
       setTimelineTitleDraft("");
