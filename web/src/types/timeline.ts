@@ -8,6 +8,20 @@ export type TimelineMetadata = {
   updatedAt?: string;
 };
 
+export type EventSource = {
+  url: string;
+  label?: string;
+};
+
+export type EventLocation = {
+  name: string;
+  country?: string;
+  region?: string;
+  lat?: number;
+  lon?: number;
+};
+
+
 export type TimelineAxis = {
   minYear?: number;
   maxYear?: number;
@@ -25,6 +39,15 @@ export type TimelineEvent = {
   imageUrl?: string;
   videoUrl?: string;
   sourceUrl?: string;
+
+  sources?: EventSource[];
+  categories?: string[];
+  tags?: string[];
+  location?: EventLocation;
+  epochId?: string;
+  context?: string;
+  timePrecision?: "exact" | "approx" | "fuzzy";
+  uncertaintyYears?: number;
 };
 
 export type Epoch = {
@@ -53,6 +76,20 @@ export const TimelineMetadataSchema = z.object({
   createdAt: z.string().min(1).optional(),
   updatedAt: z.string().min(1).optional(),
 });
+
+export const EventSourceSchema = z.object({
+  url: z.string().url(),
+  label: z.string().min(1).optional(),
+});
+
+export const EventLocationSchema = z.object({
+  name: z.string().min(1),
+  country: z.string().min(1).optional(),
+  region: z.string().min(1).optional(),
+  lat: z.number().optional(),
+  lon: z.number().optional(),
+});
+
 
 export const TimelineAxisSchema = z
   .object({
@@ -84,10 +121,38 @@ export const TimelineEventSchema = z
     imageUrl: z.string().url().optional(),
     videoUrl: z.string().url().optional(),
     sourceUrl: z.string().url().optional(),
+
+    sources: z.array(EventSourceSchema).min(1).optional(),
+    categories: z.array(z.string().min(1)).optional(),
+    tags: z.array(z.string().min(1)).optional(),
+    location: EventLocationSchema.optional(),
+    epochId: z.string().min(1).optional(),
+    context: z.string().min(1).optional(),
+    timePrecision: z.enum(["exact", "approx", "fuzzy"]).optional(),
+    uncertaintyYears: z.number().int().positive().optional(),
   })
   .superRefine((val, ctx) => {
     const hasSingleYear = typeof val.year === "number";
     const hasRange = typeof val.startYear === "number" || typeof val.endYear === "number";
+
+    if (val.timePrecision === "fuzzy" && typeof val.uncertaintyYears !== "number") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "uncertaintyYears is required when timePrecision is fuzzy.",
+        path: ["uncertaintyYears"],
+      });
+      return;
+    }
+
+    if (typeof val.uncertaintyYears === "number" && val.timePrecision !== "fuzzy") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "timePrecision must be fuzzy when uncertaintyYears is set.",
+        path: ["timePrecision"],
+      });
+      return;
+    }
+
 
     if (hasSingleYear && hasRange) {
       ctx.addIssue({

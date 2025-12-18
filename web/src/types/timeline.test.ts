@@ -35,3 +35,38 @@ describe("TimelineSchema", () => {
     expect(r.success).toBe(true);
   });
 });
+
+
+describe("TimelineEventSchema time precision", () => {
+  it("accepts fuzzy with uncertaintyYears", () => {
+    const res = TimelineEventSchema.safeParse({
+      id: "e-fuzzy",
+      title: "Some gradual shift",
+      year: 1200,
+      timePrecision: "fuzzy",
+      uncertaintyYears: 25,
+    });
+    expect(res.success).toBe(true);
+  });
+
+  it("rejects fuzzy without uncertaintyYears", () => {
+    const res = TimelineEventSchema.safeParse({
+      id: "e-fuzzy2",
+      title: "Missing uncertainty",
+      year: 1200,
+      timePrecision: "fuzzy",
+    });
+    expect(res.success).toBe(false);
+  });
+
+  it("rejects uncertaintyYears when timePrecision is not fuzzy", () => {
+    const res = TimelineEventSchema.safeParse({
+      id: "e-approx",
+      title: "Approx date",
+      year: 1200,
+      timePrecision: "approx",
+      uncertaintyYears: 10,
+    });
+    expect(res.success).toBe(false);
+  });
+});
