@@ -80,38 +80,38 @@ function AxisControls(props: {
 
     const tickStep = parseOptionalInt(tickStepInput);
     if (Number.isNaN(tickStep)) {
-      setError("tickStep muss eine ganze Zahl sein oder leer (auto).");
+      setError("tickStep must be an integer or empty (auto).");
       return;
     }
     if (typeof tickStep === "number" && tickStep <= 0) {
-      setError("tickStep muss groesser als 0 sein.");
+      setError("tickStep must be greater than 0.");
       return;
     }
 
     const targetTickCount = parseOptionalInt(targetTickCountInput);
     if (Number.isNaN(targetTickCount)) {
-      setError("targetTickCount muss eine ganze Zahl sein oder leer (auto).");
+      setError("targetTickCount must be an integer or empty (auto).");
       return;
     }
     if (typeof targetTickCount === "number" && (targetTickCount < 2 || targetTickCount > 50)) {
-      setError("targetTickCount muss zwischen 2 und 50 liegen.");
+      setError("targetTickCount must be between 2 and 50.");
       return;
     }
 
     const minYear = parseOptionalInt(minYearInput);
     if (Number.isNaN(minYear)) {
-      setError("minYear muss eine ganze Zahl sein oder leer (auto).");
+      setError("minYear must be an integer or empty (auto).");
       return;
     }
 
     const maxYear = parseOptionalInt(maxYearInput);
     if (Number.isNaN(maxYear)) {
-      setError("maxYear muss eine ganze Zahl sein oder leer (auto).");
+      setError("maxYear must be an integer or empty (auto).");
       return;
     }
 
     if (typeof minYear === "number" && typeof maxYear === "number" && maxYear < minYear) {
-      setError("maxYear muss groesser oder gleich minYear sein.");
+      setError("maxYear must be greater than or equal to minYear.");
       return;
     }
 
@@ -128,10 +128,10 @@ function AxisControls(props: {
 
   return (
     <div className="mb-3 rounded-md border p-2">
-      <div className="mb-2 text-sm font-medium">Axis (Massstab)</div>
+      <div className="mb-2 text-sm font-medium">Axis (scale)</div>
 
       <div className="mb-2 text-xs text-gray-600">
-        tickStep hat Prioritaet. Wenn tickStep gesetzt ist, wird targetTickCount ignoriert. minYear/maxYear setzen den sichtbaren Bereich.
+        tickStep takes priority. If tickStep is set, targetTickCount is ignored. minYear/maxYear define the visible range.
       </div>
 
       <div className="flex flex-wrap items-end gap-2">
@@ -223,7 +223,7 @@ export function TimelineControls() {
   function onSaveTimelineTitle() {
     const next = timelineTitleValue.trim();
     if (!next) {
-      setError("Timeline Titel darf nicht leer sein.");
+      setError("Timeline title darf nicht leer sein.");
       return;
     }
     setError(null);
@@ -259,13 +259,13 @@ export function TimelineControls() {
     const trimmedDescription = description.trim();
 
     if (!trimmedTitle || !trimmedYear) {
-      setError("Bitte title und year ausfuellen.");
+      setError("Please fill in title and year.");
       return;
     }
 
     const parsedYear = Number(trimmedYear);
     if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
-      setError("Year muss eine ganze Zahl sein (zB 2000 oder -44).");
+      setError("Year must be an integer (e.g. 2000 or -44).");
       return;
     }
 
@@ -280,7 +280,7 @@ export function TimelineControls() {
 
     const result = TimelineEventSchema.safeParse(candidate);
     if (!result.success) {
-      setError("Ungueltige Eingabe. Bitte Werte pruefen.");
+      setError("Invalid input. Please check values.");
       return;
     }
 
@@ -347,13 +347,13 @@ export function TimelineControls() {
     const nextDescription = nextDescTrimmed ? nextDescTrimmed : undefined;
 
     if (!nextTitle) {
-      setError("Title darf nicht leer sein.");
+      setError("Title cannot be empty.");
       return;
     }
 
     const parsedYear = Number(nextYearStr);
     if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
-      setError("Year muss eine ganze Zahl sein (zB 2000 oder -44).");
+      setError("Year must be an integer (e.g. 2000 or -44).");
       return;
     }
 
@@ -370,7 +370,7 @@ export function TimelineControls() {
 
     const result = TimelineEventSchema.safeParse(candidate);
     if (!result.success) {
-      setError("Ungueltige Werte. Bitte pruefen.");
+      setError("Invalid values. Please check.");
       return;
     }
 
@@ -404,20 +404,20 @@ export function TimelineControls() {
       const result = TimelineSchema.safeParse(parsed);
 
       if (!result.success) {
-        setError("Import JSON ist ungueltig.");
+        setError("Import JSON is invalid.");
         return;
       }
 
       const incoming = result.data;
       const idCollision = timelines.some(t => t.id === incoming.id) && incoming.id !== activeTimelineId;
       if (idCollision) {
-        setError("Import ID existiert bereits. Bitte ID im JSON aendern oder die Timeline zuerst loeschen.");
+        setError("Import id already exists. Please change the id in the JSON or delete the timeline first.");
         return;
       }
 
       dispatch({ type: "timeline/replace", payload: incoming });
 
-      setNotice("Import erfolgreich.");
+      setNotice("Import successful.");
       setImportJson("");
       setIsTitleDirty(false);
       setTimelineTitleDraft("");
@@ -425,7 +425,7 @@ export function TimelineControls() {
       setEditYearById({});
       setEditDescriptionById({});
     } catch {
-      setError("Import JSON ist kein gueltiges JSON.");
+      setError("Import JSON is not valid JSON.");
     }
   }
 
@@ -439,7 +439,7 @@ export function TimelineControls() {
     <div className="mb-4 rounded-md border bg-white p-3 text-gray-900">
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="tl-select">Aktiver Zeitstrahl</label>
+          <label className="text-xs text-gray-600" htmlFor="tl-select">Active timeline</label>
           <select
             id="tl-select"
             className="w-80 rounded-md border bg-white px-2 py-2 text-sm text-gray-900"
@@ -476,7 +476,7 @@ export function TimelineControls() {
             setEditDescriptionById({});
           }}
         >
-          Duplizieren
+          Duplicate
         </button>
 
         <button
@@ -494,13 +494,13 @@ export function TimelineControls() {
             setEditDescriptionById({});
           }}
         >
-          Timeline loeschen
+          Delete timeline
         </button>
       </div>
 
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="tl-title">Timeline Titel</label>
+          <label className="text-xs text-gray-600" htmlFor="tl-title">Timeline title</label>
           <input
             id="tl-title"
             className="w-80 rounded-md border px-2 py-1 text-sm"
@@ -517,7 +517,7 @@ export function TimelineControls() {
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={onSaveTimelineTitle}
         >
-          Save Titel
+          Save title
         </button>
 
         <button
@@ -525,11 +525,11 @@ export function TimelineControls() {
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={onResetTimeline}
         >
-          Reset Timeline
+          Reset timeline
         </button>
 
         <span className="text-sm text-gray-600">
-          Reset setzt auf Default zurueck und schreibt LocalStorage neu.
+          Reset restores defaults and rewrites LocalStorage.
         </span>
 
         {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
@@ -680,15 +680,15 @@ export function TimelineControls() {
         </div>
       </div>
       <details className="mt-4 rounded-md border p-2">
-        <summary className="cursor-pointer text-sm font-medium">JSON Export und Import</summary>
+        <summary className="cursor-pointer text-sm font-medium">JSON export and import</summary>
 
         <div className="mt-2 grid gap-2">
-          <div className="text-xs text-gray-600">Export (aktiver Zeitstrahl)</div>
+          <div className="text-xs text-gray-600">Export (active timeline)</div>
           <pre className="max-h-64 overflow-auto rounded-md bg-gray-50 p-2 text-xs">
             {JSON.stringify(timeline, null, 2)}
           </pre>
 
-          <div className="text-xs text-gray-600">Import (ersetzt aktiven Zeitstrahl)</div>
+          <div className="text-xs text-gray-600">Import (replaces active timeline)</div>
           <textarea
             className="h-40 w-full rounded-md border px-2 py-1 font-mono text-xs"
             value={importJson}
