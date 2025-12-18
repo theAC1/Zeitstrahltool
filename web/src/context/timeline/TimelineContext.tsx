@@ -21,6 +21,7 @@ export type TimelineAction =
   | { type: "state/replace"; payload: TimelineState }
   | { type: "timeline/select"; payload: { id: string } }
   | { type: "timeline/add"; payload: { timeline: Timeline } }
+  | { type: "timeline/createEmpty"; payload: { id: string; title: string } }
   | { type: "timeline/delete"; payload: { id: string } }
   | { type: "timeline/replace"; payload: Timeline }
   | { type: "timeline/reset" }
@@ -102,6 +103,16 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
         activeTimelineId: next.id,
       };
     }
+    case "timeline/createEmpty": {
+      const { id, title } = action.payload;
+      const empty: Timeline = { id, title, events: [], epochs: [], metadata: { language: "en" } };
+
+      const exists = state.timelines.some(t => t.id === id);
+      const nextTimelines = exists ? state.timelines : [...state.timelines, empty];
+
+      return { timelines: nextTimelines, activeTimelineId: id };
+    }
+
 
     case "timeline/delete": {
       if (state.timelines.length <= 1) return state;
