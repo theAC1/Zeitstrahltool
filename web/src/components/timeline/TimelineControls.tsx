@@ -226,17 +226,17 @@ export function TimelineControls() {
   const timelineTitleValue = isTitleDirty ? timelineTitleDraft : timeline.title;
 
   function onSaveTimelineTitle() {
-    const next = timelineTitleValue.trim();
+    setError(null);
+    setNotice(null);
+
+    const next = timelineTitleDraft.trim();
     if (!next) {
-      setError("{UI.timeline.titleLabel} darf nicht leer sein.");
+      setError(UI.timeline.titleEmpty);
       return;
     }
-    setError(null);
 
     dispatch({ type: "timeline/updateTitle", payload: { title: next } });
-
     setIsTitleDirty(false);
-    setTimelineTitleDraft("");
   }
 
   function onResetTimeline() {
@@ -403,24 +403,21 @@ export function TimelineControls() {
   
   function onImportTimelineJson() {
     setError(null);
+    setNotice(null);
 
     try {
       const parsed = JSON.parse(importJson);
       const result = TimelineSchema.safeParse(parsed);
 
       if (!result.success) {
-        setError("{UI.json.importButton} is invalid.");
+        setError(UI.json.errors.invalid);
         return;
       }
 
       const incoming = result.data;
-      const idCollision = timelines.some(t => t.id === incoming.id) && incoming.id !== activeTimelineId;
-      if (idCollision) {
-        setError(UI.json.errors.idCollision);
-        return;
-      }
+      const normalized = { ...incoming, id: activeTimelineId };
 
-      dispatch({ type: "timeline/replace", payload: incoming });
+      dispatch({ type: "timeline/replace", payload: normalized });
 
       setNotice(UI.json.success);
       setImportJson("");
@@ -430,7 +427,7 @@ export function TimelineControls() {
       setEditYearById({});
       setEditDescriptionById({});
     } catch {
-      setError("{UI.json.importButton} is not valid JSON.");
+      setError(UI.json.errors.notJson);
     }
   }
 
@@ -471,9 +468,25 @@ export function TimelineControls() {
           type="button"
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={() => {
-            const cloned = cloneTimeline(timeline);
+            const baseTitle = timeline.title.replace(/\s*\(Copy.*\)\s*$/i, "").trim();
+            const escaped = baseTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const re = new RegExp(`^${escaped}\\s*\\(Copy(?:\\s+(\\d+))?\\)\\s*$`, "i");
+
+            let max = 0;
+            for (const t of timelines) {
+              const m = t.title.match(re);
+              if (m) {
+                const n = m[1] ? Number(m[1]) : 1;
+                if (!Number.isNaN(n)) max = Math.max(max, n);
+              }
+            }
+
+            const nextTitle = max === 0 ? `${baseTitle} (Copy)` : `${baseTitle} (Copy ${max + 1})`;
+            const cloned = { ...timeline, id: createTimelineId("tl"), title: nextTitle };
+
             dispatch({ type: "timeline/add", payload: { timeline: cloned } });
             setError(null);
+            setNotice(null);
             setIsTitleDirty(false);
             setTimelineTitleDraft("");
             setEditTitleById({});
