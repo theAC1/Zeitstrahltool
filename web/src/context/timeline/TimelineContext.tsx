@@ -21,6 +21,7 @@ export type TimelineAction =
   | { type: "state/replace"; payload: TimelineState }
   | { type: "timeline/select"; payload: { id: string } }
   | { type: "timeline/add"; payload: { timeline: Timeline } }
+  | { type: "timeline/delete"; payload: { id: string } }
   | { type: "timeline/replace"; payload: Timeline }
   | { type: "timeline/reset" }
   | { type: "timeline/updateTitle"; payload: { title: string } }
@@ -99,6 +100,25 @@ export function timelineReducer(state: TimelineState, action: TimelineAction): T
       return {
         timelines: nextTimelines,
         activeTimelineId: next.id,
+      };
+    }
+
+    case "timeline/delete": {
+      if (state.timelines.length <= 1) return state;
+
+      const id = action.payload.id;
+      const remaining = state.timelines.filter(t => t.id !== id);
+
+      if (remaining.length === state.timelines.length) return state;
+
+      const nextActive =
+        state.activeTimelineId === id
+          ? remaining[0].id
+          : (remaining.some(t => t.id === state.activeTimelineId) ? state.activeTimelineId : remaining[0].id);
+
+      return {
+        timelines: remaining,
+        activeTimelineId: nextActive,
       };
     }
 
