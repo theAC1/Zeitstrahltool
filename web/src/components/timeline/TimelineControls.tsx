@@ -137,7 +137,7 @@ function AxisControls(props: {
 
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-tickStep">tickStep (leer = auto)</label>
+          <label className="text-xs text-gray-600" htmlFor="axis-tickStep">{UI.axis.tickStepLabel}</label>
           <input
             id="axis-tickStep"
             className="w-44 rounded-md border px-2 py-1 text-sm"
@@ -149,9 +149,7 @@ function AxisControls(props: {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-targetTickCount">
-            targetTickCount (nur wenn tickStep leer)
-          </label>
+          <label className="text-xs text-gray-600" htmlFor="axis-targetTickCount">{UI.axis.targetTickCountLabel}</label>
           <input
             id="axis-targetTickCount"
             className="w-44 rounded-md border px-2 py-1 text-sm"
@@ -163,7 +161,7 @@ function AxisControls(props: {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-minYear">minYear (leer = daten)</label>
+          <label className="text-xs text-gray-600" htmlFor="axis-minYear">{UI.axis.minYearLabel}</label>
           <input
             id="axis-minYear"
             className="w-44 rounded-md border px-2 py-1 text-sm"
@@ -175,7 +173,7 @@ function AxisControls(props: {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-maxYear">maxYear (leer = daten)</label>
+          <label className="text-xs text-gray-600" htmlFor="axis-maxYear">{UI.axis.maxYearLabel}</label>
           <input
             id="axis-maxYear"
             className="w-44 rounded-md border px-2 py-1 text-sm"
@@ -596,7 +594,7 @@ export function TimelineControls() {
       </form>
 
       <div className="mt-4 border-t pt-3">
-        <div className="mb-2 text-sm font-medium">Events</div>
+        <div className="mb-2 text-sm font-medium">{UI.events.title}</div>
 
         <div className="flex flex-col gap-2 max-h-80 overflow-y-auto pr-1">
           {timeline.events.map(ev => {
