@@ -407,7 +407,14 @@ export function TimelineControls() {
         return;
       }
 
-      dispatch({ type: "timeline/replace", payload: result.data });
+      const incoming = result.data;
+      const idCollision = timelines.some(t => t.id === incoming.id) && incoming.id !== activeTimelineId;
+      if (idCollision) {
+        setError("Import ID existiert bereits. Bitte ID im JSON aendern oder die Timeline zuerst loeschen.");
+        return;
+      }
+
+      dispatch({ type: "timeline/replace", payload: incoming });
 
       setImportJson("");
       setIsTitleDirty(false);
