@@ -130,6 +130,10 @@ function AxisControls(props: {
     <div className="mb-3 rounded-md border p-2">
       <div className="mb-2 text-sm font-medium">Axis (Massstab)</div>
 
+      <div className="mb-2 text-xs text-gray-600">
+        tickStep hat Prioritaet. Wenn tickStep gesetzt ist, wird targetTickCount ignoriert. minYear/maxYear setzen den sichtbaren Bereich.
+      </div>
+
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
           <label className="text-xs text-gray-600" htmlFor="axis-tickStep">tickStep (leer = auto)</label>
