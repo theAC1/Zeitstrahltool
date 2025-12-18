@@ -77,6 +77,7 @@ function AxisControls(props: {
 
   function onSave() {
     setError(null);
+    setNotice(null);
 
     const tickStep = parseOptionalInt(tickStepInput);
     if (Number.isNaN(tickStep)) {
@@ -211,6 +212,7 @@ export function TimelineControls() {
   const [year, setYear] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [importJson, setImportJson] = useState("");
 
   const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
@@ -416,6 +418,7 @@ export function TimelineControls() {
 
       dispatch({ type: "timeline/replace", payload: incoming });
 
+      setNotice("Import erfolgreich.");
       setImportJson("");
       setIsTitleDirty(false);
       setTimelineTitleDraft("");
@@ -434,13 +437,13 @@ export function TimelineControls() {
   }
 
   return (
-    <div className="mb-4 rounded-md border p-3">
+    <div className="mb-4 rounded-md border bg-white p-3 text-gray-900">
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
           <label className="text-xs text-gray-600" htmlFor="tl-select">Aktiver Zeitstrahl</label>
           <select
             id="tl-select"
-            className="w-80 rounded-md border px-2 py-2 text-sm"
+            className="w-80 rounded-md border bg-white px-2 py-2 text-sm text-gray-900"
             value={activeTimelineId}
             onChange={(e) => {
               dispatch({ type: "timeline/select", payload: { id: e.target.value } });
@@ -454,7 +457,7 @@ export function TimelineControls() {
           >
             {timelines.map(t => (
               <option key={t.id} value={t.id}>
-                {t.title} ({t.id})
+                {t.title}
               </option>
             ))}
           </select>
@@ -702,6 +705,9 @@ export function TimelineControls() {
           >
             Import JSON
           </button>
+
+          {notice ? <div className="text-sm text-green-700">{notice}</div> : null}
+          {error ? <div className="text-sm text-red-700">{error}</div> : null}
         </div>
       </details>
 
