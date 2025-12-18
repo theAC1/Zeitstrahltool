@@ -1,0 +1,52 @@
+export const UI = {
+  axis: {
+    title: "Axis (scale)",
+    hint: "tickStep takes priority. If tickStep is set, targetTickCount is ignored. minYear/maxYear define the visible range.",
+    save: "Save axis",
+    tickStepLabel: "tickStep (empty = auto)",
+    targetTickCountLabel: "targetTickCount (only when tickStep is empty)",
+    minYearLabel: "minYear (empty = data)",
+    maxYearLabel: "maxYear (empty = data)",
+  },
+  timeline: {
+    activeLabel: "Active timeline",
+    duplicate: "Duplicate",
+    delete: "Delete timeline",
+    titleLabel: "Timeline title",
+    saveTitle: "Save title",
+    reset: "Reset timeline",
+    resetHint: "Reset restores defaults and rewrites LocalStorage.",
+    titleEmpty: "Timeline title cannot be empty.",
+  },
+  events: {
+    title: "Events",
+    idAuto: "id (auto)",
+    add: "Add event",
+    save: "Save",
+    del: "Delete",
+    placeholders: {
+      title: "New event",
+      year: "2000",
+      description: "Optional",
+    },
+    errors: {
+      fillTitleYear: "Please fill in title and year.",
+      yearInteger: "Year must be an integer (e.g. 2000 or -44).",
+      invalidInput: "Invalid input. Please check values.",
+      titleEmpty: "Title cannot be empty.",
+      invalidValues: "Invalid values. Please check.",
+    },
+  },
+  json: {
+    title: "JSON export and import",
+    exportTitle: "Export (active timeline)",
+    importTitle: "Import (replaces active timeline)",
+    importButton: "Import JSON",
+    success: "Import successful.",
+    errors: {
+      invalid: "Import JSON is invalid.",
+      notJson: "Import JSON is not valid JSON.",
+      idCollision: "Import id already exists. Please change the id in the JSON or delete the timeline first.",
+    },
+  },
+};

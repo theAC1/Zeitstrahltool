@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { Timeline, TimelineAxis } from "../../types/timeline";
 import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
 import { TimelineEventSchema, TimelineSchema } from "../../types/timeline";
+import { UI } from "./uiText";
 
 function nextAutoId(existingIds: string[]): string {
   const used = new Set(existingIds);
@@ -128,10 +129,10 @@ function AxisControls(props: {
 
   return (
     <div className="mb-3 rounded-md border p-2">
-      <div className="mb-2 text-sm font-medium">Axis (scale)</div>
+      <div className="mb-2 text-sm font-medium">{UI.axis.title}</div>
 
       <div className="mb-2 text-xs text-gray-600">
-        tickStep takes priority. If tickStep is set, targetTickCount is ignored. minYear/maxYear define the visible range.
+        {UI.axis.hint}
       </div>
 
       <div className="flex flex-wrap items-end gap-2">
@@ -190,7 +191,7 @@ function AxisControls(props: {
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={onSave}
         >
-          Save Axis
+          {UI.axis.save}
         </button>
       </div>
     </div>
@@ -223,7 +224,7 @@ export function TimelineControls() {
   function onSaveTimelineTitle() {
     const next = timelineTitleValue.trim();
     if (!next) {
-      setError("Timeline title darf nicht leer sein.");
+      setError("{UI.timeline.titleLabel} darf nicht leer sein.");
       return;
     }
     setError(null);
@@ -404,7 +405,7 @@ export function TimelineControls() {
       const result = TimelineSchema.safeParse(parsed);
 
       if (!result.success) {
-        setError("Import JSON is invalid.");
+        setError("{UI.json.importButton} is invalid.");
         return;
       }
 
@@ -425,7 +426,7 @@ export function TimelineControls() {
       setEditYearById({});
       setEditDescriptionById({});
     } catch {
-      setError("Import JSON is not valid JSON.");
+      setError("{UI.json.importButton} is not valid JSON.");
     }
   }
 
@@ -439,7 +440,7 @@ export function TimelineControls() {
     <div className="mb-4 rounded-md border bg-white p-3 text-gray-900">
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="tl-select">Active timeline</label>
+          <label className="text-xs text-gray-600" htmlFor="tl-select">{UI.timeline.activeLabel}</label>
           <select
             id="tl-select"
             className="w-80 rounded-md border bg-white px-2 py-2 text-sm text-gray-900"
@@ -476,7 +477,7 @@ export function TimelineControls() {
             setEditDescriptionById({});
           }}
         >
-          Duplicate
+          {UI.timeline.duplicate}
         </button>
 
         <button
@@ -494,13 +495,13 @@ export function TimelineControls() {
             setEditDescriptionById({});
           }}
         >
-          Delete timeline
+          {UI.timeline.delete}
         </button>
       </div>
 
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="tl-title">Timeline title</label>
+          <label className="text-xs text-gray-600" htmlFor="tl-title">{UI.timeline.titleLabel}</label>
           <input
             id="tl-title"
             className="w-80 rounded-md border px-2 py-1 text-sm"
@@ -517,7 +518,7 @@ export function TimelineControls() {
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={onSaveTimelineTitle}
         >
-          Save title
+          {UI.timeline.saveTitle}
         </button>
 
         <button
@@ -525,11 +526,11 @@ export function TimelineControls() {
           className="cursor-pointer rounded-md border px-3 py-2 text-sm"
           onClick={onResetTimeline}
         >
-          Reset timeline
+          {UI.timeline.reset}
         </button>
 
         <span className="text-sm text-gray-600">
-          Reset restores defaults and rewrites LocalStorage.
+          {UI.timeline.resetHint}
         </span>
 
         {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
@@ -680,15 +681,15 @@ export function TimelineControls() {
         </div>
       </div>
       <details className="mt-4 rounded-md border p-2">
-        <summary className="cursor-pointer text-sm font-medium">JSON export and import</summary>
+        <summary className="cursor-pointer text-sm font-medium">{UI.json.title}</summary>
 
         <div className="mt-2 grid gap-2">
-          <div className="text-xs text-gray-600">Export (active timeline)</div>
+          <div className="text-xs text-gray-600">{UI.json.exportTitle}</div>
           <pre className="max-h-64 overflow-auto rounded-md bg-gray-50 p-2 text-xs">
             {JSON.stringify(timeline, null, 2)}
           </pre>
 
-          <div className="text-xs text-gray-600">Import (replaces active timeline)</div>
+          <div className="text-xs text-gray-600">{UI.json.importTitle}</div>
           <textarea
             className="h-40 w-full rounded-md border px-2 py-1 font-mono text-xs"
             value={importJson}
@@ -702,7 +703,7 @@ export function TimelineControls() {
             disabled={!importJson.trim()}
             aria-disabled={!importJson.trim()}
           >
-            Import JSON
+            {UI.json.importButton}
           </button>
 
           {notice ? <div className="text-sm text-green-700">{notice}</div> : null}
