@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 4 (Epochen und Kategorien) abgeschlossen
+**Aktuelle Phase**: Milestone 5 (Lokale Speicherung) abgeschlossen
 
 ---
 
@@ -29,6 +29,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Timeline Engine (M2) | **Abgeschlossen** |
 | Ereignis-Verwaltung (M3) | **Abgeschlossen** |
 | Epochen & Kategorien (M4) | **Abgeschlossen** |
+| Lokale Speicherung (M5) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -76,16 +77,18 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (50% abgeschlossen)
+### Quellcode (60% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
 - [x] Timeline-Komponenten implementieren (Timeline, TimelineScale, TimelineEpochs, TimelineEvents)
 - [x] Custom Hooks implementieren (useTimeline)
 - [x] State Management implementieren (TimelineContext + useReducer)
-- [ ] Persistence Layer (LocalStorage/IndexedDB)
-- [ ] Export-Funktionen (PNG, SVG, PDF, JSON)
-- [ ] Import-Funktionen (JSON, CSV)
+- [x] Persistence Layer (LocalStorage mit Auto-Save)
+- [x] Export-Funktionen (JSON)
+- [x] Import-Funktionen (JSON)
+- [ ] Export-Funktionen erweitert (PNG, SVG, PDF)
+- [ ] Import-Funktionen erweitert (CSV)
 
 ### Tests (0% abgeschlossen)
 
@@ -218,24 +221,27 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 5: Lokale Speicherung
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 2-3 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| LocalStorage API implementieren | [ ] |
-| Auto-Save Funktion | [ ] |
-| Zeitstrahl-Liste (Dashboard) | [ ] |
-| Zeitstrahl laden | [ ] |
-| Zeitstrahl loeschen | [ ] |
-| Zuletzt geoeffnet Liste | [ ] |
+| LocalStorage API implementieren | [x] |
+| Auto-Save Funktion | [x] |
+| Zeitstrahl-Liste (Dashboard) | [x] |
+| Zeitstrahl laden | [x] |
+| Zeitstrahl loeschen | [x] |
+| Zuletzt geoeffnet Liste | [x] |
+| JSON Export/Import | [x] |
 | IndexedDB fuer grosse Daten (optional) | [ ] |
 
 **Abnahmekriterien**:
-- Zeitstrahlen werden automatisch gespeichert
-- Dashboard zeigt alle gespeicherten Zeitstrahlen
-- Zeitstrahlen koennen geladen und geloescht werden
-- Daten bleiben nach Browser-Neustart erhalten
+- ✅ Zeitstrahlen werden automatisch gespeichert (2s Debounce)
+- ✅ Dashboard zeigt alle gespeicherten Zeitstrahlen
+- ✅ Zeitstrahlen koennen geladen und geloescht werden
+- ✅ Daten bleiben nach Browser-Neustart erhalten
+- ✅ Zuletzt geoeffnet Liste funktioniert
+- ✅ JSON Export/Import funktioniert
 
 ---
 
@@ -420,14 +426,14 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 2. Timeline Engine | 8 | ✅ Abgeschlossen |
 | 3. Ereignis-Verwaltung | 9 | ✅ Abgeschlossen |
 | 4. Epochen und Kategorien | 7 | ✅ Abgeschlossen |
-| 5. Lokale Speicherung | 7 | ⏳ Nächster Schritt |
-| 6. Export-Funktionen | 7 | Ausstehend |
+| 5. Lokale Speicherung | 8 | ✅ Abgeschlossen |
+| 6. Export-Funktionen | 7 | ⏳ Nächster Schritt |
 | 7. Import-Funktionen | 5 | Ausstehend |
 | 8. Vorlagen-System | 6 | Ausstehend |
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **88** | **~44% abgeschlossen** |
+| **Gesamt** | **89** | **~52% abgeschlossen** |
 
 ---
 

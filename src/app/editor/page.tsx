@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   TimelineProvider,
   Timeline,
@@ -15,15 +16,22 @@ import {
 } from '@/components/zeitstrahl';
 import { Button } from '@/components/ui/Button';
 import { erstelleBeispielZeitstrahl } from '@/lib/zeitstrahl';
+import {
+  ladeZeitstrahl,
+  exportiereZeitstrahl,
+} from '@/lib/storage/timelineStorage';
 import type { Ereignis, Epoche } from '@/types';
 
 /**
  * Editor Page Content (needs to be inside TimelineProvider)
  */
 function EditorContent() {
+  const searchParams = useSearchParams();
+  const timelineId = searchParams.get('id');
+
   const {
     zeitstrahl,
-    ladeZeitstrahl,
+    ladeZeitstrahl: ladeZeitstrahlInContext,
     ereignisse,
     epochen,
     ausgewaehltesEreignis,
@@ -38,6 +46,9 @@ function EditorContent() {
     redo,
     aktivesWerkzeug,
     setWerkzeug,
+    manuellesSpeichern,
+    autoSaveEnabled,
+    lastSaved,
   } = useTimeline();
 
   const [isEventEditorOpen, setIsEventEditorOpen] = useState(false);
@@ -46,14 +57,28 @@ function EditorContent() {
   const [editingEpoch, setEditingEpoch] = useState<Epoche | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [detailsType, setDetailsType] = useState<'event' | 'epoch'>('event');
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Load sample timeline on mount
+  // Load timeline on mount
   useEffect(() => {
     if (!zeitstrahl) {
-      const beispiel = erstelleBeispielZeitstrahl();
-      ladeZeitstrahl(beispiel);
+      if (timelineId) {
+        // Load from storage
+        const geladen = ladeZeitstrahl(timelineId);
+        if (geladen) {
+          ladeZeitstrahlInContext(geladen);
+        } else {
+          // Timeline not found, load example
+          const beispiel = erstelleBeispielZeitstrahl();
+          ladeZeitstrahlInContext(beispiel);
+        }
+      } else {
+        // No ID provided, load example
+        const beispiel = erstelleBeispielZeitstrahl();
+        ladeZeitstrahlInContext(beispiel);
+      }
     }
-  }, [zeitstrahl, ladeZeitstrahl]);
+  }, [zeitstrahl, timelineId, ladeZeitstrahlInContext]);
 
   // Show details panel when event or epoch is selected
   useEffect(() => {
@@ -102,6 +127,54 @@ function EditorContent() {
     }
   }, [ausgewaehlteEpoche, epochen]);
 
+  // Manual save handler
+  const handleManualSave = useCallback(async () => {
+    if (!zeitstrahl) return;
+
+    setIsSaving(true);
+    try {
+      manuellesSpeichern();
+      // Show success feedback briefly
+      setTimeout(() => setIsSaving(false), 1000);
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      alert('Fehler beim Speichern des Zeitstrahls');
+      setIsSaving(false);
+    }
+  }, [zeitstrahl, manuellesSpeichern]);
+
+  // Export handler
+  const handleExport = useCallback(() => {
+    if (!zeitstrahl) return;
+
+    try {
+      exportiereZeitstrahl(zeitstrahl);
+    } catch (error) {
+      console.error('Fehler beim Exportieren:', error);
+      alert('Fehler beim Exportieren des Zeitstrahls');
+    }
+  }, [zeitstrahl]);
+
+  // Format last saved time
+  const formatLastSaved = useCallback(() => {
+    if (!lastSaved) return '';
+
+    const date = new Date(lastSaved);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 1) return 'gerade eben';
+    if (diffMins === 1) return 'vor 1 Minute';
+    if (diffMins < 60) return `vor ${diffMins} Minuten`;
+
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours === 1) return 'vor 1 Stunde';
+    if (diffHours < 24) return `vor ${diffHours} Stunden`;
+
+    return date.toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+  }, [lastSaved]);
+
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -109,6 +182,12 @@ function EditorContent() {
       if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
         e.preventDefault();
         handleNewEvent();
+      }
+
+      // Ctrl/Cmd + S - Save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleManualSave();
       }
 
       // Delete - Delete selected event or epoch
@@ -154,6 +233,7 @@ function EditorContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     handleNewEvent,
+    handleManualSave,
     ausgewaehltesEreignis,
     ausgewaehlteEpoche,
     ereignisLoeschen,
@@ -171,7 +251,7 @@ function EditorContent() {
       {/* Editor Header */}
       <header className="flex h-14 items-center justify-between border-b bg-background px-4">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+          <Link href="/dashboard" className="flex items-center gap-2 text-lg font-semibold">
             <svg
               className="h-6 w-6 text-primary"
               fill="none"
@@ -192,6 +272,15 @@ function EditorContent() {
           <span className="text-sm text-muted-foreground">
             {zeitstrahl?.titel ?? 'Neuer Zeitstrahl'}
           </span>
+          {/* Auto-save status */}
+          {autoSaveEnabled && lastSaved && (
+            <>
+              <span className="text-muted-foreground">|</span>
+              <span className="text-xs text-muted-foreground">
+                Gespeichert {formatLastSaved()}
+              </span>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -233,10 +322,29 @@ function EditorContent() {
 
           <div className="mx-2 h-6 w-px bg-border" />
 
-          <Button variant="outline" size="sm">
-            Speichern
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleManualSave}
+            disabled={isSaving}
+            title="Speichern (Ctrl+S)"
+          >
+            {isSaving ? (
+              <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+            )}
+            {isSaving ? 'Speichert...' : 'Speichern'}
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport}>
+            <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
             Exportieren
           </Button>
         </div>
@@ -369,6 +477,10 @@ function EditorContent() {
                   <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono">Ctrl+N</kbd>
                 </div>
                 <div className="flex items-center justify-between">
+                  <span>Speichern</span>
+                  <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono">Ctrl+S</kbd>
+                </div>
+                <div className="flex items-center justify-between">
                   <span>Löschen</span>
                   <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono">Del</kbd>
                 </div>
@@ -433,7 +545,13 @@ function EditorContent() {
 export default function EditorPage() {
   return (
     <TimelineProvider>
-      <EditorContent />
+      <Suspense fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <p className="text-muted-foreground">Lädt...</p>
+        </div>
+      }>
+        <EditorContent />
+      </Suspense>
     </TimelineProvider>
   );
 }
