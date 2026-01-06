@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/Button';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { ImportModal, TemplateSelectionModal } from '@/components/zeitstrahl';
 import {
   ladeZeitstrahlListe,
@@ -16,12 +17,14 @@ import {
   type RecentTimeline,
 } from '@/lib/storage/timelineStorage';
 import type { Zeitstrahl } from '@/types';
+import { useI18n } from '@/lib/i18n/I18nProvider';
 
 /**
  * Dashboard Page - Timeline Management
  */
 export default function DashboardPage() {
   const router = useRouter();
+  const { t } = useI18n();
 
   const [timelines, setTimelines] = useState<TimelineMetaInfo[]>([]);
   const [recentTimelines, setRecentTimelines] = useState<RecentTimeline[]>([]);
@@ -126,7 +129,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-background">
+      <header id="main-navigation" className="border-b bg-background" role="banner" aria-label="Main navigation">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -144,9 +147,10 @@ export default function DashboardPage() {
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h1 className="text-3xl font-bold">Zeitstrahl</h1>
+              <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
             </div>
             <div className="flex gap-2">
+              <LanguageSwitcher />
               <Button variant="outline" onClick={handleImportClick}>
                 <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -156,7 +160,7 @@ export default function DashboardPage() {
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   />
                 </svg>
-                Importieren
+                {t('dashboard.import')}
               </Button>
               <Button onClick={handleNewTimeline}>
                 <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +171,7 @@ export default function DashboardPage() {
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-                Neuer Zeitstrahl
+                {t('dashboard.newTimeline')}
               </Button>
             </div>
           </div>

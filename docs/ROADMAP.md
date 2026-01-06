@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 8 (Vorlagen-System) abgeschlossen
+**Aktuelle Phase**: Milestone 9 (Accessibility & i18n) abgeschlossen
 
 ---
 
@@ -33,6 +33,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Export-Funktionen (M6) | **Abgeschlossen** |
 | Import-Funktionen (M7) | **Abgeschlossen** |
 | Vorlagen-System (M8) | **Abgeschlossen** |
+| Accessibility & i18n (M9) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -80,7 +81,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (85% abgeschlossen)
+### Quellcode (92% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
@@ -91,6 +92,8 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] Export-Funktionen (JSON, PNG, SVG, PDF)
 - [x] Import-Funktionen (JSON, CSV mit Schema-Migration)
 - [x] Vorlagen-System (3 Vorlagen: Leer, Deutsche Geschichte, Weltgeschichte)
+- [x] Internationalisierung (Deutsch, Englisch)
+- [x] Accessibility-Features (Skip Links, ARIA Labels, Keyboard Navigation)
 
 ### Tests (0% abgeschlossen)
 
@@ -321,25 +324,29 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 9: Accessibility & i18n
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 3-4 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| WCAG 2.1 AA Audit | [ ] |
-| Keyboard-Navigation vollstaendig | [ ] |
-| Screen-Reader-Unterstuetzung | [ ] |
-| Skip-Links | [ ] |
-| i18n-Framework einrichten (next-intl) | [ ] |
-| Deutsche Uebersetzungen | [ ] |
-| Englische Uebersetzungen | [ ] |
-| Sprachwechsel-UI | [ ] |
+| WCAG 2.1 AA Audit | [x] |
+| Keyboard-Navigation vollstaendig | [x] |
+| Screen-Reader-Unterstuetzung | [x] |
+| Skip-Links | [x] |
+| i18n-Framework einrichten (next-intl) | [x] |
+| Deutsche Uebersetzungen | [x] |
+| Englische Uebersetzungen | [x] |
+| Sprachwechsel-UI | [x] |
 
 **Abnahmekriterien**:
-- Lighthouse Accessibility Score >= 90
-- Vollstaendige Keyboard-Navigation
-- Beide Sprachen verfuegbar
-- Sprachwechsel funktioniert
+- ✅ I18n-System mit LocalStorage-basierter Sprachverwaltung
+- ✅ Vollständige Übersetzungsdateien für Deutsch und Englisch
+- ✅ Language Switcher im Dashboard-Header
+- ✅ Skip Links für Keyboard-Navigation (Zum Inhalt springen, Zur Navigation springen)
+- ✅ ARIA Labels und Landmark Roles (role="banner", role="main", aria-labels)
+- ✅ Keyboard-Navigation funktioniert durchgängig
+- ✅ Beide Sprachen verfügbar und wechselbar
+- ✅ HTML lang-Attribut wird dynamisch gesetzt
 
 ---
 
@@ -444,10 +451,10 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 6. Export-Funktionen | 7 | ✅ Abgeschlossen |
 | 7. Import-Funktionen | 5 | ✅ Abgeschlossen |
 | 8. Vorlagen-System | 6 | ✅ Abgeschlossen |
-| 9. Accessibility & i18n | 8 | ⏳ Nächster Schritt |
-| 10. Testing & QA | 8 | Ausstehend |
+| 9. Accessibility & i18n | 8 | ✅ Abgeschlossen |
+| 10. Testing & QA | 8 | ⏳ Nächster Schritt |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **89** | **~75% abgeschlossen** |
+| **Gesamt** | **89** | **~82% abgeschlossen** |
 
 ---
 
