@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 2 (Timeline Engine) abgeschlossen
+**Aktuelle Phase**: Milestone 3 (Ereignis-Verwaltung) abgeschlossen
 
 ---
 
@@ -27,6 +27,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Infrastruktur (M0) | **Abgeschlossen** |
 | UI-Komponenten (M1) | **Abgeschlossen** |
 | Timeline Engine (M2) | **Abgeschlossen** |
+| Ereignis-Verwaltung (M3) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -170,26 +171,26 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 3: Ereignis-Verwaltung
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 5-7 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| ZeitstrahlContext implementieren | [ ] |
-| useZeitstrahl Hook | [ ] |
-| Ereignis-Komponente | [ ] |
-| Ereignis-Editor (Formular) | [ ] |
-| Ereignis hinzufuegen | [ ] |
-| Ereignis bearbeiten | [ ] |
-| Ereignis loeschen | [ ] |
-| Ereignis-Positionierung auf Timeline | [ ] |
+| ZeitstrahlContext implementieren | [x] |
+| useZeitstrahl Hook | [x] |
+| Ereignis-Komponente | [x] |
+| Ereignis-Editor (Formular) | [x] |
+| Ereignis hinzufuegen | [x] |
+| Ereignis bearbeiten | [x] |
+| Ereignis loeschen | [x] |
+| Ereignis-Positionierung auf Timeline | [x] |
 | Drag-and-Drop fuer Ereignisse | [ ] |
 
 **Abnahmekriterien**:
-- Ereignisse koennen erstellt werden
-- Ereignisse werden auf Timeline angezeigt
-- Ereignisse sind bearbeitbar und loeschbar
-- Undo/Redo funktioniert
+- ✅ Ereignisse koennen erstellt werden
+- ✅ Ereignisse werden auf Timeline angezeigt
+- ✅ Ereignisse sind bearbeitbar und loeschbar
+- ✅ Undo/Redo funktioniert
 
 ---
 
@@ -416,8 +417,8 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 0. Projektinitialisierung | 7 | ✅ Abgeschlossen |
 | 1. Core UI Components | 8 | ✅ Abgeschlossen |
 | 2. Timeline Engine | 8 | ✅ Abgeschlossen |
-| 3. Ereignis-Verwaltung | 9 | ⏳ Nächster Schritt |
-| 4. Epochen und Kategorien | 7 | Ausstehend |
+| 3. Ereignis-Verwaltung | 9 | ✅ Abgeschlossen |
+| 4. Epochen und Kategorien | 7 | ⏳ Nächster Schritt |
 | 5. Lokale Speicherung | 7 | Ausstehend |
 | 6. Export-Funktionen | 7 | Ausstehend |
 | 7. Import-Funktionen | 5 | Ausstehend |
@@ -425,7 +426,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **88** | **~26% abgeschlossen** |
+| **Gesamt** | **88** | **~36% abgeschlossen** |
 
 ---
 
