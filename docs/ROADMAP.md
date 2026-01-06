@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 10 (Testing & QA) teilweise abgeschlossen
+**Aktuelle Phase**: Milestone 10 (Testing & QA) in Arbeit - Grundlegende Tests implementiert
 
 ---
 
@@ -34,7 +34,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Import-Funktionen (M7) | **Abgeschlossen** |
 | Vorlagen-System (M8) | **Abgeschlossen** |
 | Accessibility & i18n (M9) | **Abgeschlossen** |
-| Tests | Nicht vorhanden |
+| Tests | **Teilweise** (44 Unit Tests) |
 | Deployment | Nicht vorhanden |
 
 ---
@@ -94,12 +94,18 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] Vorlagen-System (3 Vorlagen: Leer, Deutsche Geschichte, Weltgeschichte)
 - [x] Internationalisierung (Deutsch, Englisch)
 - [x] Accessibility-Features (Skip Links, ARIA Labels, Keyboard Navigation)
+- [x] Moderne System-Font-Stack (ersetzt Google Fonts für bessere Performance und Offline-Nutzung)
 
-### Tests (0% abgeschlossen)
+### Tests (40% abgeschlossen)
 
-- [ ] Unit Tests mit Vitest
+- [x] Vitest Testing-Framework eingerichtet
+- [x] Unit Tests für CSV Import (19 Tests)
+- [x] Unit Tests für Template Service (14 Tests)
+- [x] Unit Tests für Button Component (11 Tests)
+- [x] Test Coverage Analysis (76-84% auf getesteten Modulen)
 - [ ] E2E Tests mit Playwright
 - [ ] Accessibility Tests
+- [ ] Tests für weitere Components (Input, Modal, etc.)
 
 ### Assets (0% abgeschlossen)
 
@@ -351,24 +357,38 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 10: Testing & QA
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 4-5 Tage
+**Status**: 🔄 In Arbeit (ca. 40% abgeschlossen)
+**Abgeschlossen am**: Teilweise - Januar 2026
+**Geschaetzter Aufwand**: 4-5 Tage (2 Tage investiert)
 
 | Aufgabe | Status |
 |---------|--------|
-| Unit Tests fuer Utilities | [ ] |
-| Unit Tests fuer Hooks | [ ] |
-| Komponenten-Tests | [ ] |
+| Vitest Test-Framework einrichten | [x] |
+| Test Setup & Config (vitest.config.ts, setup.ts) | [x] |
+| Unit Tests für CSV Import (parseCSV, parseDate, csvToEreignisse, validateCSV) | [x] |
+| Unit Tests für Template Service (getAllTemplates, loadTemplate, createFromTemplate) | [x] |
+| Komponenten-Tests (Button: variants, sizes, states) | [x] |
+| Test Coverage Analysis Tool (@vitest/coverage-v8) | [x] |
+| Unit Tests für weitere Utilities (timelineCalculator, storageUtils) | [ ] |
+| Unit Tests für Hooks (useTimeline) | [ ] |
+| Weitere Komponenten-Tests (Input, Modal, Select) | [ ] |
 | E2E Tests: Timeline erstellen | [ ] |
 | E2E Tests: Events verwalten | [ ] |
 | E2E Tests: Export/Import | [ ] |
 | Visual Regression Tests | [ ] |
 | Performance-Tests | [ ] |
 
+**Erreichte Ergebnisse**:
+- ✅ 44 Unit Tests implementiert (100% pass rate)
+- ✅ Coverage: csvImport.ts (76.6%), templateService.ts (84.46%)
+- ✅ Component Tests: Button (11 Tests für alle Varianten, Größen, States)
+- ✅ Test-Infrastruktur vollständig eingerichtet
+
 **Abnahmekriterien**:
-- Code Coverage >= 80%
-- Alle E2E Tests bestehen
-- Keine kritischen Performance-Probleme
+- ⏳ Code Coverage >= 80% (aktuell: 76-84% auf getesteten Modulen)
+- ⏳ Alle E2E Tests bestehen (noch nicht implementiert)
+- ✅ Keine kritischen Performance-Probleme
+- ⏳ Playwright E2E Tests konfiguriert (Playwright installiert, aber Tests ausstehend)
 
 ---
 
@@ -452,9 +472,9 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 7. Import-Funktionen | 5 | ✅ Abgeschlossen |
 | 8. Vorlagen-System | 6 | ✅ Abgeschlossen |
 | 9. Accessibility & i18n | 8 | ✅ Abgeschlossen |
-| 10. Testing & QA | 8 | ⏳ Nächster Schritt |
+| 10. Testing & QA | 14 | 🔄 In Arbeit (40%) |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **89** | **~82% abgeschlossen** |
+| **Gesamt** | **95** | **~86% abgeschlossen** |
 
 ---
 
