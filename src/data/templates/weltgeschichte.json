@@ -1,0 +1,463 @@
+{
+  "titel": "Weltgeschichte",
+  "beschreibung": "Wichtige Ereignisse der Weltgeschichte von der Antike bis zur Gegenwart",
+  "ereignisse": [
+    {
+      "id": "753bc",
+      "titel": "Gründung Roms",
+      "datum": { "jahr": -753, "ungenau": true },
+      "beschreibung": "Der Legende nach gründen Romulus und Remus die Stadt Rom. Beginn der römischen Zivilisation.",
+      "kategorie": "kultur",
+      "wichtigkeit": 3,
+      "tags": ["Antike", "Rom", "Gründung"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "500bc",
+      "titel": "Blütezeit des antiken Griechenlands",
+      "datum": { "jahr": -500, "ungenau": true },
+      "endDatum": { "jahr": -300 },
+      "beschreibung": "Klassische Periode mit Philosophie, Demokratie, Kunst und Wissenschaft. Sokrates, Platon, Aristoteles prägen das Denken.",
+      "kategorie": "kultur",
+      "wichtigkeit": 3,
+      "tags": ["Antike", "Griechenland", "Philosophie"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "44bc",
+      "titel": "Ermordung Julius Caesars",
+      "datum": { "jahr": -44, "monat": 3, "tag": 15 },
+      "beschreibung": "Julius Caesar wird von römischen Senatoren ermordet. Ende der römischen Republik und Aufstieg des Kaisertums.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Rom", "Caesar", "Antike"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "0",
+      "titel": "Beginn der christlichen Zeitrechnung",
+      "datum": { "jahr": 1, "ungenau": true },
+      "beschreibung": "Geburt Jesu Christi nach traditioneller Berechnung. Beginn der christlichen Ära.",
+      "kategorie": "religion",
+      "wichtigkeit": 3,
+      "tags": ["Christentum", "Zeitenwende"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "476",
+      "titel": "Fall des Weströmischen Reiches",
+      "datum": { "jahr": 476 },
+      "beschreibung": "Der letzte weströmische Kaiser Romulus Augustus wird abgesetzt. Ende der Antike, Beginn des Mittelalters.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Rom", "Ende Antike", "Mittelalter"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "622",
+      "titel": "Hidschra - Beginn der islamischen Zeitrechnung",
+      "datum": { "jahr": 622 },
+      "beschreibung": "Mohammed wandert von Mekka nach Medina aus. Beginn der islamischen Zeitrechnung und Ausbreitung des Islam.",
+      "kategorie": "religion",
+      "wichtigkeit": 3,
+      "tags": ["Islam", "Mohammed", "Religion"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1066",
+      "titel": "Normannische Eroberung Englands",
+      "datum": { "jahr": 1066, "monat": 10, "tag": 14 },
+      "beschreibung": "Wilhelm der Eroberer besiegt König Harald II. in der Schlacht von Hastings und wird König von England.",
+      "kategorie": "militaer",
+      "wichtigkeit": 2,
+      "tags": ["England", "Eroberung", "Mittelalter"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1453",
+      "titel": "Fall Konstantinopels",
+      "datum": { "jahr": 1453, "monat": 5, "tag": 29 },
+      "beschreibung": "Die Osmanen erobern Konstantinopel. Ende des Byzantinischen Reiches und des Mittelalters.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Byzanz", "Osmanen", "Ende Mittelalter"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1492",
+      "titel": "Entdeckung Amerikas",
+      "datum": { "jahr": 1492, "monat": 10, "tag": 12 },
+      "beschreibung": "Christoph Kolumbus erreicht Amerika. Beginn der europäischen Kolonisierung der Neuen Welt.",
+      "kategorie": "entdeckung",
+      "wichtigkeit": 3,
+      "tags": ["Kolumbus", "Amerika", "Entdeckung"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1776",
+      "titel": "Amerikanische Unabhängigkeitserklärung",
+      "datum": { "jahr": 1776, "monat": 7, "tag": 4 },
+      "beschreibung": "Die 13 amerikanischen Kolonien erklären ihre Unabhängigkeit von Großbritannien. Geburt der Vereinigten Staaten.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["USA", "Unabhängigkeit", "Revolution"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1789",
+      "titel": "Französische Revolution",
+      "datum": { "jahr": 1789, "monat": 7, "tag": 14 },
+      "beschreibung": "Sturm auf die Bastille markiert den Beginn der Französischen Revolution. Ende des Absolutismus in Frankreich.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Frankreich", "Revolution", "Aufklärung"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1815",
+      "titel": "Schlacht bei Waterloo",
+      "datum": { "jahr": 1815, "monat": 6, "tag": 18 },
+      "beschreibung": "Napoleon Bonaparte wird endgültig besiegt. Ende der napoleonischen Ära, Wiener Kongress ordnet Europa neu.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Napoleon", "Waterloo", "Europa"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1865",
+      "titel": "Ende des Amerikanischen Bürgerkriegs",
+      "datum": { "jahr": 1865, "monat": 4, "tag": 9 },
+      "beschreibung": "Der Süden kapituliert. Abschaffung der Sklaverei in den USA durch den 13. Verfassungszusatz.",
+      "kategorie": "politik",
+      "wichtigkeit": 2,
+      "tags": ["USA", "Bürgerkrieg", "Sklaverei"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1914",
+      "titel": "Erster Weltkrieg",
+      "datum": { "jahr": 1914, "monat": 7, "tag": 28 },
+      "endDatum": { "jahr": 1918, "monat": 11, "tag": 11 },
+      "beschreibung": "Attentat von Sarajevo löst den Ersten Weltkrieg aus. Millionen Tote, Ende der europäischen Monarchien.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Weltkrieg", "20. Jahrhundert"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1917",
+      "titel": "Oktoberrevolution in Russland",
+      "datum": { "jahr": 1917, "monat": 11, "tag": 7 },
+      "beschreibung": "Bolschewiki stürzen die Provisorische Regierung. Gründung der Sowjetunion und Beginn des Kommunismus.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Russland", "Revolution", "Kommunismus"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1929",
+      "titel": "Weltwirtschaftskrise beginnt",
+      "datum": { "jahr": 1929, "monat": 10, "tag": 24 },
+      "beschreibung": "Schwarzer Donnerstag an der New Yorker Börse. Beginn der Großen Depression mit weltweiten Folgen.",
+      "kategorie": "wirtschaft",
+      "wichtigkeit": 3,
+      "tags": ["Wirtschaft", "Depression", "USA"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1939",
+      "titel": "Zweiter Weltkrieg",
+      "datum": { "jahr": 1939, "monat": 9, "tag": 1 },
+      "endDatum": { "jahr": 1945, "monat": 9, "tag": 2 },
+      "beschreibung": "Angriff auf Polen löst den Zweiten Weltkrieg aus. Über 60 Millionen Tote, Holocaust, Atombomben auf Japan.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Weltkrieg", "Holocaust", "Atombombe"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1945",
+      "titel": "Gründung der Vereinten Nationen",
+      "datum": { "jahr": 1945, "monat": 10, "tag": 24 },
+      "beschreibung": "Die UN-Charta tritt in Kraft. Internationale Organisation zur Friedenssicherung wird gegründet.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["UN", "Frieden", "International"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1949",
+      "titel": "Gründung der Volksrepublik China",
+      "datum": { "jahr": 1949, "monat": 10, "tag": 1 },
+      "beschreibung": "Mao Zedong proklamiert die Volksrepublik China nach dem Sieg der Kommunisten im Bürgerkrieg.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["China", "Kommunismus", "Mao"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1969",
+      "titel": "Erste Mondlandung",
+      "datum": { "jahr": 1969, "monat": 7, "tag": 20 },
+      "beschreibung": "Neil Armstrong betritt als erster Mensch den Mond. Höhepunkt des Wettlaufs ins All zwischen USA und UdSSR.",
+      "kategorie": "wissenschaft",
+      "wichtigkeit": 3,
+      "tags": ["Raumfahrt", "Mond", "NASA"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1989",
+      "titel": "Fall der Berliner Mauer",
+      "datum": { "jahr": 1989, "monat": 11, "tag": 9 },
+      "beschreibung": "Die Berliner Mauer fällt. Symbol für das Ende des Kalten Krieges und die Teilung Europas.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Kalter Krieg", "Mauerfall", "Europa"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1991",
+      "titel": "Auflösung der Sowjetunion",
+      "datum": { "jahr": 1991, "monat": 12, "tag": 26 },
+      "beschreibung": "Die UdSSR wird offiziell aufgelöst. Ende des Kalten Krieges, 15 neue unabhängige Staaten entstehen.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Sowjetunion", "Kalter Krieg", "Ende"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "2001",
+      "titel": "Terroranschläge vom 11. September",
+      "datum": { "jahr": 2001, "monat": 9, "tag": 11 },
+      "beschreibung": "Terroristische Anschläge auf das World Trade Center und das Pentagon. Beginn des 'Kriegs gegen den Terror'.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Terror", "USA", "21. Jahrhundert"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "2020",
+      "titel": "COVID-19 Pandemie",
+      "datum": { "jahr": 2020, "monat": 3 },
+      "endDatum": { "jahr": 2023 },
+      "beschreibung": "Weltweite Pandemie durch das Coronavirus SARS-CoV-2. Lockdowns, Millionen Tote, globale wirtschaftliche Auswirkungen.",
+      "kategorie": "wissenschaft",
+      "wichtigkeit": 3,
+      "tags": ["Pandemie", "COVID-19", "Gesundheit"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    }
+  ],
+  "epochen": [
+    {
+      "id": "antike",
+      "name": "Antike",
+      "start": { "jahr": -800 },
+      "ende": { "jahr": 500 },
+      "farbe": "#8B4513",
+      "ebene": 0,
+      "beschreibung": "Griechische und römische Zivilisation"
+    },
+    {
+      "id": "mittelalter",
+      "name": "Mittelalter",
+      "start": { "jahr": 500 },
+      "ende": { "jahr": 1500 },
+      "farbe": "#4682B4",
+      "ebene": 0,
+      "beschreibung": "Feudalismus, Kreuzzüge, Byzantinisches Reich"
+    },
+    {
+      "id": "frueheneuzeit",
+      "name": "Frühe Neuzeit",
+      "start": { "jahr": 1500 },
+      "ende": { "jahr": 1800 },
+      "farbe": "#9370DB",
+      "ebene": 0,
+      "beschreibung": "Renaissance, Reformation, Entdeckungsreisen, Aufklärung"
+    },
+    {
+      "id": "19jhd",
+      "name": "Langes 19. Jahrhundert",
+      "start": { "jahr": 1789 },
+      "ende": { "jahr": 1914 },
+      "farbe": "#20B2AA",
+      "ebene": 1,
+      "beschreibung": "Revolutionen, Nationalstaaten, Industrialisierung, Kolonialismus"
+    },
+    {
+      "id": "20jhd",
+      "name": "20. Jahrhundert - Weltkriege",
+      "start": { "jahr": 1914 },
+      "ende": { "jahr": 1945 },
+      "farbe": "#DC143C",
+      "ebene": 0,
+      "beschreibung": "Zwei Weltkriege, Totalitarismus, Holocaust"
+    },
+    {
+      "id": "kalterkrieg",
+      "name": "Kalter Krieg",
+      "start": { "jahr": 1945 },
+      "ende": { "jahr": 1991 },
+      "farbe": "#FF8C00",
+      "ebene": 1,
+      "beschreibung": "Ost-West-Konflikt, Wettrüsten, Raumfahrt"
+    },
+    {
+      "id": "moderne",
+      "name": "Moderne Welt",
+      "start": { "jahr": 1991 },
+      "ende": { "jahr": 2025 },
+      "farbe": "#32CD32",
+      "ebene": 0,
+      "beschreibung": "Globalisierung, Digitalisierung, Terrorismus, Klimawandel"
+    }
+  ],
+  "kategorien": [
+    {
+      "id": "politik",
+      "name": "Politik & Diplomatie",
+      "farbe": "#4A90E2",
+      "icon": "⚖️",
+      "beschreibung": "Politische Ereignisse, Revolutionen, Staatsformen"
+    },
+    {
+      "id": "militaer",
+      "name": "Kriege & Konflikte",
+      "farbe": "#E74C3C",
+      "icon": "⚔️",
+      "beschreibung": "Kriege, Schlachten, militärische Konflikte"
+    },
+    {
+      "id": "kultur",
+      "name": "Kultur & Zivilisation",
+      "farbe": "#F39C12",
+      "icon": "🎭",
+      "beschreibung": "Kulturelle Entwicklungen, Kunst, Literatur"
+    },
+    {
+      "id": "religion",
+      "name": "Religion",
+      "farbe": "#9B59B6",
+      "icon": "✝️",
+      "beschreibung": "Religiöse Entwicklungen und Bewegungen"
+    },
+    {
+      "id": "wissenschaft",
+      "name": "Wissenschaft & Technik",
+      "farbe": "#1ABC9C",
+      "icon": "🔬",
+      "beschreibung": "Wissenschaftliche Entdeckungen und technische Innovationen"
+    },
+    {
+      "id": "wirtschaft",
+      "name": "Wirtschaft",
+      "farbe": "#E67E22",
+      "icon": "💰",
+      "beschreibung": "Wirtschaftliche Ereignisse und Entwicklungen"
+    },
+    {
+      "id": "entdeckung",
+      "name": "Entdeckungen",
+      "farbe": "#3498DB",
+      "icon": "🌍",
+      "beschreibung": "Geografische Entdeckungen und Erkundungen"
+    }
+  ],
+  "einstellungen": {
+    "zeitraum": {
+      "start": { "jahr": -800 },
+      "ende": { "jahr": 2025 },
+      "automatisch": false
+    },
+    "skalierung": "adaptiv",
+    "ansicht": "horizontal",
+    "sprache": "de",
+    "theme": "system",
+    "export": {
+      "breite": 1920,
+      "hoehe": 1080,
+      "hintergrund": "#ffffff",
+      "qualitaet": 0.95
+    }
+  },
+  "metadaten": {
+    "version": "1.0",
+    "erstelltAm": "2026-01-06T00:00:00.000Z",
+    "geaendertAm": "2026-01-06T00:00:00.000Z",
+    "autor": "Zeitstrahl Template System",
+    "quelle": "Allgemeinwissen Weltgeschichte",
+    "lizenz": "CC0-1.0"
+  }
+}

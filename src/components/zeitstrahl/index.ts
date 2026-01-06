@@ -13,3 +13,4 @@ export { CategoryManager } from './CategoryManager';
 export { TimelineLegend } from './TimelineLegend';
 export { ExportModal } from './ExportModal';
 export { ImportModal } from './ImportModal';
+export { TemplateSelectionModal } from './TemplateSelectionModal';

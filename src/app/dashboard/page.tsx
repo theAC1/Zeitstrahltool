@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/Button';
-import { ImportModal } from '@/components/zeitstrahl';
+import { ImportModal, TemplateSelectionModal } from '@/components/zeitstrahl';
 import {
   ladeZeitstrahlListe,
   ladeRecentListe,
@@ -15,7 +15,6 @@ import {
   type TimelineMetaInfo,
   type RecentTimeline,
 } from '@/lib/storage/timelineStorage';
-import { erstelleBeispielZeitstrahl } from '@/lib/zeitstrahl';
 import type { Zeitstrahl } from '@/types';
 
 /**
@@ -28,6 +27,7 @@ export default function DashboardPage() {
   const [recentTimelines, setRecentTimelines] = useState<RecentTimeline[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
   // Load timelines on mount
   useEffect(() => {
@@ -40,55 +40,22 @@ export default function DashboardPage() {
     setIsLoading(false);
   };
 
-  const handleCreateNew = () => {
-    const neuerZeitstrahl: Zeitstrahl = {
-      id: uuidv4(),
-      titel: 'Neuer Zeitstrahl',
-      ereignisse: [],
-      epochen: [],
-      kategorien: [],
-      einstellungen: {
-        zeitraum: {
-          start: { jahr: 1900 },
-          ende: { jahr: 2000 },
-          automatisch: true,
-        },
-        skalierung: 'linear',
-        ansicht: 'horizontal',
-        sprache: 'de',
-        theme: 'system',
-        export: {
-          breite: 1920,
-          hoehe: 1080,
-          hintergrund: '#ffffff',
-          qualitaet: 0.9,
-        },
-      },
-      metadaten: {
-        version: '1.0',
-        erstelltAm: new Date().toISOString(),
-        geaendertAm: new Date().toISOString(),
-      },
-    };
-
-    // Save to storage
-    try {
-      speichereZeitstrahl(neuerZeitstrahl);
-      router.push(`/editor?id=${neuerZeitstrahl.id}`);
-    } catch (error) {
-      console.error('Fehler beim Erstellen:', error);
-      alert('Fehler beim Erstellen des Zeitstrahls');
-    }
+  const handleNewTimeline = () => {
+    setIsTemplateModalOpen(true);
   };
 
-  const handleCreateExample = () => {
-    const beispiel = erstelleBeispielZeitstrahl();
+  const handleSelectTemplate = (zeitstrahl: Zeitstrahl) => {
     try {
-      speichereZeitstrahl(beispiel);
-      router.push(`/editor?id=${beispiel.id}`);
+      // Generate new ID if not already set
+      if (!zeitstrahl.id) {
+        zeitstrahl.id = uuidv4();
+      }
+
+      speichereZeitstrahl(zeitstrahl);
+      router.push(`/editor?id=${zeitstrahl.id}`);
     } catch (error) {
       console.error('Fehler beim Erstellen:', error);
-      alert('Fehler beim Erstellen des Beispiel-Zeitstrahls');
+      alert('Fehler beim Erstellen des Zeitstrahls aus Vorlage');
     }
   };
 
@@ -191,18 +158,7 @@ export default function DashboardPage() {
                 </svg>
                 Importieren
               </Button>
-              <Button variant="outline" onClick={handleCreateExample}>
-                <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                  />
-                </svg>
-                Beispiel erstellen
-              </Button>
-              <Button onClick={handleCreateNew}>
+              <Button onClick={handleNewTimeline}>
                 <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -275,12 +231,12 @@ export default function DashboardPage() {
               </svg>
               <h3 className="mt-4 text-lg font-semibold">Keine Zeitstrahlen vorhanden</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Erstellen Sie Ihren ersten Zeitstrahl oder importieren Sie eine vorhandene Datei.
+                Erstellen Sie Ihren ersten Zeitstrahl aus einer Vorlage oder importieren Sie eine vorhandene Datei.
               </p>
               <div className="mt-6 flex justify-center gap-3">
-                <Button onClick={handleCreateNew}>Neuer Zeitstrahl</Button>
-                <Button variant="outline" onClick={handleCreateExample}>
-                  Beispiel erstellen
+                <Button onClick={handleNewTimeline}>Neuer Zeitstrahl</Button>
+                <Button variant="outline" onClick={handleImportClick}>
+                  Importieren
                 </Button>
               </div>
             </div>
@@ -368,6 +324,13 @@ export default function DashboardPage() {
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         onImport={handleImport}
+      />
+
+      {/* Template Selection Modal */}
+      <TemplateSelectionModal
+        isOpen={isTemplateModalOpen}
+        onClose={() => setIsTemplateModalOpen(false)}
+        onSelectTemplate={handleSelectTemplate}
       />
     </div>
   );

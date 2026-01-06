@@ -1,0 +1,357 @@
+{
+  "titel": "Deutsche Geschichte",
+  "beschreibung": "Wichtige Ereignisse der deutschen Geschichte von der Antike bis heute",
+  "ereignisse": [
+    {
+      "id": "9",
+      "titel": "Schlacht im Teutoburger Wald",
+      "datum": { "jahr": 9 },
+      "beschreibung": "Sieg germanischer Stämme unter Arminius über drei römische Legionen unter Varus. Markiert das Ende der römischen Expansionsbestrebungen östlich des Rheins.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Antike", "Rom", "Germanen"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "800",
+      "titel": "Krönung Karls des Großen",
+      "datum": { "jahr": 800, "monat": 12, "tag": 25 },
+      "beschreibung": "Papst Leo III. krönt Karl den Großen zum Kaiser. Begründung des karolingischen Kaisertums und Grundlage für das spätere Heilige Römische Reich.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Mittelalter", "Karolinger", "Reich"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1517",
+      "titel": "Reformation beginnt",
+      "datum": { "jahr": 1517, "monat": 10, "tag": 31 },
+      "beschreibung": "Martin Luther veröffentlicht seine 95 Thesen in Wittenberg. Beginn der Reformation, die Europa religiös und politisch spalten wird.",
+      "kategorie": "religion",
+      "wichtigkeit": 3,
+      "tags": ["Reformation", "Luther", "Kirche"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1618",
+      "titel": "Dreißigjähriger Krieg beginnt",
+      "datum": { "jahr": 1618 },
+      "endDatum": { "jahr": 1648 },
+      "beschreibung": "Prager Fenstersturz löst einen verheerenden Religionskrieg aus, der große Teile Mitteleuropas verwüstet und Millionen Todesopfer fordert.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Krieg", "Religion", "Frühe Neuzeit"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1648",
+      "titel": "Westfälischer Frieden",
+      "datum": { "jahr": 1648, "monat": 10, "tag": 24 },
+      "beschreibung": "Beendigung des Dreißigjährigen Krieges. Grundlage des europäischen Staatensystems und Anerkennung der Souveränität der deutschen Territorialstaaten.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Frieden", "Diplomatie"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1806",
+      "titel": "Ende des Heiligen Römischen Reiches",
+      "datum": { "jahr": 1806, "monat": 8, "tag": 6 },
+      "beschreibung": "Kaiser Franz II. legt die Reichskrone nieder. Das Heilige Römische Reich Deutscher Nation endet nach über 800 Jahren.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Reich", "Napoleon", "Ende"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1848",
+      "titel": "Revolution in Deutschland",
+      "datum": { "jahr": 1848, "monat": 3 },
+      "endDatum": { "jahr": 1849 },
+      "beschreibung": "Revolutionäre Bewegung für nationale Einheit und demokratische Verfassung. Paulskirchenverfassung wird ausgearbeitet, Revolution scheitert jedoch.",
+      "kategorie": "politik",
+      "wichtigkeit": 2,
+      "tags": ["Revolution", "Demokratie", "Paulskirche"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1871",
+      "titel": "Gründung des Deutschen Kaiserreichs",
+      "datum": { "jahr": 1871, "monat": 1, "tag": 18 },
+      "beschreibung": "Wilhelm I. wird im Spiegelsaal von Versailles zum Deutschen Kaiser proklamiert. Vereinigung der deutschen Staaten unter preußischer Führung.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Kaiserreich", "Einigung", "Bismarck"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1914",
+      "titel": "Erster Weltkrieg beginnt",
+      "datum": { "jahr": 1914, "monat": 7, "tag": 28 },
+      "endDatum": { "jahr": 1918, "monat": 11, "tag": 11 },
+      "beschreibung": "Deutschland tritt in den Ersten Weltkrieg ein. Der Krieg endet mit einer Niederlage und dem Zusammenbruch der Monarchie.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Weltkrieg", "Krieg", "20. Jahrhundert"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1919",
+      "titel": "Weimarer Republik gegründet",
+      "datum": { "jahr": 1919, "monat": 8, "tag": 11 },
+      "beschreibung": "Inkrafttreten der Weimarer Verfassung. Erste deutsche Demokratie mit parlamentarischem System.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Weimar", "Demokratie", "Republik"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1933",
+      "titel": "Machtergreifung der Nationalsozialisten",
+      "datum": { "jahr": 1933, "monat": 1, "tag": 30 },
+      "beschreibung": "Adolf Hitler wird zum Reichskanzler ernannt. Beginn der nationalsozialistischen Diktatur und systematischen Verfolgung von Minderheiten.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["NS-Zeit", "Diktatur", "Hitler"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1939",
+      "titel": "Zweiter Weltkrieg beginnt",
+      "datum": { "jahr": 1939, "monat": 9, "tag": 1 },
+      "endDatum": { "jahr": 1945, "monat": 5, "tag": 8 },
+      "beschreibung": "Deutschland überfällt Polen und löst damit den Zweiten Weltkrieg aus. Der Krieg endet mit der bedingungslosen Kapitulation Deutschlands.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Weltkrieg", "NS-Zeit", "Krieg"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1945",
+      "titel": "Ende des Zweiten Weltkriegs",
+      "datum": { "jahr": 1945, "monat": 5, "tag": 8 },
+      "beschreibung": "Bedingungslose Kapitulation Deutschlands. Deutschland wird in vier Besatzungszonen aufgeteilt.",
+      "kategorie": "militaer",
+      "wichtigkeit": 3,
+      "tags": ["Kriegsende", "Kapitulation", "Besatzung"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1949a",
+      "titel": "Gründung der Bundesrepublik Deutschland",
+      "datum": { "jahr": 1949, "monat": 5, "tag": 23 },
+      "beschreibung": "Inkrafttreten des Grundgesetzes und Gründung der Bundesrepublik Deutschland in den westlichen Besatzungszonen.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["BRD", "Grundgesetz", "Nachkriegszeit"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1949b",
+      "titel": "Gründung der DDR",
+      "datum": { "jahr": 1949, "monat": 10, "tag": 7 },
+      "beschreibung": "Gründung der Deutschen Demokratischen Republik in der sowjetischen Besatzungszone.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["DDR", "Teilung", "Sowjetzone"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1961",
+      "titel": "Bau der Berliner Mauer",
+      "datum": { "jahr": 1961, "monat": 8, "tag": 13 },
+      "beschreibung": "Die DDR beginnt mit dem Bau der Mauer, die Berlin teilt. Symbol der deutschen Teilung und des Kalten Krieges.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Mauer", "Teilung", "Kalter Krieg"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1989",
+      "titel": "Fall der Berliner Mauer",
+      "datum": { "jahr": 1989, "monat": 11, "tag": 9 },
+      "beschreibung": "Die innerdeutsche Grenze wird geöffnet. Friedliche Revolution in der DDR führt zum Fall der Mauer.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Mauerfall", "Wende", "Revolution"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "1990",
+      "titel": "Deutsche Wiedervereinigung",
+      "datum": { "jahr": 1990, "monat": 10, "tag": 3 },
+      "beschreibung": "Beitritt der DDR zur Bundesrepublik Deutschland. Deutschland ist nach 41 Jahren Teilung wiedervereinigt.",
+      "kategorie": "politik",
+      "wichtigkeit": 3,
+      "tags": ["Wiedervereinigung", "Einheit", "Ende DDR"],
+      "metadaten": {
+        "erstelltAm": "2026-01-06T00:00:00.000Z",
+        "geaendertAm": "2026-01-06T00:00:00.000Z"
+      }
+    }
+  ],
+  "epochen": [
+    {
+      "id": "antike",
+      "name": "Antike und Römische Zeit",
+      "start": { "jahr": -100 },
+      "ende": { "jahr": 500 },
+      "farbe": "#8B4513",
+      "ebene": 0,
+      "beschreibung": "Germanische Stämme unter römischem Einfluss"
+    },
+    {
+      "id": "mittelalter",
+      "name": "Mittelalter",
+      "start": { "jahr": 500 },
+      "ende": { "jahr": 1500 },
+      "farbe": "#4682B4",
+      "ebene": 0,
+      "beschreibung": "Fränkisches Reich, Heiliges Römisches Reich"
+    },
+    {
+      "id": "frueheneuzeit",
+      "name": "Frühe Neuzeit",
+      "start": { "jahr": 1500 },
+      "ende": { "jahr": 1800 },
+      "farbe": "#9370DB",
+      "ebene": 0,
+      "beschreibung": "Reformation, Dreißigjähriger Krieg, Absolutismus"
+    },
+    {
+      "id": "19jhd",
+      "name": "19. Jahrhundert",
+      "start": { "jahr": 1800 },
+      "ende": { "jahr": 1900 },
+      "farbe": "#20B2AA",
+      "ebene": 0,
+      "beschreibung": "Revolution, Einigung, Kaiserreich"
+    },
+    {
+      "id": "weltkriege",
+      "name": "Weltkriege und NS-Zeit",
+      "start": { "jahr": 1914 },
+      "ende": { "jahr": 1945 },
+      "farbe": "#DC143C",
+      "ebene": 1,
+      "beschreibung": "Erster Weltkrieg, Weimarer Republik, Drittes Reich"
+    },
+    {
+      "id": "teilung",
+      "name": "Deutsche Teilung",
+      "start": { "jahr": 1949 },
+      "ende": { "jahr": 1990 },
+      "farbe": "#FF8C00",
+      "ebene": 1,
+      "beschreibung": "BRD und DDR, Kalter Krieg"
+    },
+    {
+      "id": "wiedervereinigung",
+      "name": "Wiedervereinigtes Deutschland",
+      "start": { "jahr": 1990 },
+      "ende": { "jahr": 2025 },
+      "farbe": "#FFD700",
+      "ebene": 0,
+      "beschreibung": "Vereintes Deutschland in Europa"
+    }
+  ],
+  "kategorien": [
+    {
+      "id": "politik",
+      "name": "Politik",
+      "farbe": "#4A90E2",
+      "icon": "⚖️",
+      "beschreibung": "Politische Ereignisse und Staatsformen"
+    },
+    {
+      "id": "militaer",
+      "name": "Militär & Kriege",
+      "farbe": "#E74C3C",
+      "icon": "⚔️",
+      "beschreibung": "Kriegerische Auseinandersetzungen"
+    },
+    {
+      "id": "religion",
+      "name": "Religion",
+      "farbe": "#9B59B6",
+      "icon": "✝️",
+      "beschreibung": "Religiöse Entwicklungen"
+    }
+  ],
+  "einstellungen": {
+    "zeitraum": {
+      "start": { "jahr": -100 },
+      "ende": { "jahr": 2025 },
+      "automatisch": false
+    },
+    "skalierung": "linear",
+    "ansicht": "horizontal",
+    "sprache": "de",
+    "theme": "system",
+    "export": {
+      "breite": 1920,
+      "hoehe": 1080,
+      "hintergrund": "#ffffff",
+      "qualitaet": 0.95
+    }
+  },
+  "metadaten": {
+    "version": "1.0",
+    "erstelltAm": "2026-01-06T00:00:00.000Z",
+    "geaendertAm": "2026-01-06T00:00:00.000Z",
+    "autor": "Zeitstrahl Template System",
+    "quelle": "Allgemeinwissen Deutsche Geschichte",
+    "lizenz": "CC0-1.0"
+  }
+}

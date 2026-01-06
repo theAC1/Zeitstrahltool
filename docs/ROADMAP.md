@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 7 (Import-Funktionen) abgeschlossen
+**Aktuelle Phase**: Milestone 8 (Vorlagen-System) abgeschlossen
 
 ---
 
@@ -32,6 +32,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Lokale Speicherung (M5) | **Abgeschlossen** |
 | Export-Funktionen (M6) | **Abgeschlossen** |
 | Import-Funktionen (M7) | **Abgeschlossen** |
+| Vorlagen-System (M8) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -79,7 +80,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (78% abgeschlossen)
+### Quellcode (85% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
@@ -89,6 +90,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] Persistence Layer (LocalStorage mit Auto-Save)
 - [x] Export-Funktionen (JSON, PNG, SVG, PDF)
 - [x] Import-Funktionen (JSON, CSV mit Schema-Migration)
+- [x] Vorlagen-System (3 Vorlagen: Leer, Deutsche Geschichte, Weltgeschichte)
 
 ### Tests (0% abgeschlossen)
 
@@ -295,22 +297,26 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 8: Vorlagen-System
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 2-3 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Vorlagen-JSON-Format definieren | [ ] |
-| Vorlage: Deutsche Geschichte | [ ] |
-| Vorlage: Weltgeschichte | [ ] |
-| Vorlage: Leerer Zeitstrahl | [ ] |
-| Vorlagen-Auswahl UI | [ ] |
-| Vorlagen-Vorschau | [ ] |
+| Vorlagen-JSON-Format definieren | [x] |
+| Vorlage: Deutsche Geschichte | [x] |
+| Vorlage: Weltgeschichte | [x] |
+| Vorlage: Leerer Zeitstrahl | [x] |
+| Vorlagen-Auswahl UI | [x] |
+| Vorlagen-Vorschau | [x] |
 
 **Abnahmekriterien**:
-- Mindestens 3 Vorlagen verfuegbar
-- Vorlagen koennen ausgewaehlt werden
-- Neue Zeitstrahlen basieren auf Vorlagen
+- ✅ Mindestens 3 Vorlagen verfuegbar (Leer, Deutsche Geschichte, Weltgeschichte)
+- ✅ Vorlagen koennen ausgewaehlt werden (TemplateSelectionModal)
+- ✅ Neue Zeitstrahlen basieren auf Vorlagen
+- ✅ Template-Service mit Metadaten und Suchfunktion
+- ✅ Vorlagen enthalten vorgefertigte Ereignisse, Epochen und Kategorien
+- ✅ Integration in Dashboard mit Modal-Auswahl
+- ✅ Vorlagen mit verschiedenen Schwierigkeitsgraden (Einfach, Mittel, Fortgeschritten)
 
 ---
 
@@ -437,11 +443,11 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 5. Lokale Speicherung | 8 | ✅ Abgeschlossen |
 | 6. Export-Funktionen | 7 | ✅ Abgeschlossen |
 | 7. Import-Funktionen | 5 | ✅ Abgeschlossen |
-| 8. Vorlagen-System | 6 | ⏳ Nächster Schritt |
-| 9. Accessibility & i18n | 8 | Ausstehend |
+| 8. Vorlagen-System | 6 | ✅ Abgeschlossen |
+| 9. Accessibility & i18n | 8 | ⏳ Nächster Schritt |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **89** | **~68% abgeschlossen** |
+| **Gesamt** | **89** | **~75% abgeschlossen** |
 
 ---
 

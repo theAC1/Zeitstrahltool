@@ -1,0 +1,36 @@
+{
+  "titel": "Leerer Zeitstrahl",
+  "beschreibung": "Ein leerer Zeitstrahl zum selbst gestalten",
+  "ereignisse": [],
+  "epochen": [],
+  "kategorien": [],
+  "einstellungen": {
+    "zeitraum": {
+      "start": {
+        "jahr": 1900
+      },
+      "ende": {
+        "jahr": 2025
+      },
+      "automatisch": true
+    },
+    "skalierung": "linear",
+    "ansicht": "horizontal",
+    "sprache": "de",
+    "theme": "system",
+    "export": {
+      "breite": 1920,
+      "hoehe": 1080,
+      "hintergrund": "#ffffff",
+      "qualitaet": 0.95
+    }
+  },
+  "metadaten": {
+    "version": "1.0",
+    "erstelltAm": "2026-01-06T00:00:00.000Z",
+    "geaendertAm": "2026-01-06T00:00:00.000Z",
+    "autor": "Zeitstrahl Template System",
+    "quelle": "Vorlagensystem",
+    "lizenz": "CC0-1.0"
+  }
+}
