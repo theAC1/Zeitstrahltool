@@ -8,10 +8,14 @@ import {
   useTimeline,
   EventEditorModal,
   EventDetailsPanel,
+  EpochEditorModal,
+  EpochDetailsPanel,
+  CategoryManager,
+  TimelineLegend,
 } from '@/components/zeitstrahl';
 import { Button } from '@/components/ui/Button';
 import { erstelleBeispielZeitstrahl } from '@/lib/zeitstrahl';
-import type { Ereignis } from '@/types';
+import type { Ereignis, Epoche } from '@/types';
 
 /**
  * Editor Page Content (needs to be inside TimelineProvider)
@@ -21,9 +25,13 @@ function EditorContent() {
     zeitstrahl,
     ladeZeitstrahl,
     ereignisse,
+    epochen,
     ausgewaehltesEreignis,
+    ausgewaehlteEpoche,
     waehleEreignis,
+    waehleEpoche,
     ereignisLoeschen,
+    epocheLoeschen,
     kannUndo,
     kannRedo,
     undo,
@@ -34,7 +42,10 @@ function EditorContent() {
 
   const [isEventEditorOpen, setIsEventEditorOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Ereignis | null>(null);
+  const [isEpochEditorOpen, setIsEpochEditorOpen] = useState(false);
+  const [editingEpoch, setEditingEpoch] = useState<Epoche | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [detailsType, setDetailsType] = useState<'event' | 'epoch'>('event');
 
   // Load sample timeline on mount
   useEffect(() => {
@@ -44,10 +55,18 @@ function EditorContent() {
     }
   }, [zeitstrahl, ladeZeitstrahl]);
 
-  // Show details panel when event is selected
+  // Show details panel when event or epoch is selected
   useEffect(() => {
-    setShowDetails(!!ausgewaehltesEreignis);
-  }, [ausgewaehltesEreignis]);
+    if (ausgewaehltesEreignis) {
+      setShowDetails(true);
+      setDetailsType('event');
+    } else if (ausgewaehlteEpoche) {
+      setShowDetails(true);
+      setDetailsType('epoch');
+    } else {
+      setShowDetails(false);
+    }
+  }, [ausgewaehltesEreignis, ausgewaehlteEpoche]);
 
   // Open event editor for new event
   const handleNewEvent = useCallback(() => {
@@ -66,6 +85,23 @@ function EditorContent() {
     }
   }, [ausgewaehltesEreignis, ereignisse]);
 
+  // Open epoch editor for new epoch
+  const handleNewEpoch = useCallback(() => {
+    setEditingEpoch(null);
+    setIsEpochEditorOpen(true);
+  }, []);
+
+  // Open epoch editor for editing
+  const handleEditEpoch = useCallback(() => {
+    if (ausgewaehlteEpoche) {
+      const epoche = epochen.find((e) => e.id === ausgewaehlteEpoche);
+      if (epoche) {
+        setEditingEpoch(epoche);
+        setIsEpochEditorOpen(true);
+      }
+    }
+  }, [ausgewaehlteEpoche, epochen]);
+
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -75,12 +111,19 @@ function EditorContent() {
         handleNewEvent();
       }
 
-      // Delete - Delete selected event
-      if (e.key === 'Delete' && ausgewaehltesEreignis) {
+      // Delete - Delete selected event or epoch
+      if (e.key === 'Delete') {
         e.preventDefault();
-        if (confirm('Möchten Sie das ausgewählte Ereignis wirklich löschen?')) {
-          ereignisLoeschen(ausgewaehltesEreignis);
-          waehleEreignis(null);
+        if (ausgewaehltesEreignis) {
+          if (confirm('Möchten Sie das ausgewählte Ereignis wirklich löschen?')) {
+            ereignisLoeschen(ausgewaehltesEreignis);
+            waehleEreignis(null);
+          }
+        } else if (ausgewaehlteEpoche) {
+          if (confirm('Möchten Sie die ausgewählte Epoche wirklich löschen?')) {
+            epocheLoeschen(ausgewaehlteEpoche);
+            waehleEpoche(null);
+          }
         }
       }
 
@@ -102,6 +145,7 @@ function EditorContent() {
       // Escape - Deselect
       if (e.key === 'Escape') {
         waehleEreignis(null);
+        waehleEpoche(null);
         setShowDetails(false);
       }
     };
@@ -111,8 +155,11 @@ function EditorContent() {
   }, [
     handleNewEvent,
     ausgewaehltesEreignis,
+    ausgewaehlteEpoche,
     ereignisLoeschen,
+    epocheLoeschen,
     waehleEreignis,
+    waehleEpoche,
     kannUndo,
     kannRedo,
     undo,
@@ -269,6 +316,26 @@ function EditorContent() {
                   </svg>
                   Neues Ereignis
                 </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={handleNewEpoch}
+                >
+                  <svg
+                    className="mr-2 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16m-7 6h7"
+                    />
+                  </svg>
+                  Neue Epoche
+                </Button>
               </div>
             </div>
 
@@ -280,8 +347,18 @@ function EditorContent() {
                   <span>Ereignisse:</span>
                   <span className="font-medium text-foreground">{ereignisse.length}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span>Epochen:</span>
+                  <span className="font-medium text-foreground">{epochen.length}</span>
+                </div>
               </div>
             </div>
+
+            {/* Categories */}
+            <CategoryManager />
+
+            {/* Legend */}
+            <TimelineLegend showCategories showEpochs />
 
             {/* Keyboard Shortcuts */}
             <div>
@@ -314,10 +391,14 @@ function EditorContent() {
             <Timeline className="h-full" />
           </div>
 
-          {/* Right Sidebar - Event Details */}
+          {/* Right Sidebar - Details Panel */}
           {showDetails && (
             <aside className="w-80 border-l bg-background">
-              <EventDetailsPanel onEdit={handleEditEvent} />
+              {detailsType === 'event' ? (
+                <EventDetailsPanel onEdit={handleEditEvent} />
+              ) : (
+                <EpochDetailsPanel onEdit={handleEditEpoch} />
+              )}
             </aside>
           )}
         </main>
@@ -330,6 +411,16 @@ function EditorContent() {
         onClose={() => {
           setIsEventEditorOpen(false);
           setEditingEvent(null);
+        }}
+      />
+
+      {/* Epoch Editor Modal */}
+      <EpochEditorModal
+        isOpen={isEpochEditorOpen}
+        epoche={editingEpoch}
+        onClose={() => {
+          setIsEpochEditorOpen(false);
+          setEditingEpoch(null);
         }}
       />
     </div>

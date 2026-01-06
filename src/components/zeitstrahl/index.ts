@@ -6,3 +6,8 @@ export { TimelineEvents } from './TimelineEvents';
 export { EventEditor } from './EventEditor';
 export { EventEditorModal } from './EventEditorModal';
 export { EventDetailsPanel } from './EventDetailsPanel';
+export { EpochEditor } from './EpochEditor';
+export { EpochEditorModal } from './EpochEditorModal';
+export { EpochDetailsPanel } from './EpochDetailsPanel';
+export { CategoryManager } from './CategoryManager';
+export { TimelineLegend } from './TimelineLegend';

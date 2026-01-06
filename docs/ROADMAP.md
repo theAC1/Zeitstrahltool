@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 3 (Ereignis-Verwaltung) abgeschlossen
+**Aktuelle Phase**: Milestone 4 (Epochen und Kategorien) abgeschlossen
 
 ---
 
@@ -28,6 +28,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | UI-Komponenten (M1) | **Abgeschlossen** |
 | Timeline Engine (M2) | **Abgeschlossen** |
 | Ereignis-Verwaltung (M3) | **Abgeschlossen** |
+| Epochen & Kategorien (M4) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -195,24 +196,24 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 4: Epochen und Kategorien
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 3-4 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Epoche-Komponente | [ ] |
-| Epoche-Editor | [ ] |
-| Epochen-Rendering (farbige Balken) | [ ] |
-| Epochen-Stacking (mehrere Ebenen) | [ ] |
-| Kategorie-Verwaltung | [ ] |
-| Kategorie-Farbzuweisung | [ ] |
-| Legende-Komponente | [ ] |
+| Epoche-Komponente | [x] |
+| Epoche-Editor | [x] |
+| Epochen-Rendering (farbige Balken) | [x] |
+| Epochen-Stacking (mehrere Ebenen) | [x] |
+| Kategorie-Verwaltung | [x] |
+| Kategorie-Farbzuweisung | [x] |
+| Legende-Komponente | [x] |
 
 **Abnahmekriterien**:
-- Epochen werden als farbige Balken angezeigt
-- Mehrere Epochen koennen gestapelt werden
-- Kategorien mit Farbcodierung funktionieren
-- Legende zeigt alle Kategorien
+- ✅ Epochen werden als farbige Balken angezeigt
+- ✅ Mehrere Epochen koennen gestapelt werden
+- ✅ Kategorien mit Farbcodierung funktionieren
+- ✅ Legende zeigt alle Kategorien
 
 ---
 
@@ -418,15 +419,15 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 1. Core UI Components | 8 | ✅ Abgeschlossen |
 | 2. Timeline Engine | 8 | ✅ Abgeschlossen |
 | 3. Ereignis-Verwaltung | 9 | ✅ Abgeschlossen |
-| 4. Epochen und Kategorien | 7 | ⏳ Nächster Schritt |
-| 5. Lokale Speicherung | 7 | Ausstehend |
+| 4. Epochen und Kategorien | 7 | ✅ Abgeschlossen |
+| 5. Lokale Speicherung | 7 | ⏳ Nächster Schritt |
 | 6. Export-Funktionen | 7 | Ausstehend |
 | 7. Import-Funktionen | 5 | Ausstehend |
 | 8. Vorlagen-System | 6 | Ausstehend |
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **88** | **~36% abgeschlossen** |
+| **Gesamt** | **88** | **~44% abgeschlossen** |
 
 ---
 
