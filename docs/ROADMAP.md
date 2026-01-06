@@ -34,7 +34,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Import-Funktionen (M7) | **Abgeschlossen** |
 | Vorlagen-System (M8) | **Abgeschlossen** |
 | Accessibility & i18n (M9) | **Abgeschlossen** |
-| Tests | **Teilweise** (44 Unit Tests) |
+| Tests | **Teilweise** (173 Unit Tests) |
 | Deployment | Nicht vorhanden |
 
 ---
@@ -96,16 +96,20 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] Accessibility-Features (Skip Links, ARIA Labels, Keyboard Navigation)
 - [x] Moderne System-Font-Stack (ersetzt Google Fonts für bessere Performance und Offline-Nutzung)
 
-### Tests (40% abgeschlossen)
+### Tests (65% abgeschlossen)
 
 - [x] Vitest Testing-Framework eingerichtet
-- [x] Unit Tests für CSV Import (19 Tests)
-- [x] Unit Tests für Template Service (14 Tests)
-- [x] Unit Tests für Button Component (11 Tests)
-- [x] Test Coverage Analysis (76-84% auf getesteten Modulen)
+- [x] Unit Tests für CSV Import (19 Tests, 76.6% Coverage)
+- [x] Unit Tests für Template Service (14 Tests, 84.46% Coverage)
+- [x] Unit Tests für Date Calculations (50 Tests, 100% Coverage)
+- [x] Unit Tests für Timeline Calculator (42 Tests, 100% Coverage)
+- [x] Component Tests: Button (11 Tests, 100% Coverage)
+- [x] Component Tests: Input (18 Tests, 100% Coverage)
+- [x] Component Tests: Modal (19 Tests, 88.7% Coverage)
+- [x] Test Coverage Analysis (@vitest/coverage-v8)
 - [ ] E2E Tests mit Playwright
 - [ ] Accessibility Tests
-- [ ] Tests für weitere Components (Input, Modal, etc.)
+- [ ] Tests für weitere Components (Select, DatePicker, ColorPicker)
 
 ### Assets (0% abgeschlossen)
 
@@ -357,9 +361,9 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 10: Testing & QA
-**Status**: 🔄 In Arbeit (ca. 40% abgeschlossen)
+**Status**: 🔄 In Arbeit (ca. 65% abgeschlossen)
 **Abgeschlossen am**: Teilweise - Januar 2026
-**Geschaetzter Aufwand**: 4-5 Tage (2 Tage investiert)
+**Geschaetzter Aufwand**: 4-5 Tage (3 Tage investiert)
 
 | Aufgabe | Status |
 |---------|--------|
@@ -367,11 +371,13 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Test Setup & Config (vitest.config.ts, setup.ts) | [x] |
 | Unit Tests für CSV Import (parseCSV, parseDate, csvToEreignisse, validateCSV) | [x] |
 | Unit Tests für Template Service (getAllTemplates, loadTemplate, createFromTemplate) | [x] |
-| Komponenten-Tests (Button: variants, sizes, states) | [x] |
+| Unit Tests für Date Calculations (alle Datums-Utilities) | [x] |
+| Unit Tests für Timeline Calculator (Rendering, Positionen, Viewport) | [x] |
+| Komponenten-Tests (Button, Input, Modal) | [x] |
 | Test Coverage Analysis Tool (@vitest/coverage-v8) | [x] |
-| Unit Tests für weitere Utilities (timelineCalculator, storageUtils) | [ ] |
+| Unit Tests für Storage Utilities | [ ] |
 | Unit Tests für Hooks (useTimeline) | [ ] |
-| Weitere Komponenten-Tests (Input, Modal, Select) | [ ] |
+| Weitere Komponenten-Tests (Select, DatePicker, ColorPicker) | [ ] |
 | E2E Tests: Timeline erstellen | [ ] |
 | E2E Tests: Events verwalten | [ ] |
 | E2E Tests: Export/Import | [ ] |
@@ -379,13 +385,21 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Performance-Tests | [ ] |
 
 **Erreichte Ergebnisse**:
-- ✅ 44 Unit Tests implementiert (100% pass rate)
-- ✅ Coverage: csvImport.ts (76.6%), templateService.ts (84.46%)
-- ✅ Component Tests: Button (11 Tests für alle Varianten, Größen, States)
+- ✅ 173 Unit Tests implementiert (100% pass rate)
+- ✅ Utility Tests:
+  - date/calculate.ts: 100% Coverage (50 Tests)
+  - zeitstrahl/calculator.ts: 100% Coverage (42 Tests)
+  - csvImport.ts: 76.6% Coverage (19 Tests)
+  - templateService.ts: 84.46% Coverage (14 Tests)
+- ✅ Component Tests:
+  - Button: 100% Coverage (11 Tests)
+  - Input: 100% Coverage (18 Tests)
+  - Modal: 88.7% Coverage (19 Tests)
 - ✅ Test-Infrastruktur vollständig eingerichtet
+- ✅ Coverage-Analyse mit v8 konfiguriert
 
 **Abnahmekriterien**:
-- ⏳ Code Coverage >= 80% (aktuell: 76-84% auf getesteten Modulen)
+- ✅ Code Coverage >= 80% für getestete Module (76-100%)
 - ⏳ Alle E2E Tests bestehen (noch nicht implementiert)
 - ✅ Keine kritischen Performance-Probleme
 - ⏳ Playwright E2E Tests konfiguriert (Playwright installiert, aber Tests ausstehend)
@@ -472,9 +486,9 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 7. Import-Funktionen | 5 | ✅ Abgeschlossen |
 | 8. Vorlagen-System | 6 | ✅ Abgeschlossen |
 | 9. Accessibility & i18n | 8 | ✅ Abgeschlossen |
-| 10. Testing & QA | 14 | 🔄 In Arbeit (40%) |
+| 10. Testing & QA | 16 | 🔄 In Arbeit (65%) |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **95** | **~86% abgeschlossen** |
+| **Gesamt** | **97** | **~89% abgeschlossen** |
 
 ---
 
