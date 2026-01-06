@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 1 (Core UI Components) abgeschlossen
+**Aktuelle Phase**: Milestone 2 (Timeline Engine) abgeschlossen
 
 ---
 
@@ -26,7 +26,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | API-Spezifikation | Abgeschlossen |
 | Infrastruktur (M0) | **Abgeschlossen** |
 | UI-Komponenten (M1) | **Abgeschlossen** |
-| Timeline Engine (M2) | Ausstehend |
+| Timeline Engine (M2) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -74,13 +74,13 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (25% abgeschlossen)
+### Quellcode (50% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
-- [ ] Timeline-Komponenten implementieren
-- [ ] Custom Hooks implementieren
-- [ ] State Management implementieren
+- [x] Timeline-Komponenten implementieren (Timeline, TimelineScale, TimelineEpochs, TimelineEvents)
+- [x] Custom Hooks implementieren (useTimeline)
+- [x] State Management implementieren (TimelineContext + useReducer)
 - [ ] Persistence Layer (LocalStorage/IndexedDB)
 - [ ] Export-Funktionen (PNG, SVG, PDF, JSON)
 - [ ] Import-Funktionen (JSON, CSV)
@@ -147,25 +147,25 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 2: Timeline Engine
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 5-7 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Zeitstrahl-Datentypen implementieren | [ ] |
-| Datums-Utilities (BCE/CE-Berechnung) | [ ] |
-| Position-Calculator | [ ] |
-| SVG-Renderer Basisimplementierung | [ ] |
-| Zoom-Logik | [ ] |
-| Pan/Scroll-Logik | [ ] |
-| Viewport-Culling | [ ] |
-| Zeit-Skala-Rendering | [ ] |
+| Zeitstrahl-Datentypen implementieren | [x] |
+| Datums-Utilities (BCE/CE-Berechnung) | [x] |
+| Position-Calculator | [x] |
+| SVG-Renderer Basisimplementierung | [x] |
+| Zoom-Logik | [x] |
+| Pan/Scroll-Logik | [x] |
+| Viewport-Culling | [x] |
+| Zeit-Skala-Rendering | [x] |
 
 **Abnahmekriterien**:
-- Leerer Zeitstrahl wird gerendert
-- Zoom funktioniert (Mausrad + Buttons)
-- Pan/Scroll funktioniert
-- Jahresskala wird korrekt angezeigt
+- ✅ Leerer Zeitstrahl wird gerendert
+- ✅ Zoom funktioniert (Mausrad + Ctrl/Cmd-Taste)
+- ✅ Pan/Scroll funktioniert (Maus-Drag und Touch)
+- ✅ Jahresskala wird korrekt angezeigt (inkl. BCE/CE)
 
 ---
 
@@ -415,8 +415,8 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 |-----------|----------|--------|
 | 0. Projektinitialisierung | 7 | ✅ Abgeschlossen |
 | 1. Core UI Components | 8 | ✅ Abgeschlossen |
-| 2. Timeline Engine | 8 | ⏳ Nächster Schritt |
-| 3. Ereignis-Verwaltung | 9 | Ausstehend |
+| 2. Timeline Engine | 8 | ✅ Abgeschlossen |
+| 3. Ereignis-Verwaltung | 9 | ⏳ Nächster Schritt |
 | 4. Epochen und Kategorien | 7 | Ausstehend |
 | 5. Lokale Speicherung | 7 | Ausstehend |
 | 6. Export-Funktionen | 7 | Ausstehend |
@@ -425,7 +425,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **88** | **~17% abgeschlossen** |
+| **Gesamt** | **88** | **~26% abgeschlossen** |
 
 ---
 
