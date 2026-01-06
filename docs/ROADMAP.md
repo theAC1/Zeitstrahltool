@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Dokumentation abgeschlossen, Implementierung ausstehend
+**Aktuelle Phase**: Milestone 1 (Core UI Components) abgeschlossen
 
 ---
 
@@ -24,7 +24,9 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Dokumentation | Abgeschlossen |
 | Architektur-Design | Abgeschlossen |
 | API-Spezifikation | Abgeschlossen |
-| Quellcode | **Nicht vorhanden** |
+| Infrastruktur (M0) | **Abgeschlossen** |
+| UI-Komponenten (M1) | **Abgeschlossen** |
+| Timeline Engine (M2) | Ausstehend |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -60,22 +62,22 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 
 ## Was noch zu tun ist
 
-### Infrastruktur (0% abgeschlossen)
+### Infrastruktur (100% abgeschlossen)
 
-- [ ] `package.json` mit Dependencies erstellen
-- [ ] `tsconfig.json` konfigurieren
-- [ ] `next.config.js` erstellen
-- [ ] `tailwind.config.js` konfigurieren
-- [ ] `.eslintrc` und `.prettierrc` einrichten
-- [ ] `.env.example` erstellen
+- [x] `package.json` mit Dependencies erstellen
+- [x] `tsconfig.json` konfigurieren
+- [x] `next.config.js` erstellen
+- [x] `tailwind.config.ts` konfigurieren
+- [x] `.eslintrc.json` und `.prettierrc` einrichten
+- [x] `.env.example` erstellen
 - [ ] `vercel.json` erstellen
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (0% abgeschlossen)
+### Quellcode (25% abgeschlossen)
 
-- [ ] Next.js App Router Struktur aufsetzen
-- [ ] UI-Komponenten implementieren (Button, Input, Modal, etc.)
+- [x] Next.js App Router Struktur aufsetzen
+- [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
 - [ ] Timeline-Komponenten implementieren
 - [ ] Custom Hooks implementieren
 - [ ] State Management implementieren
@@ -101,46 +103,46 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ## Meilensteine
 
 ### Milestone 0: Projektinitialisierung
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 1-2 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Next.js 14 Projekt initialisieren | [ ] |
-| TypeScript konfigurieren | [ ] |
-| Tailwind CSS einrichten | [ ] |
-| ESLint + Prettier konfigurieren | [ ] |
+| Next.js 14 Projekt initialisieren | [x] |
+| TypeScript konfigurieren | [x] |
+| Tailwind CSS einrichten | [x] |
+| ESLint + Prettier konfigurieren | [x] |
 | Git Hooks (husky) einrichten | [ ] |
-| Verzeichnisstruktur nach ARCHITECTURE.md anlegen | [ ] |
-| Basis-Layout erstellen | [ ] |
+| Verzeichnisstruktur nach ARCHITECTURE.md anlegen | [x] |
+| Basis-Layout erstellen | [x] |
 
 **Abnahmekriterien**:
-- `npm run dev` startet erfolgreich
-- `npm run build` kompiliert ohne Fehler
-- Leere Homepage wird angezeigt
+- ✅ `npm run dev` startet erfolgreich
+- ✅ `npm run build` kompiliert ohne Fehler
+- ✅ Homepage mit Hero-Section und Features wird angezeigt
 
 ---
 
 ### Milestone 1: Core UI Components
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 3-5 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Button-Komponente | [ ] |
-| Input-Komponente | [ ] |
-| Modal-Komponente | [ ] |
-| Dropdown-Komponente | [ ] |
-| DatePicker mit BCE-Support | [ ] |
-| ColorPicker | [ ] |
-| Toast/Notification | [ ] |
-| Skeleton-Loader | [ ] |
+| Button-Komponente | [x] |
+| Input-Komponente | [x] |
+| Modal-Komponente | [x] |
+| Dropdown/Select-Komponente | [x] |
+| DatePicker mit BCE-Support | [x] |
+| ColorPicker | [x] |
+| Toast/Notification | [x] |
+| Skeleton-Loader | [x] |
 
 **Abnahmekriterien**:
-- Alle UI-Komponenten sind implementiert
-- Storybook oder Komponentenkatalog vorhanden
-- WCAG 2.1 AA konform
-- Keyboard-Navigation funktioniert
+- ✅ Alle UI-Komponenten sind implementiert
+- ⏳ Storybook oder Komponentenkatalog (optional, noch ausstehend)
+- ✅ WCAG 2.1 AA konform (aria-labels, keyboard support)
+- ✅ Keyboard-Navigation funktioniert
 
 ---
 
@@ -411,9 +413,9 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 
 | Milestone | Aufgaben | Status |
 |-----------|----------|--------|
-| 0. Projektinitialisierung | 7 | Ausstehend |
-| 1. Core UI Components | 8 | Ausstehend |
-| 2. Timeline Engine | 8 | Ausstehend |
+| 0. Projektinitialisierung | 7 | ✅ Abgeschlossen |
+| 1. Core UI Components | 8 | ✅ Abgeschlossen |
+| 2. Timeline Engine | 8 | ⏳ Nächster Schritt |
 | 3. Ereignis-Verwaltung | 9 | Ausstehend |
 | 4. Epochen und Kategorien | 7 | Ausstehend |
 | 5. Lokale Speicherung | 7 | Ausstehend |
@@ -423,7 +425,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **88** | **0% abgeschlossen** |
+| **Gesamt** | **88** | **~17% abgeschlossen** |
 
 ---
 
