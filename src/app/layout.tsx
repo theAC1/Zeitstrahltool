@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
+import { I18nProvider } from '@/lib/i18n/I18nProvider';
+import { SkipLinks } from '@/components/ui/SkipLinks';
 
 export const metadata: Metadata = {
   title: {
@@ -57,9 +59,14 @@ export default function RootLayout({
   return (
     <html lang="de" suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <div className="relative flex min-h-screen flex-col">
-          <main className="flex-1">{children}</main>
-        </div>
+        <I18nProvider>
+          <SkipLinks />
+          <div className="relative flex min-h-screen flex-col">
+            <main id="main-content" className="flex-1" role="main" aria-label="Main content">
+              {children}
+            </main>
+          </div>
+        </I18nProvider>
       </body>
     </html>
   );

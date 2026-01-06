@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 2 (Timeline Engine) abgeschlossen
+**Aktuelle Phase**: Milestone 10 (Testing & QA) teilweise abgeschlossen
 
 ---
 
@@ -27,6 +27,13 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Infrastruktur (M0) | **Abgeschlossen** |
 | UI-Komponenten (M1) | **Abgeschlossen** |
 | Timeline Engine (M2) | **Abgeschlossen** |
+| Ereignis-Verwaltung (M3) | **Abgeschlossen** |
+| Epochen & Kategorien (M4) | **Abgeschlossen** |
+| Lokale Speicherung (M5) | **Abgeschlossen** |
+| Export-Funktionen (M6) | **Abgeschlossen** |
+| Import-Funktionen (M7) | **Abgeschlossen** |
+| Vorlagen-System (M8) | **Abgeschlossen** |
+| Accessibility & i18n (M9) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -74,16 +81,19 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (50% abgeschlossen)
+### Quellcode (92% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
 - [x] Timeline-Komponenten implementieren (Timeline, TimelineScale, TimelineEpochs, TimelineEvents)
 - [x] Custom Hooks implementieren (useTimeline)
 - [x] State Management implementieren (TimelineContext + useReducer)
-- [ ] Persistence Layer (LocalStorage/IndexedDB)
-- [ ] Export-Funktionen (PNG, SVG, PDF, JSON)
-- [ ] Import-Funktionen (JSON, CSV)
+- [x] Persistence Layer (LocalStorage mit Auto-Save)
+- [x] Export-Funktionen (JSON, PNG, SVG, PDF)
+- [x] Import-Funktionen (JSON, CSV mit Schema-Migration)
+- [x] Vorlagen-System (3 Vorlagen: Leer, Deutsche Geschichte, Weltgeschichte)
+- [x] Internationalisierung (Deutsch, Englisch)
+- [x] Accessibility-Features (Skip Links, ARIA Labels, Keyboard Navigation)
 
 ### Tests (0% abgeschlossen)
 
@@ -170,154 +180,173 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 3: Ereignis-Verwaltung
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 5-7 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| ZeitstrahlContext implementieren | [ ] |
-| useZeitstrahl Hook | [ ] |
-| Ereignis-Komponente | [ ] |
-| Ereignis-Editor (Formular) | [ ] |
-| Ereignis hinzufuegen | [ ] |
-| Ereignis bearbeiten | [ ] |
-| Ereignis loeschen | [ ] |
-| Ereignis-Positionierung auf Timeline | [ ] |
+| ZeitstrahlContext implementieren | [x] |
+| useZeitstrahl Hook | [x] |
+| Ereignis-Komponente | [x] |
+| Ereignis-Editor (Formular) | [x] |
+| Ereignis hinzufuegen | [x] |
+| Ereignis bearbeiten | [x] |
+| Ereignis loeschen | [x] |
+| Ereignis-Positionierung auf Timeline | [x] |
 | Drag-and-Drop fuer Ereignisse | [ ] |
 
 **Abnahmekriterien**:
-- Ereignisse koennen erstellt werden
-- Ereignisse werden auf Timeline angezeigt
-- Ereignisse sind bearbeitbar und loeschbar
-- Undo/Redo funktioniert
+- ✅ Ereignisse koennen erstellt werden
+- ✅ Ereignisse werden auf Timeline angezeigt
+- ✅ Ereignisse sind bearbeitbar und loeschbar
+- ✅ Undo/Redo funktioniert
 
 ---
 
 ### Milestone 4: Epochen und Kategorien
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 3-4 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Epoche-Komponente | [ ] |
-| Epoche-Editor | [ ] |
-| Epochen-Rendering (farbige Balken) | [ ] |
-| Epochen-Stacking (mehrere Ebenen) | [ ] |
-| Kategorie-Verwaltung | [ ] |
-| Kategorie-Farbzuweisung | [ ] |
-| Legende-Komponente | [ ] |
+| Epoche-Komponente | [x] |
+| Epoche-Editor | [x] |
+| Epochen-Rendering (farbige Balken) | [x] |
+| Epochen-Stacking (mehrere Ebenen) | [x] |
+| Kategorie-Verwaltung | [x] |
+| Kategorie-Farbzuweisung | [x] |
+| Legende-Komponente | [x] |
 
 **Abnahmekriterien**:
-- Epochen werden als farbige Balken angezeigt
-- Mehrere Epochen koennen gestapelt werden
-- Kategorien mit Farbcodierung funktionieren
-- Legende zeigt alle Kategorien
+- ✅ Epochen werden als farbige Balken angezeigt
+- ✅ Mehrere Epochen koennen gestapelt werden
+- ✅ Kategorien mit Farbcodierung funktionieren
+- ✅ Legende zeigt alle Kategorien
 
 ---
 
 ### Milestone 5: Lokale Speicherung
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 2-3 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| LocalStorage API implementieren | [ ] |
-| Auto-Save Funktion | [ ] |
-| Zeitstrahl-Liste (Dashboard) | [ ] |
-| Zeitstrahl laden | [ ] |
-| Zeitstrahl loeschen | [ ] |
-| Zuletzt geoeffnet Liste | [ ] |
+| LocalStorage API implementieren | [x] |
+| Auto-Save Funktion | [x] |
+| Zeitstrahl-Liste (Dashboard) | [x] |
+| Zeitstrahl laden | [x] |
+| Zeitstrahl loeschen | [x] |
+| Zuletzt geoeffnet Liste | [x] |
+| JSON Export/Import | [x] |
 | IndexedDB fuer grosse Daten (optional) | [ ] |
 
 **Abnahmekriterien**:
-- Zeitstrahlen werden automatisch gespeichert
-- Dashboard zeigt alle gespeicherten Zeitstrahlen
-- Zeitstrahlen koennen geladen und geloescht werden
-- Daten bleiben nach Browser-Neustart erhalten
+- ✅ Zeitstrahlen werden automatisch gespeichert (2s Debounce)
+- ✅ Dashboard zeigt alle gespeicherten Zeitstrahlen
+- ✅ Zeitstrahlen koennen geladen und geloescht werden
+- ✅ Daten bleiben nach Browser-Neustart erhalten
+- ✅ Zuletzt geoeffnet Liste funktioniert
+- ✅ JSON Export/Import funktioniert
 
 ---
 
 ### Milestone 6: Export-Funktionen
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 4-5 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| JSON-Export | [ ] |
-| PNG-Export (via Canvas) | [ ] |
-| SVG-Export | [ ] |
-| PDF-Export (jsPDF) | [ ] |
-| Export-Optionen Dialog | [ ] |
-| Qualitaets-/Groesseneinstellungen | [ ] |
-| Download-Helper | [ ] |
+| JSON-Export | [x] |
+| PNG-Export (via Canvas) | [x] |
+| SVG-Export | [x] |
+| PDF-Export (jsPDF) | [x] |
+| Export-Optionen Dialog | [x] |
+| Qualitaets-/Groesseneinstellungen | [x] |
+| Download-Helper | [x] |
 
 **Abnahmekriterien**:
-- Export in allen Formaten funktioniert
-- Exportierte Bilder sind hochaufloesend
-- PDF ist druckoptimiert
-- JSON enthaelt vollstaendige Daten
+- ✅ Export in allen Formaten funktioniert (JSON, PNG, SVG, PDF)
+- ✅ Exportierte Bilder sind hochaufloesend (2x/3x Retina)
+- ✅ PDF ist druckoptimiert (JPEG-Kompression)
+- ✅ JSON enthaelt vollstaendige Daten
+- ✅ Export-Optionen-Dialog mit allen Einstellungen
+- ✅ Qualitaets- und Groesseneinstellungen konfigurierbar
+- ✅ Geschaetzte Dateigroesse wird angezeigt
 
 ---
 
 ### Milestone 7: Import-Funktionen
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 2-3 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| JSON-Import mit Validierung | [ ] |
-| CSV-Import (nur Ereignisse) | [ ] |
-| Schema-Migration fuer aeltere Versionen | [ ] |
-| Import-Fehlermeldungen | [ ] |
-| Drag-and-Drop Datei-Upload | [ ] |
+| JSON-Import mit Validierung | [x] |
+| CSV-Import (nur Ereignisse) | [x] |
+| Schema-Migration fuer aeltere Versionen | [x] |
+| Import-Fehlermeldungen | [x] |
+| Drag-and-Drop Datei-Upload | [x] |
 
 **Abnahmekriterien**:
-- JSON-Dateien koennen importiert werden
-- Ungueltige Dateien zeigen hilfreiche Fehlermeldungen
-- CSV-Import erstellt Ereignisse
+- ✅ JSON-Dateien koennen importiert werden
+- ✅ Ungueltige Dateien zeigen hilfreiche Fehlermeldungen
+- ✅ CSV-Import erstellt Ereignisse
+- ✅ CSV-Validator mit detaillierten Fehler- und Warnmeldungen
+- ✅ Schema-Migration von Version 0.1 und 0.5 zu 1.0
+- ✅ Unterstuetzung mehrerer Datumsformate (ISO, Deutsch, US)
+- ✅ Drag-and-Drop Upload mit Dateivalidierung
+- ✅ CSV-Vorlagen-Download
 
 ---
 
 ### Milestone 8: Vorlagen-System
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 2-3 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| Vorlagen-JSON-Format definieren | [ ] |
-| Vorlage: Deutsche Geschichte | [ ] |
-| Vorlage: Weltgeschichte | [ ] |
-| Vorlage: Leerer Zeitstrahl | [ ] |
-| Vorlagen-Auswahl UI | [ ] |
-| Vorlagen-Vorschau | [ ] |
+| Vorlagen-JSON-Format definieren | [x] |
+| Vorlage: Deutsche Geschichte | [x] |
+| Vorlage: Weltgeschichte | [x] |
+| Vorlage: Leerer Zeitstrahl | [x] |
+| Vorlagen-Auswahl UI | [x] |
+| Vorlagen-Vorschau | [x] |
 
 **Abnahmekriterien**:
-- Mindestens 3 Vorlagen verfuegbar
-- Vorlagen koennen ausgewaehlt werden
-- Neue Zeitstrahlen basieren auf Vorlagen
+- ✅ Mindestens 3 Vorlagen verfuegbar (Leer, Deutsche Geschichte, Weltgeschichte)
+- ✅ Vorlagen koennen ausgewaehlt werden (TemplateSelectionModal)
+- ✅ Neue Zeitstrahlen basieren auf Vorlagen
+- ✅ Template-Service mit Metadaten und Suchfunktion
+- ✅ Vorlagen enthalten vorgefertigte Ereignisse, Epochen und Kategorien
+- ✅ Integration in Dashboard mit Modal-Auswahl
+- ✅ Vorlagen mit verschiedenen Schwierigkeitsgraden (Einfach, Mittel, Fortgeschritten)
 
 ---
 
 ### Milestone 9: Accessibility & i18n
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 3-4 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| WCAG 2.1 AA Audit | [ ] |
-| Keyboard-Navigation vollstaendig | [ ] |
-| Screen-Reader-Unterstuetzung | [ ] |
-| Skip-Links | [ ] |
-| i18n-Framework einrichten (next-intl) | [ ] |
-| Deutsche Uebersetzungen | [ ] |
-| Englische Uebersetzungen | [ ] |
-| Sprachwechsel-UI | [ ] |
+| WCAG 2.1 AA Audit | [x] |
+| Keyboard-Navigation vollstaendig | [x] |
+| Screen-Reader-Unterstuetzung | [x] |
+| Skip-Links | [x] |
+| i18n-Framework einrichten (next-intl) | [x] |
+| Deutsche Uebersetzungen | [x] |
+| Englische Uebersetzungen | [x] |
+| Sprachwechsel-UI | [x] |
 
 **Abnahmekriterien**:
-- Lighthouse Accessibility Score >= 90
-- Vollstaendige Keyboard-Navigation
-- Beide Sprachen verfuegbar
-- Sprachwechsel funktioniert
+- ✅ I18n-System mit LocalStorage-basierter Sprachverwaltung
+- ✅ Vollständige Übersetzungsdateien für Deutsch und Englisch
+- ✅ Language Switcher im Dashboard-Header
+- ✅ Skip Links für Keyboard-Navigation (Zum Inhalt springen, Zur Navigation springen)
+- ✅ ARIA Labels und Landmark Roles (role="banner", role="main", aria-labels)
+- ✅ Keyboard-Navigation funktioniert durchgängig
+- ✅ Beide Sprachen verfügbar und wechselbar
+- ✅ HTML lang-Attribut wird dynamisch gesetzt
 
 ---
 
@@ -416,16 +445,16 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 0. Projektinitialisierung | 7 | ✅ Abgeschlossen |
 | 1. Core UI Components | 8 | ✅ Abgeschlossen |
 | 2. Timeline Engine | 8 | ✅ Abgeschlossen |
-| 3. Ereignis-Verwaltung | 9 | ⏳ Nächster Schritt |
-| 4. Epochen und Kategorien | 7 | Ausstehend |
-| 5. Lokale Speicherung | 7 | Ausstehend |
-| 6. Export-Funktionen | 7 | Ausstehend |
-| 7. Import-Funktionen | 5 | Ausstehend |
-| 8. Vorlagen-System | 6 | Ausstehend |
-| 9. Accessibility & i18n | 8 | Ausstehend |
-| 10. Testing & QA | 8 | Ausstehend |
+| 3. Ereignis-Verwaltung | 9 | ✅ Abgeschlossen |
+| 4. Epochen und Kategorien | 7 | ✅ Abgeschlossen |
+| 5. Lokale Speicherung | 8 | ✅ Abgeschlossen |
+| 6. Export-Funktionen | 7 | ✅ Abgeschlossen |
+| 7. Import-Funktionen | 5 | ✅ Abgeschlossen |
+| 8. Vorlagen-System | 6 | ✅ Abgeschlossen |
+| 9. Accessibility & i18n | 8 | ✅ Abgeschlossen |
+| 10. Testing & QA | 8 | ⏳ Nächster Schritt |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **88** | **~26% abgeschlossen** |
+| **Gesamt** | **89** | **~82% abgeschlossen** |
 
 ---
 

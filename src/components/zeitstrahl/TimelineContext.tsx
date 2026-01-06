@@ -5,10 +5,13 @@ import {
   useContext,
   useReducer,
   useMemo,
+  useEffect,
+  useRef,
   type ReactNode,
 } from 'react';
 import type { Zeitstrahl, Ereignis, Epoche } from '@/types';
 import { type RenderKontext } from '@/lib/zeitstrahl';
+import { speichereZeitstrahl } from '@/lib/storage/timelineStorage';
 
 // ============================================
 // State Types
@@ -35,6 +38,11 @@ export interface TimelineState {
     vergangenheit: Zeitstrahl[];
     zukunft: Zeitstrahl[];
   };
+  /** Auto-save settings */
+  autoSave: {
+    enabled: boolean;
+    lastSaved: string | null;
+  };
 }
 
 // ============================================
@@ -57,6 +65,8 @@ type TimelineAction =
   | { type: 'EPOCHE_AUSWAEHLEN'; payload: { id: string | null } }
   | { type: 'WERKZEUG_WECHSELN'; payload: TimelineState['ui']['aktivesWerkzeug'] }
   | { type: 'EDITOR_TOGGLE'; payload: boolean }
+  | { type: 'AUTOSAVE_TOGGLE'; payload: boolean }
+  | { type: 'AUTOSAVE_GESPEICHERT' }
   | { type: 'UNDO' }
   | { type: 'REDO' };
 
@@ -80,6 +90,10 @@ const initialState: TimelineState = {
   history: {
     vergangenheit: [],
     zukunft: [],
+  },
+  autoSave: {
+    enabled: true,
+    lastSaved: null,
   },
 };
 
@@ -298,6 +312,24 @@ function timelineReducer(state: TimelineState, action: TimelineAction): Timeline
         },
       };
 
+    case 'AUTOSAVE_TOGGLE':
+      return {
+        ...state,
+        autoSave: {
+          ...state.autoSave,
+          enabled: action.payload,
+        },
+      };
+
+    case 'AUTOSAVE_GESPEICHERT':
+      return {
+        ...state,
+        autoSave: {
+          ...state.autoSave,
+          lastSaved: new Date().toISOString(),
+        },
+      };
+
     default:
       return state;
   }
@@ -332,6 +364,7 @@ export function TimelineProvider({
   hoehe = 600,
 }: TimelineProviderProps) {
   const [state, dispatch] = useReducer(timelineReducer, initialState);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const renderKontext = useMemo<RenderKontext | null>(() => {
     return {
@@ -342,6 +375,35 @@ export function TimelineProvider({
       offset: state.ansicht.offset,
     };
   }, [breite, hoehe, state.ansicht]);
+
+  // Auto-save effect
+  useEffect(() => {
+    // Only auto-save if enabled and timeline exists
+    if (!state.autoSave.enabled || !state.zeitstrahl) {
+      return;
+    }
+
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Debounce: save after 2 seconds of inactivity
+    saveTimeoutRef.current = setTimeout(() => {
+      try {
+        speichereZeitstrahl(state.zeitstrahl!);
+        dispatch({ type: 'AUTOSAVE_GESPEICHERT' });
+      } catch (error) {
+        console.error('Auto-Save fehlgeschlagen:', error);
+      }
+    }, 2000);
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [state.zeitstrahl, state.autoSave.enabled]);
 
   const value = useMemo(
     () => ({ state, dispatch, renderKontext }),
@@ -415,11 +477,26 @@ export function useTimeline() {
       toggleEditor: (offen: boolean) =>
         dispatch({ type: 'EDITOR_TOGGLE', payload: offen }),
 
+      toggleAutoSave: (enabled: boolean) =>
+        dispatch({ type: 'AUTOSAVE_TOGGLE', payload: enabled }),
+
+      manuellesSpeichern: () => {
+        if (state.zeitstrahl) {
+          try {
+            speichereZeitstrahl(state.zeitstrahl);
+            dispatch({ type: 'AUTOSAVE_GESPEICHERT' });
+          } catch (error) {
+            console.error('Speichern fehlgeschlagen:', error);
+            throw error;
+          }
+        }
+      },
+
       undo: () => dispatch({ type: 'UNDO' }),
 
       redo: () => dispatch({ type: 'REDO' }),
     }),
-    [dispatch]
+    [dispatch, state.zeitstrahl]
   );
 
   return {
@@ -439,6 +516,10 @@ export function useTimeline() {
     ausgewaehlteEpoche: state.ui.ausgewaehlteEpoche,
     aktivesWerkzeug: state.ui.aktivesWerkzeug,
     istEditorOffen: state.ui.istEditorOffen,
+
+    // Auto-save state
+    autoSaveEnabled: state.autoSave.enabled,
+    lastSaved: state.autoSave.lastSaved,
 
     // History
     kannUndo: state.history.vergangenheit.length > 0,

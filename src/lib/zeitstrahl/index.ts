@@ -11,3 +11,8 @@ export {
   berechneEreignisPositionen,
   type RenderKontext,
 } from './calculator';
+
+export {
+  erstelleBeispielZeitstrahl,
+  erstelleLeerenZeitstrahl,
+} from './sampleData';

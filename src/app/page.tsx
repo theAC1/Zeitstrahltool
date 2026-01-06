@@ -25,10 +25,10 @@ export default function HomePage() {
           </div>
           <nav className="flex items-center gap-4">
             <Link
-              href="/editor"
+              href="/dashboard"
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Editor starten
+              Dashboard
             </Link>
           </nav>
         </div>
@@ -48,7 +48,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
-              href="/editor"
+              href="/dashboard"
               className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-lg font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Jetzt starten
