@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 9 (Accessibility & i18n) abgeschlossen
+**Aktuelle Phase**: Milestone 10 (Testing & QA) teilweise abgeschlossen
 
 ---
 
