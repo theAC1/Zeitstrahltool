@@ -68,9 +68,9 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] `tsconfig.json` konfigurieren
 - [x] `next.config.js` erstellen
 - [x] `tailwind.config.ts` konfigurieren
-- [x] `.eslintrc.json` und `.prettierrc` einrichten
+- [x] `eslint.config.mjs` und `.prettierrc` einrichten (ESLint 9 Flat Config)
 - [x] `.env.example` erstellen
-- [ ] `vercel.json` erstellen
+- [x] `vercel.json` erstellen
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
