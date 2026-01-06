@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 6 (Export-Funktionen) abgeschlossen
+**Aktuelle Phase**: Milestone 7 (Import-Funktionen) abgeschlossen
 
 ---
 
@@ -31,6 +31,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Epochen & Kategorien (M4) | **Abgeschlossen** |
 | Lokale Speicherung (M5) | **Abgeschlossen** |
 | Export-Funktionen (M6) | **Abgeschlossen** |
+| Import-Funktionen (M7) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -78,7 +79,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (70% abgeschlossen)
+### Quellcode (78% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
@@ -87,8 +88,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] State Management implementieren (TimelineContext + useReducer)
 - [x] Persistence Layer (LocalStorage mit Auto-Save)
 - [x] Export-Funktionen (JSON, PNG, SVG, PDF)
-- [x] Import-Funktionen (JSON)
-- [ ] Import-Funktionen erweitert (CSV)
+- [x] Import-Funktionen (JSON, CSV mit Schema-Migration)
 
 ### Tests (0% abgeschlossen)
 
@@ -271,21 +271,26 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 7: Import-Funktionen
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 2-3 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| JSON-Import mit Validierung | [ ] |
-| CSV-Import (nur Ereignisse) | [ ] |
-| Schema-Migration fuer aeltere Versionen | [ ] |
-| Import-Fehlermeldungen | [ ] |
-| Drag-and-Drop Datei-Upload | [ ] |
+| JSON-Import mit Validierung | [x] |
+| CSV-Import (nur Ereignisse) | [x] |
+| Schema-Migration fuer aeltere Versionen | [x] |
+| Import-Fehlermeldungen | [x] |
+| Drag-and-Drop Datei-Upload | [x] |
 
 **Abnahmekriterien**:
-- JSON-Dateien koennen importiert werden
-- Ungueltige Dateien zeigen hilfreiche Fehlermeldungen
-- CSV-Import erstellt Ereignisse
+- ✅ JSON-Dateien koennen importiert werden
+- ✅ Ungueltige Dateien zeigen hilfreiche Fehlermeldungen
+- ✅ CSV-Import erstellt Ereignisse
+- ✅ CSV-Validator mit detaillierten Fehler- und Warnmeldungen
+- ✅ Schema-Migration von Version 0.1 und 0.5 zu 1.0
+- ✅ Unterstuetzung mehrerer Datumsformate (ISO, Deutsch, US)
+- ✅ Drag-and-Drop Upload mit Dateivalidierung
+- ✅ CSV-Vorlagen-Download
 
 ---
 
@@ -431,12 +436,12 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 4. Epochen und Kategorien | 7 | ✅ Abgeschlossen |
 | 5. Lokale Speicherung | 8 | ✅ Abgeschlossen |
 | 6. Export-Funktionen | 7 | ✅ Abgeschlossen |
-| 7. Import-Funktionen | 5 | ⏳ Nächster Schritt |
-| 8. Vorlagen-System | 6 | Ausstehend |
+| 7. Import-Funktionen | 5 | ✅ Abgeschlossen |
+| 8. Vorlagen-System | 6 | ⏳ Nächster Schritt |
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **89** | **~60% abgeschlossen** |
+| **Gesamt** | **89** | **~68% abgeschlossen** |
 
 ---
 

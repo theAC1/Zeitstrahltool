@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/Button';
+import { ImportModal } from '@/components/zeitstrahl';
 import {
   ladeZeitstrahlListe,
   ladeRecentListe,
   ladeZeitstrahl,
   loescheZeitstrahl,
   exportiereZeitstrahl,
-  importiereZeitstrahl,
   speichereZeitstrahl,
   type TimelineMetaInfo,
   type RecentTimeline,
@@ -23,11 +23,11 @@ import type { Zeitstrahl } from '@/types';
  */
 export default function DashboardPage() {
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [timelines, setTimelines] = useState<TimelineMetaInfo[]>([]);
   const [recentTimelines, setRecentTimelines] = useState<RecentTimeline[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // Load timelines on mount
   useEffect(() => {
@@ -121,26 +121,22 @@ export default function DashboardPage() {
   };
 
   const handleImportClick = () => {
-    fileInputRef.current?.click();
+    setIsImportModalOpen(true);
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const handleImport = (zeitstrahl: Zeitstrahl, isCSV?: boolean) => {
     try {
-      const zeitstrahl = await importiereZeitstrahl(file);
       speichereZeitstrahl(zeitstrahl);
       loadData();
-      alert(`Zeitstrahl "${zeitstrahl.titel}" wurde erfolgreich importiert`);
-    } catch (error) {
-      console.error('Fehler beim Importieren:', error);
-      alert('Fehler beim Importieren der Datei');
-    }
 
-    // Reset input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      if (isCSV) {
+        alert(`${zeitstrahl.ereignisse.length} Ereignisse aus CSV importiert`);
+      } else {
+        alert(`Zeitstrahl "${zeitstrahl.titel}" wurde erfolgreich importiert`);
+      }
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      alert('Fehler beim Speichern des importierten Zeitstrahls');
     }
   };
 
@@ -367,13 +363,11 @@ export default function DashboardPage() {
         </section>
       </main>
 
-      {/* Hidden file input for import */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json"
-        onChange={handleFileSelect}
-        className="hidden"
+      {/* Import Modal */}
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImport}
       />
     </div>
   );
