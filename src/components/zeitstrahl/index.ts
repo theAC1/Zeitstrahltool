@@ -11,3 +11,4 @@ export { EpochEditorModal } from './EpochEditorModal';
 export { EpochDetailsPanel } from './EpochDetailsPanel';
 export { CategoryManager } from './CategoryManager';
 export { TimelineLegend } from './TimelineLegend';
+export { ExportModal } from './ExportModal';

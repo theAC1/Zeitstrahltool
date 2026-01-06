@@ -3,7 +3,7 @@
 Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilensteine.
 
 **Stand**: Januar 2026
-**Aktuelle Phase**: Milestone 5 (Lokale Speicherung) abgeschlossen
+**Aktuelle Phase**: Milestone 6 (Export-Funktionen) abgeschlossen
 
 ---
 
@@ -30,6 +30,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | Ereignis-Verwaltung (M3) | **Abgeschlossen** |
 | Epochen & Kategorien (M4) | **Abgeschlossen** |
 | Lokale Speicherung (M5) | **Abgeschlossen** |
+| Export-Funktionen (M6) | **Abgeschlossen** |
 | Tests | Nicht vorhanden |
 | Deployment | Nicht vorhanden |
 
@@ -77,7 +78,7 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [ ] `.github/workflows/ci.yml` erstellen
 - [ ] Dockerfile erstellen
 
-### Quellcode (60% abgeschlossen)
+### Quellcode (70% abgeschlossen)
 
 - [x] Next.js App Router Struktur aufsetzen
 - [x] UI-Komponenten implementieren (Button, Input, Modal, Select, DatePicker, ColorPicker, Toast, Skeleton)
@@ -85,9 +86,8 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 - [x] Custom Hooks implementieren (useTimeline)
 - [x] State Management implementieren (TimelineContext + useReducer)
 - [x] Persistence Layer (LocalStorage mit Auto-Save)
-- [x] Export-Funktionen (JSON)
+- [x] Export-Funktionen (JSON, PNG, SVG, PDF)
 - [x] Import-Funktionen (JSON)
-- [ ] Export-Funktionen erweitert (PNG, SVG, PDF)
 - [ ] Import-Funktionen erweitert (CSV)
 
 ### Tests (0% abgeschlossen)
@@ -246,24 +246,27 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 ---
 
 ### Milestone 6: Export-Funktionen
-**Status**: Ausstehend
-**Geschaetzter Aufwand**: 4-5 Tage
+**Status**: ✅ Abgeschlossen
+**Abgeschlossen am**: Januar 2026
 
 | Aufgabe | Status |
 |---------|--------|
-| JSON-Export | [ ] |
-| PNG-Export (via Canvas) | [ ] |
-| SVG-Export | [ ] |
-| PDF-Export (jsPDF) | [ ] |
-| Export-Optionen Dialog | [ ] |
-| Qualitaets-/Groesseneinstellungen | [ ] |
-| Download-Helper | [ ] |
+| JSON-Export | [x] |
+| PNG-Export (via Canvas) | [x] |
+| SVG-Export | [x] |
+| PDF-Export (jsPDF) | [x] |
+| Export-Optionen Dialog | [x] |
+| Qualitaets-/Groesseneinstellungen | [x] |
+| Download-Helper | [x] |
 
 **Abnahmekriterien**:
-- Export in allen Formaten funktioniert
-- Exportierte Bilder sind hochaufloesend
-- PDF ist druckoptimiert
-- JSON enthaelt vollstaendige Daten
+- ✅ Export in allen Formaten funktioniert (JSON, PNG, SVG, PDF)
+- ✅ Exportierte Bilder sind hochaufloesend (2x/3x Retina)
+- ✅ PDF ist druckoptimiert (JPEG-Kompression)
+- ✅ JSON enthaelt vollstaendige Daten
+- ✅ Export-Optionen-Dialog mit allen Einstellungen
+- ✅ Qualitaets- und Groesseneinstellungen konfigurierbar
+- ✅ Geschaetzte Dateigroesse wird angezeigt
 
 ---
 
@@ -427,13 +430,13 @@ Diese Roadmap dokumentiert den aktuellen Projektstand und die geplanten Meilenst
 | 3. Ereignis-Verwaltung | 9 | ✅ Abgeschlossen |
 | 4. Epochen und Kategorien | 7 | ✅ Abgeschlossen |
 | 5. Lokale Speicherung | 8 | ✅ Abgeschlossen |
-| 6. Export-Funktionen | 7 | ⏳ Nächster Schritt |
-| 7. Import-Funktionen | 5 | Ausstehend |
+| 6. Export-Funktionen | 7 | ✅ Abgeschlossen |
+| 7. Import-Funktionen | 5 | ⏳ Nächster Schritt |
 | 8. Vorlagen-System | 6 | Ausstehend |
 | 9. Accessibility & i18n | 8 | Ausstehend |
 | 10. Testing & QA | 8 | Ausstehend |
 | 11. Deployment & Launch | 8 | Ausstehend |
-| **Gesamt** | **89** | **~52% abgeschlossen** |
+| **Gesamt** | **89** | **~60% abgeschlossen** |
 
 ---
 

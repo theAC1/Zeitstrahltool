@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback, Suspense, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -13,13 +13,12 @@ import {
   EpochDetailsPanel,
   CategoryManager,
   TimelineLegend,
+  ExportModal,
 } from '@/components/zeitstrahl';
 import { Button } from '@/components/ui/Button';
 import { erstelleBeispielZeitstrahl } from '@/lib/zeitstrahl';
-import {
-  ladeZeitstrahl,
-  exportiereZeitstrahl,
-} from '@/lib/storage/timelineStorage';
+import { ladeZeitstrahl } from '@/lib/storage/timelineStorage';
+import { exportTimeline, type ExportOptions } from '@/lib/export/exportUtils';
 import type { Ereignis, Epoche } from '@/types';
 
 /**
@@ -58,6 +57,10 @@ function EditorContent() {
   const [showDetails, setShowDetails] = useState(false);
   const [detailsType, setDetailsType] = useState<'event' | 'epoch'>('event');
   const [isSaving, setIsSaving] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
+  // Ref for timeline element (for export)
+  const timelineContainerRef = useRef<HTMLDivElement>(null);
 
   // Load timeline on mount
   useEffect(() => {
@@ -143,17 +146,36 @@ function EditorContent() {
     }
   }, [zeitstrahl, manuellesSpeichern]);
 
-  // Export handler
-  const handleExport = useCallback(() => {
-    if (!zeitstrahl) return;
+  // Open export modal
+  const handleExportClick = useCallback(() => {
+    setIsExportModalOpen(true);
+  }, []);
 
-    try {
-      exportiereZeitstrahl(zeitstrahl);
-    } catch (error) {
-      console.error('Fehler beim Exportieren:', error);
-      alert('Fehler beim Exportieren des Zeitstrahls');
-    }
-  }, [zeitstrahl]);
+  // Perform export with options
+  const handleExport = useCallback(
+    async (options: ExportOptions) => {
+      if (!zeitstrahl || !timelineContainerRef.current) return;
+
+      try {
+        // Get the timeline SVG element if format is SVG
+        if (options.format === 'svg') {
+          const svgElement = timelineContainerRef.current.querySelector('svg');
+          if (svgElement) {
+            await exportTimeline(zeitstrahl, svgElement, options);
+          } else {
+            throw new Error('SVG-Element nicht gefunden');
+          }
+        } else {
+          // For PNG/PDF, use the container element
+          await exportTimeline(zeitstrahl, timelineContainerRef.current, options);
+        }
+      } catch (error) {
+        console.error('Fehler beim Exportieren:', error);
+        throw error; // Let the modal handle the error
+      }
+    },
+    [zeitstrahl]
+  );
 
   // Format last saved time
   const formatLastSaved = useCallback(() => {
@@ -341,7 +363,7 @@ function EditorContent() {
             )}
             {isSaving ? 'Speichert...' : 'Speichern'}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExport}>
+          <Button variant="outline" size="sm" onClick={handleExportClick}>
             <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
@@ -499,7 +521,7 @@ function EditorContent() {
 
         {/* Main Timeline Area */}
         <main className="flex flex-1">
-          <div className="flex-1">
+          <div ref={timelineContainerRef} className="flex-1">
             <Timeline className="h-full" />
           </div>
 
@@ -534,6 +556,14 @@ function EditorContent() {
           setIsEpochEditorOpen(false);
           setEditingEpoch(null);
         }}
+      />
+
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        onExport={handleExport}
+        timelineElement={timelineContainerRef.current}
       />
     </div>
   );
