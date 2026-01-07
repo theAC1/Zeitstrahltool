@@ -12,10 +12,17 @@ playwright-report
 test-results
 e2e-results
 
+# Testing
+.coverage
+coverage
+.vitest
+
 # Next.js
 .next
 out
 dist
+
+# Production
 build
 
 # Misc
@@ -32,6 +39,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Debug
+*.log*
+
+# Local env files
+.env*.local
+.env
+
+# Git
+.git
+.gitignore
+
 # IDE
 .vscode
 .idea
@@ -43,6 +61,10 @@ yarn-error.log*
 .git
 .gitignore
 .gitattributes
+# Documentation
+docs
+*.md
+!README.md
 
 # CI/CD
 .github
@@ -56,3 +78,6 @@ LICENSE
 Dockerfile
 .dockerignore
 docker-compose.yml
+# Playwright
+test-results
+playwright-report
