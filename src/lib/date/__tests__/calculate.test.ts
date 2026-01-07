@@ -115,9 +115,9 @@ describe('sortiereNachDatum', () => {
     ];
 
     const sorted = sortiereNachDatum(items);
-    expect(sorted[0].id).toBe('2'); // 1990
-    expect(sorted[1].id).toBe('1'); // 2000
-    expect(sorted[2].id).toBe('3'); // 2010
+    expect(sorted[0]!.id).toBe('2'); // 1990
+    expect(sorted[1]!.id).toBe('1'); // 2000
+    expect(sorted[2]!.id).toBe('3'); // 2010
   });
 
   it('should handle BCE dates', () => {
@@ -128,9 +128,9 @@ describe('sortiereNachDatum', () => {
     ];
 
     const sorted = sortiereNachDatum(items);
-    expect(sorted[0].id).toBe('2'); // -100
-    expect(sorted[1].id).toBe('3'); // 0
-    expect(sorted[2].id).toBe('1'); // 100
+    expect(sorted[0]!.id).toBe('2'); // -100
+    expect(sorted[1]!.id).toBe('3'); // 0
+    expect(sorted[2]!.id).toBe('1'); // 100
   });
 
   it('should not modify original array', () => {
@@ -140,8 +140,8 @@ describe('sortiereNachDatum', () => {
     ];
 
     const sorted = sortiereNachDatum(items);
-    expect(items[0].id).toBe('1'); // Original unchanged
-    expect(sorted[0].id).toBe('2'); // Sorted version
+    expect(items[0]!.id).toBe('1'); // Original unchanged
+    expect(sorted[0]!.id).toBe('2'); // Sorted version
   });
 });
 
@@ -344,9 +344,7 @@ describe('berechneAutomatischenZeitraum', () => {
   });
 
   it('should consider event end dates', () => {
-    const ereignisse = [
-      { id: '1', datum: { jahr: 1990 }, endDatum: { jahr: 2020 } },
-    ];
+    const ereignisse = [{ id: '1', datum: { jahr: 1990 }, endDatum: { jahr: 2020 } }];
     const zeitraum = berechneAutomatischenZeitraum(ereignisse);
 
     expect(zeitraum).not.toBeNull();

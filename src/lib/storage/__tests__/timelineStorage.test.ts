@@ -35,8 +35,10 @@ const localStorageMock = (() => {
   };
 })();
 
-// @ts-expect-error - Mock localStorage for testing
-global.localStorage = localStorageMock;
+Object.defineProperty(global, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
 
 describe('timelineStorage', () => {
   beforeEach(() => {
@@ -53,7 +55,11 @@ describe('timelineStorage', () => {
         titel: 'Event 1',
         datum: { jahr: 2000 },
         beschreibung: 'Test event',
-        kategorieId: 'cat-1',
+        kategorie: 'cat-1',
+        metadaten: {
+          erstelltAm: '2024-01-01T00:00:00.000Z',
+          geaendertAm: '2024-01-01T00:00:00.000Z',
+        },
       },
     ],
     epochen: [
@@ -63,6 +69,7 @@ describe('timelineStorage', () => {
         start: { jahr: 1990 },
         ende: { jahr: 2010 },
         farbe: '#ff0000',
+        ebene: 0,
       },
     ],
     kategorien: [
@@ -70,14 +77,25 @@ describe('timelineStorage', () => {
         id: 'cat-1',
         name: 'Category 1',
         farbe: '#00ff00',
-        symbol: '●',
+        icon: 'circle',
       },
     ],
     einstellungen: {
-      startJahr: 1900,
-      endJahr: 2100,
+      zeitraum: {
+        start: { jahr: 1900 },
+        ende: { jahr: 2100 },
+        automatisch: false,
+      },
+      skalierung: 'linear',
+      ansicht: 'horizontal',
       sprache: 'de',
-      thema: 'light',
+      theme: 'hell',
+      export: {
+        breite: 1920,
+        hoehe: 1080,
+        hintergrund: '#ffffff',
+        qualitaet: 1,
+      },
     },
     metadaten: {
       version: '1.0',
@@ -104,10 +122,10 @@ describe('timelineStorage', () => {
 
       const liste = ladeZeitstrahlListe();
       expect(liste).toHaveLength(1);
-      expect(liste[0].id).toBe('test-123');
-      expect(liste[0].titel).toBe('Test Timeline');
-      expect(liste[0].ereignisAnzahl).toBe(1);
-      expect(liste[0].epochenAnzahl).toBe(1);
+      expect(liste[0]!.id).toBe('test-123');
+      expect(liste[0]!.titel).toBe('Test Timeline');
+      expect(liste[0]!.ereignisAnzahl).toBe(1);
+      expect(liste[0]!.epochenAnzahl).toBe(1);
     });
 
     it('should update existing timeline in list', () => {
@@ -118,7 +136,7 @@ describe('timelineStorage', () => {
 
       const liste = ladeZeitstrahlListe();
       expect(liste).toHaveLength(1);
-      expect(liste[0].titel).toBe('Updated Timeline');
+      expect(liste[0]!.titel).toBe('Updated Timeline');
     });
 
     it('should update recent list', () => {
@@ -126,7 +144,7 @@ describe('timelineStorage', () => {
 
       const recent = ladeRecentListe();
       expect(recent).toHaveLength(1);
-      expect(recent[0].id).toBe('test-123');
+      expect(recent[0]!.id).toBe('test-123');
     });
 
     it('should handle save errors gracefully', () => {
@@ -170,7 +188,7 @@ describe('timelineStorage', () => {
 
       const recent = ladeRecentListe();
       expect(recent).toHaveLength(1);
-      expect(recent[0].id).toBe('test-123');
+      expect(recent[0]!.id).toBe('test-123');
     });
 
     it('should handle corrupted data gracefully', () => {
@@ -223,7 +241,7 @@ describe('timelineStorage', () => {
 
       const liste = ladeZeitstrahlListe();
       expect(liste).toHaveLength(1);
-      expect(liste[0].id).toBe('test-456');
+      expect(liste[0]!.id).toBe('test-456');
     });
 
     it('should update recent list', () => {
@@ -261,8 +279,8 @@ describe('timelineStorage', () => {
 
       const recent = ladeRecentListe();
       expect(recent).toHaveLength(2);
-      expect(recent[0].id).toBe('test-456'); // Most recent first
-      expect(recent[1].id).toBe('test-123');
+      expect(recent[0]!.id).toBe('test-456'); // Most recent first
+      expect(recent[1]!.id).toBe('test-123');
     });
 
     it('should limit to 10 recent items', () => {
@@ -282,7 +300,7 @@ describe('timelineStorage', () => {
       ladeZeitstrahl('test-123');
 
       const recent = ladeRecentListe();
-      expect(recent[0].id).toBe('test-123'); // Now most recent
+      expect(recent[0]!.id).toBe('test-123'); // Now most recent
     });
 
     it('should handle corrupted recent list', () => {

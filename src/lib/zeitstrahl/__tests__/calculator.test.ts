@@ -176,28 +176,31 @@ describe('filtereVonViewport', () => {
       titel: 'Event 1',
       datum: { jahr: 1990 }, // Before viewport
       beschreibung: '',
-      kategorieId: 'cat1',
+      kategorie: 'cat1',
+      metadaten: { erstelltAm: '', geaendertAm: '' },
     },
     {
       id: '2',
       titel: 'Event 2',
       datum: { jahr: 2050 }, // In viewport
       beschreibung: '',
-      kategorieId: 'cat1',
+      kategorie: 'cat1',
+      metadaten: { erstelltAm: '', geaendertAm: '' },
     },
     {
       id: '3',
       titel: 'Event 3',
       datum: { jahr: 2110 }, // After viewport
       beschreibung: '',
-      kategorieId: 'cat1',
+      kategorie: 'cat1',
+      metadaten: { erstelltAm: '', geaendertAm: '' },
     },
   ];
 
   it('should filter out events outside viewport', () => {
     const sichtbar = filtereVonViewport(ereignisse, kontext, 0);
     expect(sichtbar).toHaveLength(1);
-    expect(sichtbar[0].id).toBe('2');
+    expect(sichtbar[0]!.id).toBe('2');
   });
 
   it('should include events within buffer', () => {
@@ -214,7 +217,8 @@ describe('filtereVonViewport', () => {
         datum: { jahr: 1980 },
         endDatum: { jahr: 2020 }, // Spans into viewport
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
     ];
 
@@ -239,6 +243,7 @@ describe('filtereEpochenVonViewport', () => {
       start: { jahr: 1900 },
       ende: { jahr: 1990 }, // Before viewport
       farbe: '#ff0000',
+      ebene: 0,
     },
     {
       id: '2',
@@ -246,6 +251,7 @@ describe('filtereEpochenVonViewport', () => {
       start: { jahr: 2010 },
       ende: { jahr: 2090 }, // In viewport
       farbe: '#00ff00',
+      ebene: 0,
     },
     {
       id: '3',
@@ -253,13 +259,14 @@ describe('filtereEpochenVonViewport', () => {
       start: { jahr: 2110 },
       ende: { jahr: 2200 }, // After viewport
       farbe: '#0000ff',
+      ebene: 0,
     },
   ];
 
   it('should filter out epochs outside viewport', () => {
     const sichtbar = filtereEpochenVonViewport(epochen, kontext, 0);
     expect(sichtbar).toHaveLength(1);
-    expect(sichtbar[0].id).toBe('2');
+    expect(sichtbar[0]!.id).toBe('2');
   });
 
   it('should include epochs within buffer', () => {
@@ -389,7 +396,8 @@ describe('berechneEreignisPositionen', () => {
         titel: 'Event 1',
         datum: { jahr: 2050 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
     ];
 
@@ -404,14 +412,16 @@ describe('berechneEreignisPositionen', () => {
         titel: 'Event 1',
         datum: { jahr: 2050 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
       {
         id: '2',
         titel: 'Event 2',
         datum: { jahr: 2051 }, // Very close to event 1
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
     ];
 
@@ -433,14 +443,16 @@ describe('berechneEreignisPositionen', () => {
         titel: 'Event 1',
         datum: { jahr: 2000 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
       {
         id: '2',
         titel: 'Event 2',
         datum: { jahr: 2090 }, // Far from event 1
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
     ];
 
@@ -459,14 +471,16 @@ describe('berechneEreignisPositionen', () => {
         datum: { jahr: 2040 },
         endDatum: { jahr: 2060 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
       {
         id: '2',
         titel: 'Point Event',
         datum: { jahr: 2050 }, // Within span
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
     ];
 
@@ -486,21 +500,24 @@ describe('berechneEreignisPositionen', () => {
         titel: 'Event 3',
         datum: { jahr: 2070 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
       {
         id: '1',
         titel: 'Event 1',
         datum: { jahr: 2030 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
       {
         id: '2',
         titel: 'Event 2',
         datum: { jahr: 2050 },
         beschreibung: '',
-        kategorieId: 'cat1',
+        kategorie: 'cat1',
+        metadaten: { erstelltAm: '', geaendertAm: '' },
       },
     ];
 
