@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useMemo,
   type WheelEvent,
   type MouseEvent,
   type TouchEvent,
@@ -34,15 +35,8 @@ export function Timeline({ className }: TimelineProps) {
   const [isPanning, setIsPanning] = useState(false);
   const [lastPanPosition, setLastPanPosition] = useState({ x: 0, y: 0 });
 
-  const {
-    zeitstrahl,
-    zoom,
-    offset,
-    setZoom,
-    setOffset,
-    renderKontext,
-    aktivesWerkzeug,
-  } = useTimeline();
+  const { zeitstrahl, zoom, offset, setZoom, setOffset, renderKontext, aktivesWerkzeug } =
+    useTimeline();
 
   // Update dimensions on resize
   useEffect(() => {
@@ -63,10 +57,12 @@ export function Timeline({ className }: TimelineProps) {
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Create render context with actual dimensions
-  const kontext = renderKontext
-    ? { ...renderKontext, breite: dimensions.width, hoehe: dimensions.height - 80 }
-    : null;
+  // Create render context with actual dimensions - wrapped in useMemo to prevent dependency changes on every render
+  const kontext = useMemo(() => {
+    return renderKontext
+      ? { ...renderKontext, breite: dimensions.width, hoehe: dimensions.height - 80 }
+      : null;
+  }, [renderKontext, dimensions.width, dimensions.height]);
 
   // Handle wheel zoom
   const handleWheel = useCallback(
@@ -102,12 +98,7 @@ export function Timeline({ className }: TimelineProps) {
       const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom * (1 + delta)));
 
       // Calculate new offset to zoom towards mouse position
-      const newOffset = berechneZoomOffset(
-        { x: mouseX, y: mouseY },
-        zoom,
-        newZoom,
-        offset
-      );
+      const newOffset = berechneZoomOffset({ x: mouseX, y: mouseY }, zoom, newZoom, offset);
 
       setZoom(newZoom);
       setOffset(begrenzeOffset(newOffset, kontext, kontext.breite * newZoom, kontext.hoehe));
@@ -247,12 +238,7 @@ export function Timeline({ className }: TimelineProps) {
         >
           {/* Background grid (optional) */}
           <defs>
-            <pattern
-              id="grid"
-              width="100"
-              height="100"
-              patternUnits="userSpaceOnUse"
-            >
+            <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
               <path
                 d="M 100 0 L 0 0 0 100"
                 fill="none"
@@ -303,7 +289,8 @@ export function Timeline({ className }: TimelineProps) {
                 </svg>
               </div>
               <p className="text-muted-foreground">
-                Kein Zeitstrahl geladen. Erstellen Sie einen neuen Zeitstrahl oder laden Sie einen vorhandenen.
+                Kein Zeitstrahl geladen. Erstellen Sie einen neuen Zeitstrahl oder laden Sie einen
+                vorhandenen.
               </p>
             </div>
           </div>

@@ -7,8 +7,8 @@ import {
   ladeRecentListe,
   pruefeStorage,
   loescheAlleZeitstrahlen,
-  type TimelineMetaInfo,
-  type RecentTimeline,
+  type TimelineMetaInfo as _TimelineMetaInfo,
+  type RecentTimeline as _RecentTimeline,
 } from '../timelineStorage';
 import type { Zeitstrahl } from '@/types';
 
@@ -35,7 +35,7 @@ const localStorageMock = (() => {
   };
 })();
 
-// @ts-ignore
+// @ts-expect-error - Mock localStorage for testing
 global.localStorage = localStorageMock;
 
 describe('timelineStorage', () => {
@@ -366,9 +366,7 @@ describe('timelineStorage', () => {
         throw new Error('Cannot remove');
       });
 
-      expect(() => loescheAlleZeitstrahlen()).toThrow(
-        'Fehler beim Löschen aller Zeitstrahlen'
-      );
+      expect(() => loescheAlleZeitstrahlen()).toThrow('Fehler beim Löschen aller Zeitstrahlen');
 
       localStorage.removeItem = originalRemoveItem;
     });
