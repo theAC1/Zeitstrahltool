@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Output standalone for Docker builds
+  // Output für Docker standalone build
   output: 'standalone',
 
   // Bildoptimierung

@@ -106,11 +106,10 @@ describe('csvImport', () => {
 
       expect(errors).toHaveLength(0);
       expect(ereignisse).toHaveLength(1);
-      expect(ereignisse[0].titel).toBe('Test Event');
-      expect(ereignisse[0].datum).toMatchObject({ jahr: 2024, monat: 6, tag: 15 });
-      expect(ereignisse[0].beschreibung).toBe('Test description');
+      expect(ereignisse[0]!.titel).toBe('Test Event');
+      expect(ereignisse[0]!.datum).toMatchObject({ jahr: 2024, monat: 6, tag: 15 });
+      expect(ereignisse[0]!.beschreibung).toBe('Test description');
     });
-
 
     it('should report errors for invalid dates', () => {
       const rows = [
