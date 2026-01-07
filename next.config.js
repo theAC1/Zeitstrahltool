@@ -2,9 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Output standalone for Docker builds
-  output: 'standalone',
-
   // Bildoptimierung
   images: {
     formats: ['image/avif', 'image/webp'],
