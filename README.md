@@ -218,11 +218,11 @@ Color:       Red
 
 | Technology | Version | Description |
 |------------|---------|-------------|
-| [Next.js](https://nextjs.org/) | 14+ | React Framework with App Router |
-| [React](https://react.dev/) | 18+ | UI Library |
+| [Next.js](https://nextjs.org/) | 16+ | React Framework with App Router |
+| [React](https://react.dev/) | 19+ | UI Library |
 | [TypeScript](https://www.typescriptlang.org/) | 5.0+ | Type Safety |
-| [Tailwind CSS](https://tailwindcss.com/) | 3.4+ | Utility-First CSS |
-| [Framer Motion](https://www.framer.com/motion/) | 11+ | Animations |
+| [Tailwind CSS](https://tailwindcss.com/) | 4.0+ | Utility-First CSS |
+| [Framer Motion](https://www.framer.com/motion/) | 11+ | Animations (Planned) |
 
 ### Visualization
 

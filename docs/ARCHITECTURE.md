@@ -24,10 +24,10 @@ Dieses Dokument beschreibt die technische Architektur von Zeitstrahl, einem webb
 ```
 +-------------------+
 |    Frontend       |
-|  Next.js 14+      |
-|  React 18+        |
+|  Next.js 16+      |
+|  React 19+        |
 |  TypeScript 5+    |
-|  Tailwind CSS     |
+|  Tailwind CSS 4   |
 +-------------------+
          |
          v
@@ -189,7 +189,7 @@ zeitstrahl/
 
 ### Next.js App Router
 
-Wir nutzen den Next.js 14 App Router fuer:
+Wir nutzen den Next.js 16 App Router fuer:
 
 - **Server Components**: Statische Teile (Header, Footer, Marketing-Seiten)
 - **Client Components**: Interaktive Teile (Editor, Timeline)

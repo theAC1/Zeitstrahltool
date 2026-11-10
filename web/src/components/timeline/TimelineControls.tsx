@@ -1,38 +1,70 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Timeline, TimelineAxis } from "../../types/timeline";
-import { useTimelineDispatch, useTimelineState } from "../../context/timeline/TimelineContext";
-import { TimelineEventSchema, TimelineSchema } from "../../types/timeline";
+import type { Timeline, TimelineAxis, Epoch } from "../../types/timeline";
+import { useTimelineDispatch, useTimelineState, useTimelineHistory } from "../../context/timeline/TimelineContext";
+import { TimelineEventSchema, TimelineSchema, EpochSchema } from "../../types/timeline";
 import { UI } from "./uiText";
+import { Button, Input, Label, Card } from "./ui-components";
+import {
+  Plus,
+  Trash2,
+  Save,
+  RotateCcw,
+  Copy,
+  FileJson,
+  Settings,
+  Calendar,
+  Type,
+  AlignLeft,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Image as ImageIcon,
+  Undo2,
+  Redo2,
+  FileImage,
+  Palette,
+  Clock,
+  ArrowRight
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { exportAsPng, exportAsSvg, exportAsPdf, getTimelineElement } from "../../lib/export";
 
-function nextAutoId(existingIds: string[]): string {
+// Default colors for epochs
+const EPOCH_COLOR_PRESETS = [
+  "#fef3c7", // amber-100
+  "#dbeafe", // blue-100
+  "#dcfce7", // green-100
+  "#fce7f3", // pink-100
+  "#f3e8ff", // purple-100
+  "#fed7aa", // orange-100
+  "#cffafe", // cyan-100
+  "#fef9c3", // yellow-100
+];
+
+function nextAutoId(existingIds: string[], prefix: string = "e"): string {
   const used = new Set(existingIds);
-
+  const regex = new RegExp(`^${prefix}(\\d+)$`);
   let max = 0;
   for (const id of existingIds) {
-    const m = /^e(\d+)$/.exec(id);
+    const m = regex.exec(id);
     if (m) {
       const n = Number(m[1]);
       if (Number.isFinite(n) && n > max) max = n;
     }
   }
-
   for (let i = max + 1; i < max + 10000; i += 1) {
-    const candidate = `e${i}`;
+    const candidate = `${prefix}${i}`;
     if (!used.has(candidate)) return candidate;
   }
-
-  let fallback = `e${Date.now()}`;
-  while (used.has(fallback)) fallback = `e${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-  return fallback;
+  return `${prefix}${Date.now()}`;
 }
 
 function createTimelineId(prefix: string = "tl"): string {
   const suffix = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
   return `${prefix}-${suffix}`;
 }
-
 
 function parseOptionalInt(raw: string): number | undefined {
   const trimmed = raw.trim();
@@ -42,22 +74,13 @@ function parseOptionalInt(raw: string): number | undefined {
   return n;
 }
 
-function axisKey(axis?: TimelineAxis) {
-  return JSON.stringify({
-    tickStep: typeof axis?.tickStep === "number" ? axis.tickStep : null,
-    targetTickCount: typeof axis?.targetTickCount === "number" ? axis.targetTickCount : null,
-    minYear: typeof axis?.minYear === "number" ? axis.minYear : null,
-    maxYear: typeof axis?.maxYear === "number" ? axis.maxYear : null,
-  });
-}
-
-
 function AxisControls(props: {
   axis?: TimelineAxis;
   onSaveAxis: (axis?: TimelineAxis) => void;
   setError: (msg: string | null) => void;
 }) {
   const { axis, onSaveAxis, setError } = props;
+  const [isOpen, setIsOpen] = useState(false);
 
   const [tickStepInput, setTickStepInput] = useState(
     typeof axis?.tickStep === "number" ? String(axis.tickStep) : "",
@@ -74,42 +97,24 @@ function AxisControls(props: {
 
   function onSave() {
     setError(null);
-
     const tickStep = parseOptionalInt(tickStepInput);
-    if (Number.isNaN(tickStep)) {
-      setError(UI.axis.errors.tickStepIntOrEmpty);
-      return;
-    }
-    if (typeof tickStep === "number" && tickStep <= 0) {
-      setError(UI.axis.errors.tickStepGtZero);
-      return;
-    }
+    if (Number.isNaN(tickStep)) return setError(UI.axis.errors.tickStepIntOrEmpty);
+    if (typeof tickStep === "number" && tickStep <= 0) return setError(UI.axis.errors.tickStepGtZero);
 
     const targetTickCount = parseOptionalInt(targetTickCountInput);
-    if (Number.isNaN(targetTickCount)) {
-      setError(UI.axis.errors.targetTickCountIntOrEmpty);
-      return;
-    }
+    if (Number.isNaN(targetTickCount)) return setError(UI.axis.errors.targetTickCountIntOrEmpty);
     if (typeof targetTickCount === "number" && (targetTickCount < 2 || targetTickCount > 50)) {
-      setError(UI.axis.errors.targetTickCountRange);
-      return;
+      return setError(UI.axis.errors.targetTickCountRange);
     }
 
     const minYear = parseOptionalInt(minYearInput);
-    if (Number.isNaN(minYear)) {
-      setError(UI.axis.errors.minYearIntOrEmpty);
-      return;
-    }
+    if (Number.isNaN(minYear)) return setError(UI.axis.errors.minYearIntOrEmpty);
 
     const maxYear = parseOptionalInt(maxYearInput);
-    if (Number.isNaN(maxYear)) {
-      setError(UI.axis.errors.maxYearIntOrEmpty);
-      return;
-    }
+    if (Number.isNaN(maxYear)) return setError(UI.axis.errors.maxYearIntOrEmpty);
 
     if (typeof minYear === "number" && typeof maxYear === "number" && maxYear < minYear) {
-      setError(UI.axis.errors.maxYearGteMinYear);
-      return;
+      return setError(UI.axis.errors.maxYearGteMinYear);
     }
 
     const nextAxis: TimelineAxis = {
@@ -119,624 +124,700 @@ function AxisControls(props: {
       ...(typeof maxYear === "number" ? { maxYear } : {}),
     };
 
-    const axisToStore = Object.keys(nextAxis).length ? nextAxis : undefined;
-    onSaveAxis(axisToStore);
+    onSaveAxis(Object.keys(nextAxis).length ? nextAxis : undefined);
   }
 
   return (
-    <div className="mb-3 rounded-md border p-2">
-      <div className="mb-2 text-sm font-medium">{UI.axis.title}</div>
-
-      <div className="mb-2 text-xs text-gray-600">
-        {UI.axis.hint}
+    <Card className="p-4 mb-4">
+      <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+        <div className="flex items-center gap-2 font-medium text-gray-900">
+          <Settings className="w-4 h-4" />
+          {UI.axis.title}
+        </div>
+        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}>
+          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </Button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-2">
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-tickStep">{UI.axis.tickStepLabel}</label>
-          <input
-            id="axis-tickStep"
-            className="w-44 rounded-md border px-2 py-1 text-sm"
-            value={tickStepInput}
-            onChange={e => setTickStepInput(e.target.value)}
-            placeholder="zB 500"
-            inputMode="numeric"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-targetTickCount">{UI.axis.targetTickCountLabel}</label>
-          <input
-            id="axis-targetTickCount"
-            className="w-44 rounded-md border px-2 py-1 text-sm"
-            value={targetTickCountInput}
-            onChange={e => setTargetTickCountInput(e.target.value)}
-            placeholder="zB 6"
-            inputMode="numeric"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-minYear">{UI.axis.minYearLabel}</label>
-          <input
-            id="axis-minYear"
-            className="w-44 rounded-md border px-2 py-1 text-sm"
-            value={minYearInput}
-            onChange={e => setMinYearInput(e.target.value)}
-            placeholder="zB 0"
-            inputMode="numeric"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="axis-maxYear">{UI.axis.maxYearLabel}</label>
-          <input
-            id="axis-maxYear"
-            className="w-44 rounded-md border px-2 py-1 text-sm"
-            value={maxYearInput}
-            onChange={e => setMaxYearInput(e.target.value)}
-            placeholder="zB 1000"
-            inputMode="numeric"
-          />
-        </div>
-
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-          onClick={onSave}
-        >
-          {UI.axis.save}
-        </button>
-      </div>
-    </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <Label htmlFor="axis-tickStep">{UI.axis.tickStepLabel}</Label>
+                <Input
+                  id="axis-tickStep"
+                  value={tickStepInput}
+                  onChange={e => setTickStepInput(e.target.value)}
+                  placeholder="e.g. 500"
+                  inputMode="numeric"
+                />
+              </div>
+              <div>
+                <Label htmlFor="axis-targetTickCount">{UI.axis.targetTickCountLabel}</Label>
+                <Input
+                  id="axis-targetTickCount"
+                  value={targetTickCountInput}
+                  onChange={e => setTargetTickCountInput(e.target.value)}
+                  placeholder="e.g. 6"
+                  inputMode="numeric"
+                />
+              </div>
+              <div>
+                <Label htmlFor="axis-minYear">{UI.axis.minYearLabel}</Label>
+                <Input
+                  id="axis-minYear"
+                  value={minYearInput}
+                  onChange={e => setMinYearInput(e.target.value)}
+                  placeholder="e.g. 0"
+                  inputMode="numeric"
+                />
+              </div>
+              <div>
+                <Label htmlFor="axis-maxYear">{UI.axis.maxYearLabel}</Label>
+                <Input
+                  id="axis-maxYear"
+                  value={maxYearInput}
+                  onChange={e => setMaxYearInput(e.target.value)}
+                  placeholder="e.g. 1000"
+                  inputMode="numeric"
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <Button onClick={onSave} size="sm">
+                Apply Axis Settings
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Card>
   );
 }
 
 export function TimelineControls() {
-  const { timeline, timelines, activeTimelineId } = useTimelineState();
+  const { timeline, timelines, activeTimelineId, canUndo, canRedo } = useTimelineState();
   const dispatch = useTimelineDispatch();
-
+  const { undo, redo } = useTimelineHistory();
   const [timelineTitleDraft, setTimelineTitleDraft] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPng = async () => {
+    const element = getTimelineElement();
+    if (!element || isExporting) return;
+
+    setIsExporting(true);
+    try {
+      await exportAsPng(element, `${timeline.title || "timeline"}-${new Date().toISOString().slice(0, 10)}.png`);
+    } catch (err) {
+      console.error("PNG Export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportSvg = async () => {
+    const element = getTimelineElement();
+    if (!element || isExporting) return;
+
+    setIsExporting(true);
+    try {
+      await exportAsSvg(element, `${timeline.title || "timeline"}-${new Date().toISOString().slice(0, 10)}.svg`);
+    } catch (err) {
+      console.error("SVG Export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    const element = getTimelineElement();
+    if (!element || isExporting) return;
+
+    setIsExporting(true);
+    try {
+      await exportAsPdf(
+        element,
+        `${timeline.title || "timeline"}-${new Date().toISOString().slice(0, 10)}.pdf`,
+        { title: timeline.title || "Timeline" }
+      );
+    } catch (err) {
+      console.error("PDF Export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
   const [isTitleDirty, setIsTitleDirty] = useState(false);
 
-  const existingIds = useMemo(() => timeline.events.map(e => e.id), [timeline.events]);
-  const nextIdPreview = useMemo(() => nextAutoId(existingIds), [existingIds]);
+  // Event state
+  const existingEventIds = useMemo(() => timeline.events.map(e => e.id), [timeline.events]);
+  const nextEventIdPreview = useMemo(() => nextAutoId(existingEventIds, "e"), [existingEventIds]);
 
-  const [title, setTitle] = useState("");
-  const [year, setYear] = useState("");
-  const [description, setDescription] = useState("");
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventYear, setEventYear] = useState("");
+  const [eventDescription, setEventDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [importJson, setImportJson] = useState("");
 
-  const [editTitleById, setEditTitleById] = useState<Record<string, string>>({});
-  const [editYearById, setEditYearById] = useState<Record<string, string>>({});
-  const [editDescriptionById, setEditDescriptionById] = useState<Record<string, string>>({});
+  // Event edit state
+  const [eventEditState, setEventEditState] = useState<Record<string, { title?: string, year?: string, desc?: string }>>({});
 
-  const timelineTitleValue = isTitleDirty ? timelineTitleDraft : timeline.title;
+  // Epoch state
+  const existingEpochIds = useMemo(() => timeline.epochs.map(e => e.id), [timeline.epochs]);
+  const nextEpochIdPreview = useMemo(() => nextAutoId(existingEpochIds, "ep"), [existingEpochIds]);
+
+  const [epochTitle, setEpochTitle] = useState("");
+  const [epochStartYear, setEpochStartYear] = useState("");
+  const [epochEndYear, setEpochEndYear] = useState("");
+  const [epochColor, setEpochColor] = useState(EPOCH_COLOR_PRESETS[0]);
+  const [epochDescription, setEpochDescription] = useState("");
+
+  // Epoch edit state
+  const [epochEditState, setEpochEditState] = useState<Record<string, {
+    title?: string,
+    startYear?: string,
+    endYear?: string,
+    color?: string,
+    desc?: string
+  }>>({});
 
   function onSaveTimelineTitle() {
     setError(null);
-    setNotice(null);
-
     const next = timelineTitleDraft.trim();
-    if (!next) {
-      setError(UI.timeline.titleEmpty);
-      return;
-    }
-
+    if (!next) return setError(UI.timeline.titleEmpty);
     dispatch({ type: "timeline/updateTitle", payload: { title: next } });
     setIsTitleDirty(false);
   }
 
-  function onResetTimeline() {
-    dispatch({ type: "timeline/reset" });
-    setError(null);
-
-    setIsTitleDirty(false);
-    setTimelineTitleDraft("");
-
-    setEditTitleById({});
-    setEditYearById({});
-    setEditDescriptionById({});
-
-    setTitle("");
-    setYear("");
-    setDescription("");
-  }
-
+  // ===== EVENT HANDLERS =====
   function onAddEvent(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    const trimmedTitle = eventTitle.trim();
+    const trimmedYear = eventYear.trim();
 
-    const trimmedTitle = title.trim();
-    const trimmedYear = year.trim();
-    const trimmedDescription = description.trim();
-
-    if (!trimmedTitle || !trimmedYear) {
-      setError(UI.events.errors.fillTitleYear);
-      return;
-    }
+    if (!trimmedTitle || !trimmedYear) return setError(UI.events.errors.fillTitleYear);
 
     const parsedYear = Number(trimmedYear);
-    if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
-      setError(UI.events.errors.yearInteger);
-      return;
-    }
+    if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) return setError(UI.events.errors.yearInteger);
 
-    const newId = nextAutoId(existingIds);
-
+    const newId = nextAutoId(existingEventIds, "e");
     const candidate = {
       id: newId,
       title: trimmedTitle,
       year: parsedYear,
-      description: trimmedDescription ? trimmedDescription : undefined,
+      description: eventDescription.trim() || undefined,
     };
 
     const result = TimelineEventSchema.safeParse(candidate);
-    if (!result.success) {
-      setError(UI.events.errors.invalidInput);
-      return;
-    }
+    if (!result.success) return setError(UI.events.errors.invalidInput);
 
     dispatch({ type: "event/add", payload: result.data });
-
-    setTitle("");
-    setYear("");
-    setDescription("");
+    setEventTitle("");
+    setEventYear("");
+    setEventDescription("");
   }
 
-  function onDeleteEvent(eventId: string) {
-    dispatch({ type: "event/delete", payload: { id: eventId } });
-
-    setEditTitleById(prev => {
-      const next = { ...prev };
-      delete next[eventId];
-      return next;
-    });
-
-    setEditYearById(prev => {
-      const next = { ...prev };
-      delete next[eventId];
-      return next;
-    });
-
-    setEditDescriptionById(prev => {
-      const next = { ...prev };
-      delete next[eventId];
-      return next;
-    });
+  function updateEventEditState(id: string, field: 'title' | 'year' | 'desc', value: string) {
+    setEventEditState(prev => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value }
+    }));
   }
 
-  function startEditTitle(eventId: string, currentTitle: string) {
-    setEditTitleById(prev =>
-      Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentTitle },
-    );
-  }
+  function saveEvent(ev: { id: string, title: string, year?: number | string, description?: string }) {
+    const edits = eventEditState[ev.id] || {};
+    const nextTitle = (edits.title ?? ev.title).trim();
+    const nextYearStr = (edits.year ?? String(ev.year)).trim();
+    const nextDesc = (edits.desc ?? ev.description ?? "").trim();
 
-  function startEditYear(eventId: string, currentYear: string) {
-    setEditYearById(prev =>
-      Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentYear },
-    );
-  }
-
-  function startEditDescription(eventId: string, currentDescription: string) {
-    setEditDescriptionById(prev =>
-      Object.prototype.hasOwnProperty.call(prev, eventId) ? prev : { ...prev, [eventId]: currentDescription },
-    );
-  }
-
-  function onSave(eventId: string) {
-    const current = timeline.events.find(ev => ev.id === eventId);
-    if (!current) return;
-
-    const nextTitle = (editTitleById[eventId] ?? current.title).trim();
-    const nextYearStr =
-      (editYearById[eventId] ??
-        (typeof current.year === "number" ? String(current.year) : "")).trim();
-
-    const nextDescRaw = Object.prototype.hasOwnProperty.call(editDescriptionById, eventId)
-      ? editDescriptionById[eventId]
-      : (current.description ?? "");
-    const nextDescTrimmed = nextDescRaw.trim();
-    const nextDescription = nextDescTrimmed ? nextDescTrimmed : undefined;
-
-    if (!nextTitle) {
-      setError(UI.events.errors.titleEmpty);
-      return;
-    }
+    if (!nextTitle) return setError(UI.events.errors.titleEmpty);
 
     const parsedYear = Number(nextYearStr);
-    if (!Number.isFinite(parsedYear) || !Number.isInteger(parsedYear)) {
-      setError(UI.events.errors.yearInteger);
-      return;
+    if (!Number.isFinite(parsedYear)) return setError(UI.events.errors.yearInteger);
+
+    dispatch({
+      type: "event/update",
+      payload: {
+        id: ev.id,
+        title: nextTitle,
+        year: parsedYear,
+        description: nextDesc || undefined
+      }
+    });
+
+    // Clear edit state for this event
+    const nextState = { ...eventEditState };
+    delete nextState[ev.id];
+    setEventEditState(nextState);
+  }
+
+  // ===== EPOCH HANDLERS =====
+  function onAddEpoch(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const trimmedTitle = epochTitle.trim();
+    const trimmedStartYear = epochStartYear.trim();
+    const trimmedEndYear = epochEndYear.trim();
+
+    if (!trimmedTitle) return setError("Epoch title is required.");
+    if (!trimmedStartYear || !trimmedEndYear) return setError("Start and end year are required.");
+
+    const parsedStartYear = Number(trimmedStartYear);
+    const parsedEndYear = Number(trimmedEndYear);
+
+    if (!Number.isFinite(parsedStartYear) || !Number.isInteger(parsedStartYear)) {
+      return setError("Start year must be an integer.");
+    }
+    if (!Number.isFinite(parsedEndYear) || !Number.isInteger(parsedEndYear)) {
+      return setError("End year must be an integer.");
+    }
+    if (parsedEndYear < parsedStartYear) {
+      return setError("End year must be greater than or equal to start year.");
     }
 
-    setError(null);
-
-    const candidate = {
-      ...current,
-      title: nextTitle,
-      year: parsedYear,
-      description: nextDescription,
-      startYear: undefined,
-      endYear: undefined,
+    const newId = nextAutoId(existingEpochIds, "ep");
+    const candidate: Epoch = {
+      id: newId,
+      title: trimmedTitle,
+      startYear: parsedStartYear,
+      endYear: parsedEndYear,
+      color: epochColor,
+      description: epochDescription.trim() || undefined,
     };
 
-    const result = TimelineEventSchema.safeParse(candidate);
-    if (!result.success) {
-      setError(UI.events.errors.invalidValues);
-      return;
-    }
+    const result = EpochSchema.safeParse(candidate);
+    if (!result.success) return setError("Invalid epoch data.");
 
-    dispatch({ type: "event/update", payload: result.data });
-
-    setEditTitleById(prev => {
-      const next = { ...prev };
-      delete next[eventId];
-      return next;
-    });
-
-    setEditYearById(prev => {
-      const next = { ...prev };
-      delete next[eventId];
-      return next;
-    });
-
-    setEditDescriptionById(prev => {
-      const next = { ...prev };
-      delete next[eventId];
-      return next;
-    });
+    dispatch({ type: "epoch/add", payload: result.data });
+    setEpochTitle("");
+    setEpochStartYear("");
+    setEpochEndYear("");
+    setEpochColor(EPOCH_COLOR_PRESETS[(existingEpochIds.length + 1) % EPOCH_COLOR_PRESETS.length]);
+    setEpochDescription("");
   }
 
-  
-  function onImportTimelineJson() {
-    setError(null);
-    setNotice(null);
+  function updateEpochEditState(id: string, field: 'title' | 'startYear' | 'endYear' | 'color' | 'desc', value: string) {
+    setEpochEditState(prev => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value }
+    }));
+  }
 
-    try {
-      const parsed = JSON.parse(importJson);
-      const result = TimelineSchema.safeParse(parsed);
+  function saveEpoch(ep: Epoch) {
+    const edits = epochEditState[ep.id] || {};
+    const nextTitle = (edits.title ?? ep.title).trim();
+    const nextStartYearStr = (edits.startYear ?? String(ep.startYear)).trim();
+    const nextEndYearStr = (edits.endYear ?? String(ep.endYear)).trim();
+    const nextColor = edits.color ?? ep.color ?? EPOCH_COLOR_PRESETS[0];
+    const nextDesc = (edits.desc ?? ep.description ?? "").trim();
 
-      if (!result.success) {
-        setError(UI.json.errors.invalid);
-        return;
+    if (!nextTitle) return setError("Epoch title is required.");
+
+    const parsedStartYear = Number(nextStartYearStr);
+    const parsedEndYear = Number(nextEndYearStr);
+
+    if (!Number.isFinite(parsedStartYear)) return setError("Start year must be a valid number.");
+    if (!Number.isFinite(parsedEndYear)) return setError("End year must be a valid number.");
+    if (parsedEndYear < parsedStartYear) return setError("End year must be >= start year.");
+
+    dispatch({
+      type: "epoch/update",
+      payload: {
+        id: ep.id,
+        title: nextTitle,
+        startYear: parsedStartYear,
+        endYear: parsedEndYear,
+        color: nextColor,
+        description: nextDesc || undefined
       }
+    });
 
-      const incoming = result.data;
-      const normalized = { ...incoming, id: activeTimelineId };
-
-      dispatch({ type: "timeline/replace", payload: normalized });
-
-      setNotice(UI.json.success);
-      setImportJson("");
-      setIsTitleDirty(false);
-      setTimelineTitleDraft("");
-      setEditTitleById({});
-      setEditYearById({});
-      setEditDescriptionById({});
-    } catch {
-      setError(UI.json.errors.notJson);
-    }
-  }
-
-  function formatYear(ev: { year?: number; startYear?: number; endYear?: number }) {
-    if (typeof ev.year === "number") return String(ev.year);
-    if (typeof ev.startYear === "number" && typeof ev.endYear === "number") return `${ev.startYear} bis ${ev.endYear}`;
-    return "";
+    // Clear edit state for this epoch
+    const nextState = { ...epochEditState };
+    delete nextState[ep.id];
+    setEpochEditState(nextState);
   }
 
   return (
-    <div className="mb-4 rounded-md border bg-white p-3 text-gray-900">
-      <div className="mb-3 flex flex-wrap items-end gap-2">
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="tl-select">{UI.timeline.activeLabel}</label>
-          <select
-            id="tl-select"
-            className="w-80 rounded-md border bg-white px-2 py-2 text-sm text-gray-900"
-            value={activeTimelineId}
-            onChange={(e) => {
-              dispatch({ type: "timeline/select", payload: { id: e.target.value } });
-              setError(null);
-              setIsTitleDirty(false);
-              setTimelineTitleDraft("");
-              setEditTitleById({});
-              setEditYearById({});
-              setEditDescriptionById({});
-            }}
-          >
-            {timelines.map(t => (
-              <option key={t.id} value={t.id}>
-                {t.title}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="space-y-6 max-w-4xl mx-auto pb-20">
 
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-          onClick={() => {
-            const baseTitle = timeline.title.replace(/\s*\(Copy.*\)\s*$/i, "").trim();
-            const escaped = baseTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            const re = new RegExp(`^${escaped}\\s*\\(Copy(?:\\s+(\\d+))?\\)\\s*$`, "i");
+      {/* Header Controls */}
+      <Card className="p-4 bg-gray-50/50">
+        <div className="flex flex-col gap-5">
+          {/* Top Row: Timeline Selection & Title */}
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <div className="w-full md:w-1/3">
+              <Label htmlFor="tl-select">{UI.timeline.activeLabel}</Label>
+              <select
+                id="tl-select"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                value={activeTimelineId}
+                onChange={(e) => dispatch({ type: "timeline/select", payload: { id: e.target.value } })}
+              >
+                {timelines.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+              </select>
+            </div>
 
-            let max = 0;
-            for (const t of timelines) {
-              const m = t.title.match(re);
-              if (m) {
-                const n = m[1] ? Number(m[1]) : 1;
-                if (!Number.isNaN(n)) max = Math.max(max, n);
-              }
-            }
+            <div className="flex-1 flex gap-2 items-end">
+              <div className="flex-1">
+                <Label htmlFor="tl-title">{UI.timeline.titleLabel}</Label>
+                <Input
+                  id="tl-title"
+                  value={isTitleDirty ? timelineTitleDraft : timeline.title}
+                  onChange={e => { setIsTitleDirty(true); setTimelineTitleDraft(e.target.value); }}
+                />
+              </div>
+              {isTitleDirty && (
+                <Button onClick={onSaveTimelineTitle} variant="primary" size="icon">
+                  <Save className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          </div>
 
-            const nextTitle = max === 0 ? `${baseTitle} (Copy)` : `${baseTitle} (Copy ${max + 1})`;
-            const cloned = { ...timeline, id: createTimelineId("tl"), title: nextTitle };
+          {/* Bottom Row: Actions */}
+          <div className="flex flex-wrap gap-2 justify-end items-center pt-3 border-t border-gray-200" role="toolbar" aria-label="Timeline actions">
+            {/* Undo/Redo */}
+            <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1 shadow-sm mr-2" role="group" aria-label="History controls">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={undo}
+                disabled={!canUndo}
+                title="Undo (Ctrl+Z)"
+                aria-label="Undo last action"
+                className="disabled:opacity-40"
+              >
+                <Undo2 className="w-4 h-4" aria-hidden="true" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={redo}
+                disabled={!canRedo}
+                title="Redo (Ctrl+Y)"
+                aria-label="Redo last undone action"
+                className="disabled:opacity-40"
+              >
+                <Redo2 className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            </div>
 
-            dispatch({ type: "timeline/add", payload: { timeline: cloned } });
-            setError(null);
-            setNotice(null);
-            setIsTitleDirty(false);
-            setTimelineTitleDraft("");
-            setEditTitleById({});
-            setEditYearById({});
-            setEditDescriptionById({});
-          }}
-        >
-          {UI.timeline.duplicate}
-        </button>
+            <Button variant="secondary" size="md" title={UI.timeline.duplicate} className="flex items-center gap-2" onClick={() => dispatch({ type: "timeline/add", payload: { timeline: { ...timeline, id: createTimelineId(), title: `${timeline.title} (Copy)` } } })}>
+              <Copy className="w-4 h-4" />
+              <span className="hidden sm:inline">Duplicate</span>
+            </Button>
+            <Button variant="secondary" size="md" title={UI.timeline.reset} className="flex items-center gap-2" onClick={() => dispatch({ type: "timeline/reset" })}>
+              <RotateCcw className="w-4 h-4" />
+              <span className="hidden sm:inline">Reset</span>
+            </Button>
+            <Button variant="danger" size="md" title={UI.timeline.delete} className="flex items-center gap-2" disabled={timelines.length <= 1} onClick={() => dispatch({ type: "timeline/delete", payload: { id: activeTimelineId } })}>
+              <Trash2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Delete</span>
+            </Button>
 
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-          onClick={() => {
-            const id = createTimelineId("tl");
-            dispatch({ type: "timeline/createEmpty", payload: { id, title: "New timeline" } });
-            setError(null);
-            setNotice(null);
-            setIsTitleDirty(false);
-            setTimelineTitleDraft("");
-            setEditTitleById({});
-            setEditYearById({});
-            setEditDescriptionById({});
-          }}
-        >
-          {UI.timeline.newEmpty}
-        </button>
+            <div className="w-px h-6 bg-gray-300 mx-2 hidden md:block"></div>
 
-
-        <button
-          type="button"
-          disabled={timelines.length <= 1}
-          aria-disabled={timelines.length <= 1}
-          className={timelines.length <= 1 ? "rounded-md border px-3 py-2 text-sm opacity-50" : "cursor-pointer rounded-md border px-3 py-2 text-sm"}
-          onClick={() => {
-            dispatch({ type: "timeline/delete", payload: { id: activeTimelineId } });
-            setError(null);
-            setIsTitleDirty(false);
-            setTimelineTitleDraft("");
-            setEditTitleById({});
-            setEditYearById({});
-            setEditDescriptionById({});
-          }}
-        >
-          {UI.timeline.delete}
-        </button>
-      </div>
-
-      <div className="mb-3 flex flex-wrap items-end gap-2">
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="tl-title">{UI.timeline.titleLabel}</label>
-          <input
-            id="tl-title"
-            className="w-80 rounded-md border px-2 py-1 text-sm"
-            value={timelineTitleValue}
-            onChange={e => {
-              setIsTitleDirty(true);
-              setTimelineTitleDraft(e.target.value);
-            }}
-          />
-        </div>
-
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-          onClick={onSaveTimelineTitle}
-        >
-          {UI.timeline.saveTitle}
-        </button>
-
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-          onClick={onResetTimeline}
-        >
-          {UI.timeline.reset}
-        </button>
-
-        <span className="text-sm text-gray-600">
-          {UI.timeline.resetHint}
-        </span>
-
-        {error ? <div className="w-full text-sm text-red-600">{error}</div> : null}
-      </div>
-
-      <AxisControls
-        key={axisKey(timeline.axis)}
-        axis={timeline.axis}
-        setError={setError}
-        onSaveAxis={(axisToStore) => {
-          dispatch({ type: "timeline/updateAxis", payload: { axis: axisToStore } });
-        }}
-      />
-
-      <form onSubmit={onAddEvent} className="flex flex-wrap items-end gap-2">
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600">id (auto)</label>
-          <div className="w-44 rounded-md border bg-gray-50 px-2 py-1 text-sm font-mono text-gray-700">
-            {nextIdPreview}
+            {/* Export Buttons */}
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handleExportSvg}
+              disabled={isExporting}
+              className="flex items-center gap-2"
+              title="Export as SVG"
+              aria-label="Export timeline as SVG"
+            >
+              <FileImage className="w-4 h-4" />
+              SVG
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={handleExportPdf}
+              disabled={isExporting}
+              className="flex items-center gap-2"
+              title="Export as PDF"
+              aria-label="Export timeline as PDF"
+            >
+              <Download className="w-4 h-4" />
+              PDF
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleExportPng}
+              disabled={isExporting}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
+              aria-label="Export timeline as PNG"
+            >
+              <ImageIcon className="w-4 h-4" />
+              {isExporting ? "Exporting..." : "PNG"}
+            </Button>
           </div>
         </div>
+        {error && <div className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded border border-red-100">{error}</div>}
+      </Card>
 
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="ev-title">title</label>
-          <input
-            id="ev-title"
-            className="w-64 rounded-md border px-2 py-1 text-sm"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            placeholder="Neues Ereignis"
-          />
-        </div>
+      <AxisControls axis={timeline.axis} setError={setError} onSaveAxis={(a) => dispatch({ type: "timeline/updateAxis", payload: { axis: a } })} />
 
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="ev-year">year</label>
-          <input
-            id="ev-year"
-            className="w-28 rounded-md border px-2 py-1 text-sm"
-            value={year}
-            onChange={e => setYear(e.target.value)}
-            placeholder="2000"
-            inputMode="numeric"
-          />
-        </div>
+      {/* Add Event Form */}
+      <Card className="p-5 border-blue-100 shadow-md">
+        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+          <div className="bg-blue-100 p-1.5 rounded-md text-blue-600">
+            <Plus className="w-5 h-5" />
+          </div>
+          Add New Event
+          <span className="text-xs font-normal text-gray-400 ml-2">(Single point in time)</span>
+        </h3>
+        <form onSubmit={onAddEvent} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+          <div className="md:col-span-2">
+            <Label>ID</Label>
+            <div className="px-3 py-2 bg-gray-100 text-gray-500 rounded-md text-sm font-mono border border-transparent">
+              {nextEventIdPreview}
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <Label htmlFor="ev-year">Year</Label>
+            <div className="relative">
+              <Calendar className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" />
+              <Input id="ev-year" className="pl-9" placeholder="2024" value={eventYear} onChange={e => setEventYear(e.target.value)} />
+            </div>
+          </div>
+          <div className="md:col-span-3">
+            <Label htmlFor="ev-title">Title</Label>
+            <div className="relative">
+              <Type className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" />
+              <Input id="ev-title" className="pl-9" placeholder="Event Title" value={eventTitle} onChange={e => setEventTitle(e.target.value)} />
+            </div>
+          </div>
+          <div className="md:col-span-3">
+            <Label htmlFor="ev-desc">Description</Label>
+            <div className="relative">
+              <AlignLeft className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" />
+              <Input id="ev-desc" className="pl-9" placeholder="Optional details..." value={eventDescription} onChange={e => setEventDescription(e.target.value)} />
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" className="w-full">Add Event</Button>
+          </div>
+        </form>
+      </Card>
 
-        <div className="flex flex-col">
-          <label className="text-xs text-gray-600" htmlFor="ev-desc">description</label>
-          <input
-            id="ev-desc"
-            className="w-80 rounded-md border px-2 py-1 text-sm"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            placeholder="Optional"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-        >
-          Add Event
-        </button>
-      </form>
-
-      <div className="mt-4 border-t pt-3">
-        <div className="mb-2 text-sm font-medium">{UI.events.title}</div>
-
-        <div className="flex flex-col gap-2 max-h-80 overflow-y-auto pr-1">
-          {timeline.events.map(ev => {
-            const isEditingTitle = Object.prototype.hasOwnProperty.call(editTitleById, ev.id);
-            const isEditingYear = Object.prototype.hasOwnProperty.call(editYearById, ev.id);
-            const isEditingDesc = Object.prototype.hasOwnProperty.call(editDescriptionById, ev.id);
-
-            const editTitleValue = editTitleById[ev.id] ?? "";
-            const editYearValue = editYearById[ev.id] ?? "";
-            const editDescValue = editDescriptionById[ev.id] ?? "";
-
-            const currentYearStr = typeof ev.year === "number" ? String(ev.year) : "";
-            const currentDescStr = ev.description ?? "";
-
-            return (
-              <div key={ev.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2 py-2">
-                <div className="min-w-0">
-                  <div className="text-sm">
-                    <span className="font-mono">{ev.id}</span>{" "}
-                    <span className="text-gray-600">({formatYear(ev)})</span>{" "}
-                    <span className="font-medium">{ev.title}</span>
-                  </div>
-
-                  {ev.description ? <div className="text-xs text-gray-600">{ev.description}</div> : null}
-
-                  <div className="mt-2 flex flex-wrap items-end gap-2">
-                    <div className="flex flex-col">
-                      <label className="text-xs text-gray-600" htmlFor={`edit-title-${ev.id}`}>title</label>
-                      <input
-                        id={`edit-title-${ev.id}`}
-                        className="w-64 rounded-md border px-2 py-1 text-sm"
-                        value={isEditingTitle ? editTitleValue : ev.title}
-                        onChange={e => setEditTitleById(prev => ({ ...prev, [ev.id]: e.target.value }))}
-                        onFocus={() => startEditTitle(ev.id, ev.title)}
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className="text-xs text-gray-600" htmlFor={`edit-year-${ev.id}`}>year</label>
-                      <input
-                        id={`edit-year-${ev.id}`}
-                        className="w-28 rounded-md border px-2 py-1 text-sm"
-                        value={isEditingYear ? editYearValue : currentYearStr}
-                        onChange={e => setEditYearById(prev => ({ ...prev, [ev.id]: e.target.value }))}
-                        onFocus={() => startEditYear(ev.id, currentYearStr)}
-                        inputMode="numeric"
-                      />
-                    </div>
-
-                    <div className="flex flex-col">
-                      <label className="text-xs text-gray-600" htmlFor={`edit-desc-${ev.id}`}>description</label>
-                      <input
-                        id={`edit-desc-${ev.id}`}
-                        className="w-80 rounded-md border px-2 py-1 text-sm"
-                        value={isEditingDesc ? editDescValue : currentDescStr}
-                        onChange={e => setEditDescriptionById(prev => ({ ...prev, [ev.id]: e.target.value }))}
-                        onFocus={() => startEditDescription(ev.id, currentDescStr)}
-                        placeholder="Optional"
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-                      onClick={() => onSave(ev.id)}
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-                  onClick={() => onDeleteEvent(ev.id)}
-                >
-                  Delete
-                </button>
+      {/* Add Epoch Form */}
+      <Card className="p-5 border-amber-200 shadow-md bg-amber-50/30">
+        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+          <div className="bg-amber-100 p-1.5 rounded-md text-amber-600">
+            <Clock className="w-5 h-5" />
+          </div>
+          Add New Epoch
+          <span className="text-xs font-normal text-gray-400 ml-2">(Time span / Era)</span>
+        </h3>
+        <form onSubmit={onAddEpoch} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+          <div className="md:col-span-1">
+            <Label>ID</Label>
+            <div className="px-3 py-2 bg-gray-100 text-gray-500 rounded-md text-sm font-mono border border-transparent">
+              {nextEpochIdPreview}
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <Label htmlFor="ep-start">Start Year</Label>
+            <div className="relative">
+              <Calendar className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" />
+              <Input id="ep-start" className="pl-9" placeholder="1900" value={epochStartYear} onChange={e => setEpochStartYear(e.target.value)} />
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <Label htmlFor="ep-end">End Year</Label>
+            <div className="relative">
+              <ArrowRight className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" />
+              <Input id="ep-end" className="pl-9" placeholder="2000" value={epochEndYear} onChange={e => setEpochEndYear(e.target.value)} />
+            </div>
+          </div>
+          <div className="md:col-span-3">
+            <Label htmlFor="ep-title">Title</Label>
+            <div className="relative">
+              <Type className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" />
+              <Input id="ep-title" className="pl-9" placeholder="Era Name" value={epochTitle} onChange={e => setEpochTitle(e.target.value)} />
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <Label htmlFor="ep-color">Color</Label>
+            <div className="flex gap-1 items-center">
+              <input
+                type="color"
+                id="ep-color"
+                value={epochColor}
+                onChange={e => setEpochColor(e.target.value)}
+                className="w-10 h-9 rounded border border-gray-300 cursor-pointer"
+              />
+              <div className="flex gap-0.5">
+                {EPOCH_COLOR_PRESETS.slice(0, 4).map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setEpochColor(color)}
+                    className={`w-6 h-6 rounded border-2 transition-all ${epochColor === color ? 'border-gray-600 scale-110' : 'border-transparent hover:border-gray-300'}`}
+                    style={{ backgroundColor: color }}
+                    title={color}
+                  />
+                ))}
               </div>
-            );
-          })}
+            </div>
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">Add Epoch</Button>
+          </div>
+        </form>
+      </Card>
+
+      {/* Event List */}
+      <div className="space-y-3">
+        <h3 className="font-medium text-gray-500 text-sm uppercase tracking-wider pl-1">
+          Timeline Events ({timeline.events.length})
+        </h3>
+        <div className="grid gap-3">
+          <AnimatePresence initial={false}>
+            {timeline.events.map(ev => {
+              const edits = eventEditState[ev.id] || {};
+
+              return (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  key={ev.id}
+                >
+                  <Card className="p-3 flex flex-col md:flex-row gap-3 md:items-center group hover:border-blue-300 transition-colors">
+                    <div className="flex items-center gap-3 min-w-[80px]">
+                      <span className="font-mono text-xs text-gray-400 select-none pb-0.5 border-b border-transparent group-hover:border-gray-200">{ev.id}</span>
+                      <Input
+                        className="w-20 font-mono text-center font-bold text-blue-600 bg-blue-50/50 border-transparent focus:bg-white transition-all"
+                        value={edits.year ?? ev.year}
+                        onChange={e => updateEventEditState(ev.id, 'year', e.target.value)}
+                        onBlur={() => saveEvent(ev)}
+                      />
+                    </div>
+
+                    <div className="flex-1 grid md:grid-cols-2 gap-3">
+                      <Input
+                        className="font-medium border-transparent focus:bg-gray-50 -ml-2 px-2"
+                        value={edits.title ?? ev.title}
+                        onChange={e => updateEventEditState(ev.id, 'title', e.target.value)}
+                        onBlur={() => saveEvent(ev)}
+                      />
+                      <Input
+                        className="text-gray-500 text-sm border-transparent focus:bg-gray-50 -ml-2 px-2"
+                        placeholder="No description"
+                        value={edits.desc ?? ev.description ?? ""}
+                        onChange={e => updateEventEditState(ev.id, 'desc', e.target.value)}
+                        onBlur={() => saveEvent(ev)}
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-600 hover:bg-red-50" onClick={() => dispatch({ type: "event/delete", payload: { id: ev.id } })}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+          {timeline.events.length === 0 && (
+            <div className="text-center py-10 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+              No events yet. Add one above!
+            </div>
+          )}
         </div>
       </div>
-      <details className="mt-4 rounded-md border p-2">
-        <summary className="cursor-pointer text-sm font-medium">{UI.json.title}</summary>
 
-        <div className="mt-2 grid gap-2">
-          <div className="text-xs text-gray-600">{UI.json.exportTitle}</div>
-          <pre className="max-h-64 overflow-auto rounded-md bg-gray-50 p-2 text-xs">
-            {JSON.stringify(timeline, null, 2)}
-          </pre>
+      {/* Epoch List */}
+      <div className="space-y-3">
+        <h3 className="font-medium text-amber-600 text-sm uppercase tracking-wider pl-1">
+          Timeline Epochs ({timeline.epochs.length})
+        </h3>
+        <div className="grid gap-3">
+          <AnimatePresence initial={false}>
+            {timeline.epochs.map(ep => {
+              const edits = epochEditState[ep.id] || {};
+              const currentColor = edits.color ?? ep.color ?? EPOCH_COLOR_PRESETS[0];
 
-          <div className="text-xs text-gray-600">{UI.json.importTitle}</div>
-          <textarea
-            className="h-40 w-full rounded-md border px-2 py-1 font-mono text-xs"
-            value={importJson}
-            onChange={(e) => setImportJson(e.target.value)}
-            placeholder='{"id":"t1","title":"...","events":[...],"epochs":[...]}'
-          />
-          <button
-            type="button"
-            className="cursor-pointer rounded-md border px-3 py-2 text-sm"
-            onClick={onImportTimelineJson}
-            disabled={!importJson.trim()}
-            aria-disabled={!importJson.trim()}
-          >
-            {UI.json.importButton}
-          </button>
+              return (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  key={ep.id}
+                >
+                  <Card
+                    className="p-3 flex flex-col md:flex-row gap-3 md:items-center group hover:border-amber-300 transition-colors"
+                    style={{ borderLeftWidth: '4px', borderLeftColor: currentColor }}
+                  >
+                    <div className="flex items-center gap-2 min-w-[120px]">
+                      <span className="font-mono text-xs text-gray-400 select-none">{ep.id}</span>
+                      <input
+                        type="color"
+                        value={currentColor}
+                        onChange={e => updateEpochEditState(ep.id, 'color', e.target.value)}
+                        onBlur={() => saveEpoch(ep)}
+                        className="w-6 h-6 rounded border border-gray-300 cursor-pointer"
+                      />
+                    </div>
 
-          {notice ? <div className="text-sm text-green-700">{notice}</div> : null}
-          {error ? <div className="text-sm text-red-700">{error}</div> : null}
+                    <div className="flex items-center gap-2 min-w-[180px]">
+                      <Input
+                        className="w-20 font-mono text-center font-bold text-amber-700 bg-amber-50/50 border-transparent focus:bg-white transition-all"
+                        value={edits.startYear ?? ep.startYear}
+                        onChange={e => updateEpochEditState(ep.id, 'startYear', e.target.value)}
+                        onBlur={() => saveEpoch(ep)}
+                      />
+                      <ArrowRight className="w-4 h-4 text-gray-400" />
+                      <Input
+                        className="w-20 font-mono text-center font-bold text-amber-700 bg-amber-50/50 border-transparent focus:bg-white transition-all"
+                        value={edits.endYear ?? ep.endYear}
+                        onChange={e => updateEpochEditState(ep.id, 'endYear', e.target.value)}
+                        onBlur={() => saveEpoch(ep)}
+                      />
+                    </div>
+
+                    <div className="flex-1">
+                      <Input
+                        className="font-medium border-transparent focus:bg-gray-50 -ml-2 px-2"
+                        value={edits.title ?? ep.title}
+                        onChange={e => updateEpochEditState(ep.id, 'title', e.target.value)}
+                        onBlur={() => saveEpoch(ep)}
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-600 hover:bg-red-50" onClick={() => dispatch({ type: "epoch/delete", payload: { id: ep.id } })}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+          {timeline.epochs.length === 0 && (
+            <div className="text-center py-10 text-amber-400 border-2 border-dashed border-amber-200 rounded-lg bg-amber-50/30">
+              No epochs yet. Add time periods above!
+            </div>
+          )}
         </div>
-      </details>
+      </div>
 
     </div>
   );
 }
+
